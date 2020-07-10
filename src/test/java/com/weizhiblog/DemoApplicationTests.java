@@ -1,4 +1,4 @@
-package com.weizhiblog.demo;
+package com.weizhiblog;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
