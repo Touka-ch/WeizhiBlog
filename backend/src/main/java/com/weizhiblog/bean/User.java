@@ -19,13 +19,13 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class User {
-    private Long id;
-    private String name;
-    private String pwd;
+    private Integer id;
+    private String username;
+    private String password;
+    private String userface;
     private String nickname;
-    private Boolean status;
+    private Integer enabled;
     private List<Role> roles;
     private String email;
-    private String tel;
     private Timestamp regTime;
 }

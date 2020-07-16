@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * 用于控制 user 的创建更改删除和更新状态
  */
-@RestController()
+@RestController
 @RequestMapping("/user")
 public class UserController {
     @Autowired
