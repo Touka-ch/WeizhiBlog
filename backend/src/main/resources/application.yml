@@ -1,0 +1,9 @@
+#服务器配置
+server:
+  address: localhost
+  port: 8081
+
+
+#mysql
+
+
