@@ -1,6 +1,7 @@
 package com.weizhiblog.controller;
 
 /*
+ * 关于用户的一些控制器
  *
  * @createTime 07-15 12:5:1
  * @author Touka_
@@ -12,98 +13,115 @@ import com.weizhiblog.bean.ResponseBean;
 import com.weizhiblog.bean.User;
 import com.weizhiblog.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-/**
- * 用于控制 user 的创建更改删除和更新状态
- */
+import java.util.List;
+
 @RestController
 @RequestMapping("/user")
 public class UserController {
     @Autowired
     UserService userService;
-//注册
+
+    /**
+     * 用户注册
+     *
+     * @param user 用户的基本信息，可以不全填
+     * @return 返回注册用户结果
+     */
     @RequestMapping(value = "/signup", method = {RequestMethod.POST})
-    public ResponseBean userSignUp(@RequestBody User user){
-        System.out.println(user);
-        if (userService.signUpUser(user)==1) {
-            return new ResponseBean(1,"注册用户成功！");
-        }else {
-            return new ResponseBean(0,"注册用户失败！请稍后重试");
-        }
+    public ResponseBean userSignUp(@RequestBody User user) {
+        return userService.signUpUser(user);
     }
-//登录
-    @RequestMapping(value = "/login",method = {RequestMethod.POST})
-    public ResponseBean userLogin(@RequestBody User user){
-        System.out.println(user);
-        if(userService.loginUser(user)==1){
-            return new ResponseBean(1,"用户登录成功！");
-        }else {
-            return new ResponseBean(0,"用户登录失败！请稍后重试");
-        }
+
+    /**
+     * 用户登录
+     *
+     * @param username 用户名
+     * @param password 用户密码
+     * @param captcha  验证码
+     * @return 用户登录是否成功
+     */
+    @RequestMapping(value = "/login", method = {RequestMethod.POST})
+    public ResponseBean userLogin(@RequestParam("username") String username,
+                                  @RequestParam("password") String password,
+                                  @RequestParam("captcha") String captcha) {
+        return userService.loginUser(username, password, captcha);
     }
-//销毁
-    @RequestMapping(value="/{id}",method={RequestMethod.DELETE})
-    public ResponseBean userDelete(@RequestBody User user){
-        System.out.println(user);
-        if(userService.deleteUser(user)==1){
-            return new ResponseBean(1,"删除用户成功！");
-        }else {
-            return new ResponseBean(0,"删除用户失败！请稍后重试");
-        }
+
+    /**
+     * 删除用户
+     *
+     * @param id 用户id
+     * @return 是否删除成功
+     */
+    @RequestMapping(value = "/{id}", method = {RequestMethod.DELETE})
+    public ResponseBean userDelete(@PathVariable Integer id) {
+        return userService.deleteUser(id);
     }
-//修改
-    @RequestMapping(value="/{id}",method={RequestMethod.POST})
-    public ResponseBean userChange(@RequestBody User user){
-        System.out.println(user);
-        if(userService.changeUser(user)==1){
-            return new ResponseBean(1,"修改用户成功！");
-        }else {
-            return new ResponseBean(0,"修改用户失败！请稍后重试");
-        }
+
+    /**
+     * 修改用户、更新用户信息
+     *
+     * @param user 用户新信息
+     * @param id   用户id
+     * @return 是都更新用户信息成功
+     */
+    @RequestMapping(value = "/{id}", method = {RequestMethod.POST})
+    public ResponseBean userUpdate(@RequestBody User user,
+                                   @PathVariable Integer id) {
+        return userService.updateUser(id, user);
     }
-//获取所有用户
-    @RequestMapping(method={RequestMethod.POST,RequestMethod.GET})
-    public ResponseBean userGet_all(@RequestBody User user){
-        System.out.println(user);
-        if(userService.get_allUser(user)==1){
-            return new ResponseBean(1,"获取所有用户成功！");
-        }else {
-            return new ResponseBean(0,"获取所有用户失败！请稍后重试");
-        }
+
+    /**
+     * 获取所有用户
+     *
+     * @return 所有用户，放在第三个参数obj里
+     */
+    @RequestMapping(value = "/all", method = {RequestMethod.POST, RequestMethod.GET})
+    public ResponseBean getAllUsers() {
+        return userService.listUsers();
     }
-//批量消除用户
-    @RequestMapping(method={RequestMethod.DELETE})
-    public ResponseBean userDel_all(@RequestBody User user){
-        System.out.println(user);
-        if(userService.del_allUser(user)==1){
-            return new ResponseBean(1,"批量删除用户成功！");
-        }else {
-            return new ResponseBean(0,"批量删除用户失败！请稍后重试");
-        }
+
+    /**
+     * 删除选定用户
+     *
+     * @param ids 要删除的用户的id组成的列表
+     * @return 是否删除成功
+     */
+    @RequestMapping(value = "/selected", method = {RequestMethod.DELETE})
+    public ResponseBean deleteSelectedUsers(@RequestBody List<Integer> ids) {
+        return userService.deleteSelectedUsers(ids);
     }
-//修改状态
-    @RequestMapping(value="/{id}/status",method={RequestMethod.PUT,RequestMethod.POST})
-    public ResponseBean userChange_status(@RequestBody User user){
-        System.out.println(user);
-        if(userService.change_statusUser(user)==1){
-            return new ResponseBean(1,"修改状态成功！");
-        }else {
-            return new ResponseBean(0,"修改状态失败！请稍后重试");
-        }
+
+    /**
+     * 更新指定用户的状态为status
+     *
+     * @param id     用户id
+     * @param status 用户更新后的状态
+     * @return 是否更新成功
+     */
+    @RequestMapping(value = "/{id}/status", method = {RequestMethod.PUT, RequestMethod.POST})
+    public ResponseBean updateUserStatus(@PathVariable Integer id,
+                                         @RequestParam("status") Integer status) {
+        return userService.updateUserStatus(id, status);
     }
-//修改密码
-    @RequestMapping(value="/{id}/pwd",method={RequestMethod.POST,RequestMethod.PUT})
-    public ResponseBean userChange_pwd(@RequestBody User user){
-        System.out.println(user);
-        if(userService.change_pwdUser(user)==1){
-            return new ResponseBean(1,"修改密码成功！");
-        }else {
-            return new ResponseBean(0,"修改密码失败！请稍后重试");
-        }
+
+    /**
+     * 修改密码
+     *
+     * @param id      用户id
+     * @param oldPwd  旧密码
+     * @param newPwd  新密码
+     * @param captcha 验证码
+     * @return 是否更新密码成功
+     */
+    @RequestMapping(value = "/{id}/password", method = {RequestMethod.POST, RequestMethod.PUT})
+    public ResponseBean updateUserPassword(@PathVariable Integer id,
+                                           @RequestParam("oldPwd") String oldPwd,
+                                           @RequestParam("newPwd") String newPwd,
+                                           @RequestParam("captcha") String captcha) {
+        return userService.updateUserPassword(id, oldPwd, newPwd, captcha);
     }
 
 }
