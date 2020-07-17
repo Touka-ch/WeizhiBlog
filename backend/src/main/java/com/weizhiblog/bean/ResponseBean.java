@@ -23,7 +23,7 @@ public class ResponseBean {
     private Integer status;
     //失败原因
     private String message;
-    //封装对象还是？感觉没啥用，先这么写着
+    //封装对象
     private Object object;
 
     public ResponseBean(Integer status, String message) {

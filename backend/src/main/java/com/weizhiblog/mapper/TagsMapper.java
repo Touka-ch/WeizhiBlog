@@ -1,13 +1,13 @@
 package com.weizhiblog.mapper;
 
-import com.weizhiblog.bean.User;
+import com.weizhiblog.bean.Tags;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
 @Mapper
-public interface UserMapper {
+public interface TagsMapper {
     /**
      * delete by primary key
      * @param id primaryKey
@@ -20,43 +20,43 @@ public interface UserMapper {
      * @param record the record
      * @return insert count
      */
-    int insert(User record);
+    int insert(Tags record);
 
-    int insertOrUpdate(User record);
+    int insertOrUpdate(Tags record);
 
-    int insertOrUpdateSelective(User record);
+    int insertOrUpdateSelective(Tags record);
 
     /**
      * insert record to table selective
      * @param record the record
      * @return insert count
      */
-    int insertSelective(User record);
+    int insertSelective(Tags record);
 
     /**
      * select by primary key
      * @param id primary key
      * @return object by primary key
      */
-    User selectByPrimaryKey(Integer id);
+    Tags selectByPrimaryKey(Integer id);
 
     /**
      * update record selective
      * @param record the updated record
      * @return update count
      */
-    int updateByPrimaryKeySelective(User record);
+    int updateByPrimaryKeySelective(Tags record);
 
     /**
      * update record
      * @param record the updated record
      * @return update count
      */
-    int updateByPrimaryKey(User record);
+    int updateByPrimaryKey(Tags record);
 
-    int updateBatch(List<User> list);
+    int updateBatch(List<Tags> list);
 
-    int updateBatchSelective(List<User> list);
+    int updateBatchSelective(List<Tags> list);
 
-    int batchInsert(@Param("list") List<User> list);
+    int batchInsert(@Param("list") List<Tags> list);
 }
