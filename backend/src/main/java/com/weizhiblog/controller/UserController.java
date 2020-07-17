@@ -109,7 +109,7 @@ public class UserController {
      */
     @RequestMapping(value = "/{id}/status", method = {RequestMethod.PUT, RequestMethod.POST})
     public ResponseBean updateUserStatus(@PathVariable Integer id,
-                                         @RequestParam("status") Integer status) {
+                                         @RequestParam("status") boolean status) {
         return userService.updateUserStatus(id, status);
     }
 
