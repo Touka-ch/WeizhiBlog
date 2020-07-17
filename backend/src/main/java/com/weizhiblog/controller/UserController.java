@@ -12,11 +12,16 @@ package com.weizhiblog.controller;
 import com.weizhiblog.bean.ResponseBean;
 import com.weizhiblog.bean.User;
 import com.weizhiblog.service.UserService;
+import lombok.extern.log4j.Log4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.List;
 
+@Log4j
 @RestController
 @RequestMapping("/user")
 public class UserController {
@@ -30,7 +35,8 @@ public class UserController {
      * @return 返回注册用户结果
      */
     @RequestMapping(value = "/signup", method = {RequestMethod.POST})
-    public ResponseBean userSignUp(@RequestBody User user) {
+    public ResponseBean userSignUp(@RequestBody @Validated User user) {
+        log.info(user);
         return userService.signUpUser(user);
     }
 
@@ -117,9 +123,9 @@ public class UserController {
      * @return 是否更新密码成功
      */
     @RequestMapping(value = "/{id}/password", method = {RequestMethod.POST, RequestMethod.PUT})
-    public ResponseBean updateUserPassword(@PathVariable Integer id,
-                                           @RequestParam("oldPwd") String oldPwd,
-                                           @RequestParam("newPwd") String newPwd,
+    public ResponseBean updateUserPassword(@PathVariable @NotNull Integer id,
+                                           @RequestParam("oldPwd") @NotNull @Size(max = 20, min = 3) String oldPwd,
+                                           @RequestParam("newPwd") @NotNull @Size(max = 20, min = 3) String newPwd,
                                            @RequestParam("captcha") String captcha) {
         return userService.updateUserPassword(id, oldPwd, newPwd, captcha);
     }
