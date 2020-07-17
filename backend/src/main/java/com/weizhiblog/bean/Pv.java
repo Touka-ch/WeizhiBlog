@@ -1,16 +1,18 @@
 package com.weizhiblog.bean;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.Date;
 
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class Pv {
-    /**
-     *
-     */
     private Integer id;
-
     /**
      * 日期
      */
@@ -26,4 +28,3 @@ public class Pv {
      */
     private Integer uid;
 }
-
