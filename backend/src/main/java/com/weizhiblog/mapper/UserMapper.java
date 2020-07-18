@@ -20,6 +20,7 @@ public interface UserMapper {
 
     /**
      * 插入用户
+     *
      * @param record 用户记录
      * @return 插入成功则返回 1
      */
@@ -27,6 +28,7 @@ public interface UserMapper {
 
     /**
      * 插入用户，如果用户存在，则更新该用户为 record
+     *
      * @param record 用户记录
      * @return 插入或更新成功则返回 1
      */
@@ -34,6 +36,7 @@ public interface UserMapper {
 
     /**
      * 插入用户记录，如果用户存在，则更新该标签为 record
+     *
      * @param record 用户记录
      * @return 插入或更新成功则返回 1
      */
@@ -41,6 +44,7 @@ public interface UserMapper {
 
     /**
      * 插入用户记录（不为null的字段），如果id存在则改为更新
+     *
      * @param record 用户记录
      * @return 插入或更新成功则返回 1
      */
@@ -48,6 +52,7 @@ public interface UserMapper {
 
     /**
      * 根据id获取用户
+     *
      * @param id id
      * @return 存在此id对应的用户则返回该用户
      */
@@ -55,6 +60,7 @@ public interface UserMapper {
 
     /**
      * 根据id更新用户记录（不为null的字段）
+     *
      * @param record 用户记录
      * @return 更新成功则返回 1
      */
@@ -62,6 +68,7 @@ public interface UserMapper {
 
     /**
      * 根据id更新用户
+     *
      * @param record 用户记录
      * @return 更新成功则返回 1
      */
@@ -69,6 +76,7 @@ public interface UserMapper {
 
     /**
      * 批量更新用户（根据每个id）
+     *
      * @param list 用户列表
      * @return 更新成功则返回 1
      */
@@ -76,6 +84,7 @@ public interface UserMapper {
 
     /**
      * 批量更新用户记录（根据每个id）
+     *
      * @param list 用户记录
      * @return 更新成功则返回 1
      */
@@ -83,6 +92,7 @@ public interface UserMapper {
 
     /**
      * 批量插入用户根据每个id）
+     *
      * @param list 用户列表
      * @return 插入成功则返回 1
      */

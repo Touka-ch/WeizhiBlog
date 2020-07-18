@@ -15,8 +15,10 @@ public interface RolesMapper {
      * @return 删除成功则返回 1
      */
     int deleteByPrimaryKey(Integer id);
+
     /**
      * 插入用户角色
+     *
      * @param record 用户角色记录
      * @return 插入成功则返回 1
      */

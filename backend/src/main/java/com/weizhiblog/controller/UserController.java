@@ -12,7 +12,7 @@ package com.weizhiblog.controller;
 import com.weizhiblog.bean.ResponseBean;
 import com.weizhiblog.bean.User;
 import com.weizhiblog.service.UserService;
-import lombok.extern.log4j.Log4j;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -21,7 +21,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.List;
 
-@Log4j
+@Log4j2
 @RestController
 @RequestMapping("/user")
 public class UserController {
@@ -36,7 +36,6 @@ public class UserController {
      */
     @RequestMapping(value = "/signup", method = {RequestMethod.POST})
     public ResponseBean userSignUp(@RequestBody @Validated User user) {
-        log.info(user);
         return userService.signUpUser(user);
     }
 
@@ -49,8 +48,8 @@ public class UserController {
      * @return 用户登录是否成功
      */
     @RequestMapping(value = "/login", method = {RequestMethod.POST})
-    public ResponseBean userLogin(@RequestParam("username") String username,
-                                  @RequestParam("password") String password,
+    public ResponseBean userLogin(@RequestParam("username") @Size(max = 20, min = 3) @NotNull String username,
+                                  @RequestParam("password") @Size(max = 20, min = 3) @NotNull String password,
                                   @RequestParam("captcha") String captcha) {
         return userService.loginUser(username, password, captcha);
     }
@@ -61,8 +60,8 @@ public class UserController {
      * @param id 用户id
      * @return 是否删除成功
      */
-    @RequestMapping(value = "/{id}", method = {RequestMethod.DELETE})
-    public ResponseBean userDelete(@PathVariable Integer id) {
+    @RequestMapping(value = "/delete", method = {RequestMethod.DELETE, RequestMethod.POST})
+    public ResponseBean userDelete(@NotNull Integer id) {
         return userService.deleteUser(id);
     }
 
@@ -70,13 +69,11 @@ public class UserController {
      * 修改用户、更新用户信息
      *
      * @param user 用户新信息
-     * @param id   用户id
      * @return 是都更新用户信息成功
      */
-    @RequestMapping(value = "/{id}", method = {RequestMethod.POST})
-    public ResponseBean userUpdate(@RequestBody User user,
-                                   @PathVariable Integer id) {
-        return userService.updateUser(id, user);
+    @RequestMapping(value = "/update", method = {RequestMethod.POST, RequestMethod.PUT})
+    public ResponseBean userUpdate(@RequestBody User user) {
+        return userService.updateUser(user);
     }
 
     /**
@@ -95,22 +92,22 @@ public class UserController {
      * @param ids 要删除的用户的id组成的列表
      * @return 是否删除成功
      */
-    @RequestMapping(value = "/selected", method = {RequestMethod.DELETE})
+    @RequestMapping(value = "/selected", method = {RequestMethod.DELETE, RequestMethod.POST})
     public ResponseBean deleteSelectedUsers(@RequestBody List<Integer> ids) {
         return userService.deleteSelectedUsers(ids);
     }
 
     /**
-     * 更新指定用户的状态为status
+     * 更新指定用户的状态
      *
      * @param id     用户id
-     * @param status 用户更新后的状态
+     * @param enable 用户更新后的状态
      * @return 是否更新成功
      */
-    @RequestMapping(value = "/{id}/status", method = {RequestMethod.PUT, RequestMethod.POST})
-    public ResponseBean updateUserStatus(@PathVariable Integer id,
-                                         @RequestParam("status") boolean status) {
-        return userService.updateUserStatus(id, status);
+    @RequestMapping(value = "/status", method = {RequestMethod.PUT, RequestMethod.POST})
+    public ResponseBean updateUserStatus(@RequestParam("id") @NotNull Integer id,
+                                         @RequestParam("enable") @NotNull boolean enable) {
+        return userService.updateUserStatus(id, enable);
     }
 
     /**

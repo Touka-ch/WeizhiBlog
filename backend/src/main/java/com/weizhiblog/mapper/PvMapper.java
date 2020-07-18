@@ -18,6 +18,7 @@ public interface PvMapper {
 
     /**
      * 插入文章的浏览量
+     *
      * @param record 文章浏览量记录
      * @return 插入成功则返回 1
      */
