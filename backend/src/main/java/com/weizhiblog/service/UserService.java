@@ -192,19 +192,22 @@ public class UserService {
      */
     public ResponseBean listUsers() {
         try {
-            if (true) {
-                //成功
-                return ResponseBean.builder()
-                        .status(1)
-                        .message("显示成功")
-                        .build();
-            } else {
-                //未知原因
-                return ResponseBean.builder()
-                        .status(0)
-                        .message("未知原因！")
-                        .build();
+            List<User> users=userMapper.listUsers();
+            for(int i=0;i<users.size();i++){
+                System.out.println(users.get(i).getId()
+                        +users.get(i).getPassword()
+                        +users.get(i).getUsername()
+                        +users.get(i).getNickname()
+                        +users.get(i).getEmail()
+                        +users.get(i).getRegTime()
+                        +users.get(i).getUserface());
             }
+
+            return ResponseBean.builder()
+                    .status(1)
+                    .message("显示成功")
+                    .build();
+
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseBean.builder()
