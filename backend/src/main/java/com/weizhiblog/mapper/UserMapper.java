@@ -59,4 +59,13 @@ public interface UserMapper {
      * @return 如果存在则返回该user
      */
     User getUserByNickname(String nickname);
+
+    /**
+     * 列出用户列表
+     *
+     * @return 如果存在用户列表则返回List<User>
+     */
+    List<User> listUsers();
+
+
 }

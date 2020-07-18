@@ -122,9 +122,27 @@ public class UserService {
      * 0：删除失败，未知原因！
      */
     public ResponseBean deleteUser(Integer id) {
-        return ResponseBean.builder()
-                .status(1)
-                .build();
+        try {
+            if (userMapper.deleteByPrimaryKey(id) == 1) {
+                //成功
+                return ResponseBean.builder()
+                        .status(1)
+                        .message("删除成功")
+                        .build();
+            } else {
+                //未知原因
+                return ResponseBean.builder()
+                        .status(0)
+                        .message("未知原因！")
+                        .build();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseBean.builder()
+                    .status(-1)
+                    .message("服务器错误！")
+                    .build();
+        }
     }
 
     /**
@@ -140,9 +158,27 @@ public class UserService {
      */
     public ResponseBean updateUser(Integer id,
                                    User user) {
-        return ResponseBean.builder()
-                .status(1)
-                .build();
+        try {
+            if (userMapper.updateByPrimaryKey(user) == 1) {
+                //成功
+                return ResponseBean.builder()
+                        .status(1)
+                        .message("更新成功")
+                        .build();
+            } else {
+                //未知原因
+                return ResponseBean.builder()
+                        .status(0)
+                        .message("未知原因！")
+                        .build();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseBean.builder()
+                    .status(-1)
+                    .message("服务器错误！")
+                    .build();
+        }
     }
 
     /**
@@ -155,9 +191,30 @@ public class UserService {
      * 0：显示失败。未知原因！
      */
     public ResponseBean listUsers() {
-        return ResponseBean.builder()
-                .status(1)
-                .build();
+        try {
+            List<User> users=userMapper.listUsers();
+            for(int i=0;i<users.size();i++){
+                System.out.println(users.get(i).getId()
+                        +users.get(i).getPassword()
+                        +users.get(i).getUsername()
+                        +users.get(i).getNickname()
+                        +users.get(i).getEmail()
+                        +users.get(i).getRegTime()
+                        +users.get(i).getUserface());
+            }
+
+            return ResponseBean.builder()
+                    .status(1)
+                    .message("显示成功")
+                    .build();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseBean.builder()
+                    .status(-1)
+                    .message("服务器错误！")
+                    .build();
+        }
     }
 
     /**
@@ -172,9 +229,28 @@ public class UserService {
      * 2：删除失败。删除了不存在的用户！
      */
     public ResponseBean deleteSelectedUsers(List<Integer> ids) {
-        return ResponseBean.builder()
-                .status(1)
-                .build();
+        try {
+            for (int i = 0; i < ids.size(); i++) {
+                if (userMapper.selectByPrimaryKey(ids.get(i)) == null){
+                    return ResponseBean.builder()
+                            .status(2)
+                            .message("删除用户不存在")
+                            .build();
+                }
+                userMapper.deleteByPrimaryKey(ids.get(i));
+            }
+            //成功
+            return ResponseBean.builder()
+                    .status(1)
+                    .message("删除成功")
+                    .build();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseBean.builder()
+                    .status(-1)
+                    .message("服务器错误！")
+                    .build();
+        }
     }
 
     /**
@@ -190,10 +266,35 @@ public class UserService {
      * 2：更新失败。用户不存在！
      */
     public ResponseBean updateUserStatus(Integer id,
-                                         Integer status) {
-        return ResponseBean.builder()
-                .status(1)
-                .build();
+                                         boolean status) {
+        try {
+            if (userMapper.selectByPrimaryKey(id) == null)
+                return ResponseBean.builder()
+                        .status(2)
+                        .message("")
+                        .build();
+            User user = userMapper.selectByPrimaryKey(id);
+            user.setEnabled(status);
+            if (userMapper.updateByPrimaryKey(user) == 1) {
+                //成功
+                return ResponseBean.builder()
+                        .status(1)
+                        .message("更新成功")
+                        .build();
+            } else {
+                //未知原因
+                return ResponseBean.builder()
+                        .status(0)
+                        .message("未知原因！")
+                        .build();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseBean.builder()
+                    .status(-1)
+                    .message("服务器错误！")
+                    .build();
+        }
     }
 
     /**
