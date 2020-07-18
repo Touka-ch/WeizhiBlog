@@ -1,18 +1,20 @@
 package com.weizhiblog.bean;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.sql.Timestamp;
 
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class Comments {
-    /**
-     *
-     */
     private Integer id;
-
     /**
-     * 文章ID
+     * 文章id
      */
     private Integer aid;
 
@@ -22,19 +24,17 @@ public class Comments {
     private String content;
 
     /**
-     * 发布时间
+     * 发表时间
      */
     private Timestamp publishTime;
 
     /**
-     * -1表示正常回复，其他值表示是评论的回复
-     */
+    * -1表示正常回复，其他值表示是评论的回复
+    */
     private Integer parentId;
 
-
     /**
-     * 用户id
+     * 发表人id
      */
     private Integer uid;
 }
-

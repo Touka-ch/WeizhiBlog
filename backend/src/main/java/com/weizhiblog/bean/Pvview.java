@@ -5,14 +5,20 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Tags {
-    private Integer id;
+public class Pvview {
     /**
-     * 标签名
+     * 一天的浏览量？
      */
-    private String tagName;
+    private BigDecimal pv;
+
+    /**
+     * 用户id
+     */
+    private Integer uid;
 }

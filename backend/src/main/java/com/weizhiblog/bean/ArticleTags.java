@@ -5,16 +5,13 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 public class ArticleTags {
-    /**
-     *
-     */
     private Integer id;
 
     /**
-     * 文章ID
+     * 文章id
      */
     private Integer aid;
 
@@ -23,4 +20,3 @@ public class ArticleTags {
      */
     private Integer tid;
 }
-
