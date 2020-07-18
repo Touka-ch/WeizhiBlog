@@ -8,11 +8,7 @@ import java.util.List;
 
 @Mapper
 public interface CommentsMapper {
-    /**
-     * delete by primary key
-     * @param id primaryKey
-     * @return deleteCount
-     */
+
     /**
      * 根据文章id删除评论
      * @param id 文章id
@@ -20,11 +16,6 @@ public interface CommentsMapper {
      */
     int deleteByPrimaryKey(Integer id);
 
-    /**
-     * insert record to table
-     * @param record the record
-     * @return insert count
-     */
     /**
      * 插入文章的评论
      * @param record 文章评论
@@ -49,11 +40,6 @@ public interface CommentsMapper {
     int insertOrUpdateSelective(Comments record);
 
     /**
-     * insert record to table selective
-     * @param record the record
-     * @return insert count
-     */
-    /**
      * 插入或更新文章评论记录（不为null的字段），如果文章id存在则改为更新
      *
      * @param record 文章评论记录
@@ -61,11 +47,7 @@ public interface CommentsMapper {
      */
     int insertSelective(Comments record);
 
-    /**
-     * select by primary key
-     * @param id primary key
-     * @return object by primary key
-     */
+
     /**
      * 根据文章id获取文章评论
      *
@@ -75,11 +57,6 @@ public interface CommentsMapper {
     Comments selectByPrimaryKey(Integer id);
 
     /**
-     * update record selective
-     * @param record the updated record
-     * @return update count
-     */
-    /**
      * 根据文章的id更新文章评论（不为null的字段）
      *
      * @param record 文章评论记录
@@ -87,11 +64,6 @@ public interface CommentsMapper {
      */
     int updateByPrimaryKeySelective(Comments record);
 
-    /**
-     * update record
-     * @param record the updated record
-     * @return update count
-     */
     /**
      * 根据文章的id更新文章评论
      *

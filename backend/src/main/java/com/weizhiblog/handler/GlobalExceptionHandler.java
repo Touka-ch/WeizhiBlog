@@ -9,22 +9,19 @@ package com.weizhiblog.handler;
  */
 
 import com.weizhiblog.bean.ResponseBean;
-import lombok.extern.log4j.Log4j;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.Objects;
 
-@Log4j
+@Log4j2
 @RestControllerAdvice
 public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseBean handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
         log.error(e.getMessage(), e);
-        return ResponseBean.builder()
-                .status(-999)
-                .message(Objects.requireNonNull(e.getBindingResult().getFieldError()).getDefaultMessage())
-                .build();
+        return ResponseBean.builder().status(-999).message(Objects.requireNonNull(e.getBindingResult().getFieldError()).getDefaultMessage()).build();
     }
 }

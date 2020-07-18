@@ -3,14 +3,15 @@ package com.weizhiblog.service;
 import com.weizhiblog.bean.ResponseBean;
 import com.weizhiblog.bean.User;
 import com.weizhiblog.mapper.UserMapper;
-import lombok.extern.log4j.Log4j;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
 
-@Log4j
+@Log4j2
 @Service
 public class UserService {
     @Autowired
@@ -21,60 +22,36 @@ public class UserService {
      *
      * @param user 用户信息
      * @return 是否注册成功
-     * 关于 status
-     * 1：注册成功。
-     * -1：注册失败。服务器错误！
-     * 0：注册失败。未知原因！
-     * -2：注册失败。此用户名已被占用！
-     * -3：注册失败。此邮箱为已注册用户，请登录！
-     * -4：注册失败。昵称重复！
-     * -5：注册失败。格式错误！全局异常处理。
      */
     public ResponseBean signUpUser(User user) {
         try {
-            //用户名已被占用
+            //用户名已被占用 -2
             if (userMapper.getUserByUsername(user.getUsername()) != null) {
-                return ResponseBean.builder()
-                        .status(-2)
-                        .message("此用户名已被占用！")
-                        .build();
+                return ResponseBean.builder().status(-2).message("此用户名已被占用！").build();
             }
-            //邮箱已注册
+            //邮箱已注册 -3
             if (userMapper.getUserByEmail(user.getEmail()) != null) {
-                return ResponseBean.builder()
-                        .status(-3)
-                        .message("此邮箱为已注册用户，请登录！")
-                        .build();
+                return ResponseBean.builder().status(-3).message("此邮箱为已注册用户，请登录！").build();
             }
-            //昵称重复
+            //昵称被占用 -4
             if (userMapper.getUserByNickname(user.getNickname()) != null) {
-                return ResponseBean.builder()
-                        .status(-4)
-                        .message("昵称重复！")
-                        .build();
+                return ResponseBean.builder().status(-4).message("昵称重复！").build();
             }
+            //设置注册时间、默认启用用户、设置默认头像
             user.setRegTime(new Date());
-            user.setEnabled(true);
-            user.setUserface("/img/defaultUserface.png");
-            if (userMapper.insert(user) == 1) {
-                //成功
-                return ResponseBean.builder()
-                        .status(1)
-                        .message("成功")
-                        .build();
-            } else {
-                //未知原因
-                return ResponseBean.builder()
-                        .status(0)
-                        .message("未知原因！")
-                        .build();
+            if (user.getEnabled() == null) {//如果设置了默认，就不管，否则默认启用
+                user.setEnabled(true);
             }
-        } catch (Exception e) {
+            if (user.getUserface() == null) {//如果设置了默认，就不管，否则使用默认头像
+                user.setUserface("/img/defaultUserface.png");
+            }
+            //三元表达式返回，简化代码
+            return userMapper.insert(user) == 1 ?//执行插入
+                    ResponseBean.builder().status(1).message("注册成功！").build() :
+                    ResponseBean.builder().status(0).message("未知原因！").build();
+        } catch (Exception e) {//都到这地步了，实在不知道还有啥没考虑到
             e.printStackTrace();
-            return ResponseBean.builder()
-                    .status(-1)
-                    .message("服务器错误！")
-                    .build();
+            return ResponseBean.builder().status(-1).message("服务器错误！").build();
         }
     }
 
@@ -85,27 +62,18 @@ public class UserService {
      * @param password 用户密码
      * @param captcha  验证码
      * @return 是否登录成功
-     * 关于 status
-     * 1：登录成功。可以跳转。
-     * -1：登录失败。服务器错误！
-     * 0：登录失败。未知原因！
-     * -2：登录失败。验证码错误！
-     * -3：登录失败。密码错误！
-     * -4：登录失败。密码错误超过五次！
-     * -5：用户不存在
      */
     public ResponseBean loginUser(String username,
                                   String password,
                                   String captcha) {
         try {
             User user = userMapper.getUserByUsername(username);
-            if (user == null) {
-                return ResponseBean.builder().status(-5).message("用户不存在！").build();
+            if (user == null) {//用户不存在
+                return ResponseBean.builder().status(-4).message("此id无对应用户！").build();
             }
-            if (!user.getPassword().equals(password)) {
-                return ResponseBean.builder().status(-3).message("密码错误！").build();
-            }
-            return ResponseBean.builder().status(1).message("登录成功！").build();
+            return !user.getPassword().equals(password) ?
+                    ResponseBean.builder().status(-2).message("密码错误！").build() :
+                    ResponseBean.builder().status(1).message("登录成功！").build();
         } catch (Exception e) {
             return ResponseBean.builder().status(-1).message("服务器错误！").build();
         }
@@ -116,104 +84,79 @@ public class UserService {
      *
      * @param id 用户id
      * @return 是否删除成功
-     * 关于 status
-     * 1：删除成功！
-     * -1：删除失败，服务器错误！
-     * 0：删除失败，未知原因！
      */
     public ResponseBean deleteUser(Integer id) {
         try {
-            if (userMapper.deleteByPrimaryKey(id) == 1) {
-                //成功
-                return ResponseBean.builder()
-                        .status(1)
-                        .message("删除成功")
-                        .build();
-            } else {
-                //未知原因
-                return ResponseBean.builder()
-                        .status(0)
-                        .message("未知原因！")
-                        .build();
+            User user = userMapper.selectByPrimaryKey(id);//尝试用主键获取 user
+            if (user == null) {//如果 user 为空，说明不存在此 id 对应的 user
+                return ResponseBean.builder().status(-2).message("id不存在！").build();
             }
+            return userMapper.deleteByPrimaryKey(id) == 1 ?//受影响行数为 1 说明删除成功
+                    ResponseBean.builder().status(1).message("删除成功！").build() :
+                    ResponseBean.builder().status(0).message("未知错误！").build();
         } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseBean.builder()
-                    .status(-1)
-                    .message("服务器错误！")
-                    .build();
+            log.error(e);
+            return ResponseBean.builder().status(-1).message("服务器错误").build();
         }
     }
 
     /**
      * 更新用户
      *
-     * @param id   用户id
      * @param user 用户信息
      * @return 是否更新成功
-     * 关于 status
-     * 1：更新成功！
-     * -1：更新失败，服务器错误！
-     * 0：更新失败，未知原因！
      */
-    public ResponseBean updateUser(Integer id,
-                                   User user) {
+    public ResponseBean updateUser(User user) {
         try {
-            if (userMapper.updateByPrimaryKey(user) == 1) {
-                //成功
-                return ResponseBean.builder()
-                        .status(1)
-                        .message("更新成功")
-                        .build();
-            } else {
-                //未知原因
-                return ResponseBean.builder()
-                        .status(0)
-                        .message("未知原因！")
-                        .build();
+            if (user.getId() == null) {
+                return ResponseBean.builder().status(-5).message("id不能为空！").build();
             }
+            User sqlUser = userMapper.selectByPrimaryKey(user.getId());
+            if (sqlUser == null) {
+                return ResponseBean.builder().status(-6).message("此id无对应用户！").object(user.getId()).build();
+            }
+            if (user.getUsername() != null) {
+                sqlUser = userMapper.getUserByUsername(user.getUsername());
+                if (sqlUser != null && !sqlUser.getId().equals(user.getId())) {
+                    return ResponseBean.builder().status(-2).message("用户名已被占用！").object(user.getUsername()).build();
+                }
+            }
+            if (user.getEmail() != null) {
+                sqlUser = userMapper.getUserByEmail(user.getEmail());
+                if (sqlUser != null && !sqlUser.getId().equals(user.getId())) {
+                    return ResponseBean.builder().status(-3).message("邮箱已被注册！").object(user.getEmail()).build();
+                }
+            }
+            if (user.getNickname() != null) {
+                sqlUser = userMapper.getUserByNickname(user.getNickname());
+                if (sqlUser != null && !sqlUser.getId().equals(user.getId())) {
+                    return ResponseBean.builder().status(-4).message("昵称被占用！").object(user.getNickname()).build();
+                }
+            }
+            return userMapper.updateByPrimaryKey(user) == 1 ?
+                    ResponseBean.builder().status(1).message("更新成功！").object(user).build() :
+                    ResponseBean.builder().status(0).message("未知错误！").build();
         } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseBean.builder()
-                    .status(-1)
-                    .message("服务器错误！")
-                    .build();
+            return ResponseBean.builder().status(-1).message("服务器错误！").build();
         }
     }
 
     /**
-     * 显示所有用户
+     * 获取所有用户
      *
-     * @return 是否成功显示所有用户
-     * 关于 status
-     * 1：获取成功！
-     * -1：显示失败。服务器错误！
-     * 0：显示失败。未知原因！
+     * @return 所有用户
      */
     public ResponseBean listUsers() {
         try {
-            List<User> users=userMapper.listUsers();
-            for(int i=0;i<users.size();i++){
-                System.out.println(users.get(i).getId()
-                        +users.get(i).getPassword()
-                        +users.get(i).getUsername()
-                        +users.get(i).getNickname()
-                        +users.get(i).getEmail()
-                        +users.get(i).getRegTime()
-                        +users.get(i).getUserface());
+            List<User> users = userMapper.listUsers();
+            if (users == null) {
+                return ResponseBean.builder().status(0).message("未知错误！").build();
             }
-
-            return ResponseBean.builder()
-                    .status(1)
-                    .message("显示成功")
-                    .build();
-
+            return users.size() == 0 ?
+                    ResponseBean.builder().status(-2).message("用户数量为空！").build() :
+                    ResponseBean.builder().status(1).message("获取成功！").object(users).build();
         } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseBean.builder()
-                    .status(-1)
-                    .message("服务器错误！")
-                    .build();
+            return ResponseBean.builder().status(-1).message("服务器错误！").build();
         }
     }
 
@@ -222,34 +165,21 @@ public class UserService {
      *
      * @param ids 选中用户列表
      * @return 是否删除成功
-     * 关于 status
-     * 1：删除成功！
-     * -1：删除失败。服务器错误！
-     * 0：删除失败。未知原因！
-     * 2：删除失败。删除了不存在的用户！
      */
+    @Transactional
     public ResponseBean deleteSelectedUsers(List<Integer> ids) {
         try {
-            for (int i = 0; i < ids.size(); i++) {
-                if (userMapper.selectByPrimaryKey(ids.get(i)) == null){
-                    return ResponseBean.builder()
-                            .status(2)
-                            .message("删除用户不存在")
-                            .build();
+            for (Integer id : ids) {
+                if (userMapper.selectByPrimaryKey(id) == null) {
+                    return ResponseBean.builder().status(2).object(id).message("删除用户不存在！").build();
                 }
-                userMapper.deleteByPrimaryKey(ids.get(i));
+                if (userMapper.deleteByPrimaryKey(id)!=1) {
+                    return ResponseBean.builder().status(0).message("未知错误！").build();
+                }
             }
-            //成功
-            return ResponseBean.builder()
-                    .status(1)
-                    .message("删除成功")
-                    .build();
+            return ResponseBean.builder().status(1).message("删除成功！").build();
         } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseBean.builder()
-                    .status(-1)
-                    .message("服务器错误！")
-                    .build();
+            return ResponseBean.builder().status(-1).message("服务器错误！").build();
         }
     }
 
@@ -257,43 +187,25 @@ public class UserService {
      * 更新用户状态
      *
      * @param id     用户id
-     * @param status 新状态
+     * @param enable 新状态
      * @return 是否更新成功
-     * 关于 status
-     * 1：更新成功！
-     * -1：更新失败。服务器错误！
-     * 0：更新失败。未知原因！
-     * 2：更新失败。用户不存在！
      */
     public ResponseBean updateUserStatus(Integer id,
-                                         boolean status) {
+                                         boolean enable) {
         try {
-            if (userMapper.selectByPrimaryKey(id) == null)
-                return ResponseBean.builder()
-                        .status(2)
-                        .message("")
-                        .build();
             User user = userMapper.selectByPrimaryKey(id);
-            user.setEnabled(status);
-            if (userMapper.updateByPrimaryKey(user) == 1) {
-                //成功
-                return ResponseBean.builder()
-                        .status(1)
-                        .message("更新成功")
-                        .build();
-            } else {
-                //未知原因
-                return ResponseBean.builder()
-                        .status(0)
-                        .message("未知原因！")
-                        .build();
+            if (user == null) {
+                return ResponseBean.builder().status(-2).message("此id不存在对应用户！").build();
             }
+            if (user.getEnabled() == enable) {
+                return ResponseBean.builder().status(-2).message("状态未改变！").build();
+            }
+            user.setEnabled(enable);
+            return userMapper.updateByPrimaryKey(user) == 1 ?
+                    ResponseBean.builder().status(1).message("更新成功！").build() :
+                    ResponseBean.builder().status(0).message("未知错误！").build();
         } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseBean.builder()
-                    .status(-1)
-                    .message("服务器错误！")
-                    .build();
+            return ResponseBean.builder().status(-1).message("服务器错误！").build();
         }
     }
 
@@ -305,14 +217,6 @@ public class UserService {
      * @param newPwd  新密码
      * @param captcha 验证码
      * @return 是否修改成功
-     * 关于 status
-     * 1：修改成功！
-     * -1：修改失败。服务器错误！
-     * 0：修改失败。未知原因！
-     * -2：修改失败。原密码错误！
-     * -3：修改失败。新密码原密码一样！
-     * -4：修改失败。验证码错误！
-     * -5：修改失败。不存在该用户！
      */
     public ResponseBean updateUserPassword(Integer id,
                                            String oldPwd,
@@ -321,13 +225,13 @@ public class UserService {
         try {
             User user = userMapper.selectByPrimaryKey(id);
             if (user == null) {
-                return ResponseBean.builder().status(-5).message("不存在该用户！").build();
+                return ResponseBean.builder().status(-4).message("不存在该用户！").build();
             }
             if (!user.getPassword().equals(oldPwd)) {
                 return ResponseBean.builder().status(-2).message("原密码错误！").build();
             }
             if (user.getPassword().equals(newPwd)) {
-                return ResponseBean.builder().status(-3).message("原密码错误！").build();
+                return ResponseBean.builder().status(-3).message("新旧密码相同！").build();
             }
             user.setPassword(newPwd);
             if (userMapper.updateByPrimaryKey(user) == 1) {
