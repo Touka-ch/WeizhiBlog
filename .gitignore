@@ -36,4 +36,11 @@ backend/.mvn/
 backend/mvnw
 backend/mvnw.cmd
 
+### rebel ###
+backend/.rebel-remote.xml.bak
+rebel.xml
+rebel-remote.xml
+backend/WeizhiBlog.iml
+
+
 

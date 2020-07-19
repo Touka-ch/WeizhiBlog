@@ -92,7 +92,7 @@ public class UserController {
      * @param ids 要删除的用户的id组成的列表
      * @return 是否删除成功
      */
-    @RequestMapping(value = "/selected", method = {RequestMethod.DELETE, RequestMethod.POST})
+    @RequestMapping(value = "/delete/selective", method = {RequestMethod.DELETE, RequestMethod.POST})
     public ResponseBean deleteSelectedUsers(@RequestBody List<Integer> ids) {
         return userService.deleteSelectedUsers(ids);
     }
@@ -104,7 +104,7 @@ public class UserController {
      * @param enable 用户更新后的状态
      * @return 是否更新成功
      */
-    @RequestMapping(value = "/status", method = {RequestMethod.PUT, RequestMethod.POST})
+    @RequestMapping(value = "/enable", method = {RequestMethod.PUT, RequestMethod.POST})
     public ResponseBean updateUserStatus(@RequestParam("id") @NotNull Integer id,
                                          @RequestParam("enable") @NotNull boolean enable) {
         return userService.updateUserStatus(id, enable);
@@ -119,8 +119,8 @@ public class UserController {
      * @param captcha 验证码
      * @return 是否更新密码成功
      */
-    @RequestMapping(value = "/{id}/password", method = {RequestMethod.POST, RequestMethod.PUT})
-    public ResponseBean updateUserPassword(@PathVariable @NotNull Integer id,
+    @RequestMapping(value = "/password", method = {RequestMethod.POST, RequestMethod.PUT})
+    public ResponseBean updateUserPassword(@RequestParam("id") Integer id,
                                            @RequestParam("oldPwd") @NotNull @Size(max = 20, min = 3) String oldPwd,
                                            @RequestParam("newPwd") @NotNull @Size(max = 20, min = 3) String newPwd,
                                            @RequestParam("captcha") String captcha) {

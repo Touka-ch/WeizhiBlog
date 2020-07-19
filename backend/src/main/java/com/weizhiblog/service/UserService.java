@@ -2,6 +2,7 @@ package com.weizhiblog.service;
 
 import com.weizhiblog.bean.ResponseBean;
 import com.weizhiblog.bean.User;
+import com.weizhiblog.exception.MyRuntimeException;
 import com.weizhiblog.mapper.UserMapper;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -171,10 +172,10 @@ public class UserService {
         try {
             for (Integer id : ids) {
                 if (userMapper.selectByPrimaryKey(id) == null) {
-                    return ResponseBean.builder().status(2).object(id).message("删除用户不存在！").build();
+                    throw new MyRuntimeException(2, "删除用户不存在！");
                 }
-                if (userMapper.deleteByPrimaryKey(id)!=1) {
-                    return ResponseBean.builder().status(0).message("未知错误！").build();
+                if (userMapper.deleteByPrimaryKey(id) != 1) {
+                    throw new MyRuntimeException(0, "未知错误！");
                 }
             }
             return ResponseBean.builder().status(1).message("删除成功！").build();

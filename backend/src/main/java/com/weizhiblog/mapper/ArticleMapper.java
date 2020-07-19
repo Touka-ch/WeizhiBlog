@@ -9,82 +9,60 @@ import java.util.List;
 @Mapper
 public interface ArticleMapper {
     /**
-     * 根据id删除文章
+     * delete by primary key
      *
-     * @param id 文章id
-     * @return 删除成功则返回 1
+     * @param id primaryKey
+     * @return deleteCount
      */
     int deleteByPrimaryKey(Integer id);
 
     /**
-     * 插入文章
+     * insert record to table
      *
-     * @param record 文章记录
-     * @return 插入成功则返回 1
+     * @param record the record
+     * @return insert count
      */
     int insert(Article record);
 
-    /**
-     * 插入文章，如果文章存在，则更新该文章为 record
-     *
-     * @param record 文章记录
-     * @return 插入或更新成功则返回 1
-     */
     int insertOrUpdate(Article record);
 
-    /**
-     * 插入文章记录（不为null的字段），如果文章id存在则改为更新
-     *
-     * @param record 文章记录
-     * @return 插入或更新成功则返回 1
-     */
     int insertOrUpdateSelective(Article record);
 
     /**
-     * 插入或更新文章（不为null的字段），如果文章id存在则改为更新
+     * insert record to table selective
      *
-     * @param record 文章记录
-     * @return 插入成功则返回 1
+     * @param record the record
+     * @return insert count
      */
     int insertSelective(Article record);
 
     /**
-     * 根据文章id获取文章
+     * select by primary key
      *
-     * @param id 文章id
-     * @return 存在此id对应的文章则返回该文章
+     * @param id primary key
+     * @return object by primary key
      */
     Article selectByPrimaryKey(Integer id);
 
     /**
-     * 根据文章的id更新文章（不为null的字段）
+     * update record selective
      *
-     * @param record 文章记录
-     * @return 更新成功则返回 1
+     * @param record the updated record
+     * @return update count
      */
     int updateByPrimaryKeySelective(Article record);
 
     /**
-     * 根据文章的id更新文章
+     * update record
      *
-     * @param record 文章记录
-     * @return 更新成功则返回 1
+     * @param record the updated record
+     * @return update count
      */
     int updateByPrimaryKey(Article record);
 
-    /**
-     * 批量更新文章（根据每个文章的id）
-     *
-     * @param list 文章列表
-     * @return 更新成功则返回插入行数
-     */
     int updateBatch(List<Article> list);
 
-    /**
-     * 批量插入文章
-     *
-     * @param list 文章列表
-     * @return 更新成功则返回更新的行数
-     */
+    int updateBatchSelective(List<Article> list);
+
     int batchInsert(@Param("list") List<Article> list);
 }

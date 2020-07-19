@@ -26,10 +26,11 @@ public class ArticleController {
 
     /**
      * 添加文章
+     *
      * @param article 文章实例
      * @return 添加结果
      */
-    @RequestMapping(value = "/add",method = {RequestMethod.POST,RequestMethod.PUT})
+    @RequestMapping(value = "/add", method = {RequestMethod.POST, RequestMethod.PUT})
     public ResponseBean insertArticle(@RequestBody Article article) {
         return articleService.insertArticle(article);
     }

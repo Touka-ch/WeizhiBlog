@@ -1,21 +1,75 @@
 package com.weizhiblog.mapper;
 
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /*
  *
- * @createTime 07-16 15:23:22
+ * @createTime 07-19 8:22:38
  * @author Touka_
  * @classname com.weizhiblog.mapper.UserMapperTest
- * @lastModifiedTime 7月16日   15:23:22
+ * @lastModifiedTime 7月19日   8:22:37
  */
 @SpringBootTest
-@RunWith(SpringJUnit4ClassRunner.class)
 class UserMapperTest {
-    @Autowired
-    private UserMapper userMapper;
 
+    @Test
+    void deleteByPrimaryKey() {
+    }
+
+    @Test
+    void insert() {
+    }
+
+    @Test
+    void insertOrUpdate() {
+    }
+
+    @Test
+    void insertOrUpdateSelective() {
+    }
+
+    @Test
+    void insertSelective() {
+    }
+
+    @Test
+    void selectByPrimaryKey() {
+    }
+
+    @Test
+    void updateByPrimaryKeySelective() {
+    }
+
+    @Test
+    void updateByPrimaryKey() {
+    }
+
+    @Test
+    void updateBatch() {
+    }
+
+    @Test
+    void updateBatchSelective() {
+    }
+
+    @Test
+    void batchInsert() {
+    }
+
+    @Test
+    void getUserByUsername() {
+    }
+
+    @Test
+    void getUserByEmail() {
+    }
+
+    @Test
+    void getUserByNickname() {
+    }
+
+    @Test
+    void listUsers() {
+    }
 }
