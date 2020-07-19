@@ -1,15 +1,24 @@
 import Vue from 'vue'
-import Router from 'vue-router'
-import HelloWorld from '@/components/HelloWorld'
+import VueRouter from 'vue-router'
+import Login from '../views/Login'
 
-Vue.use(Router)
+Vue.use(VueRouter)
 
-export default new Router({
-  routes: [
-    {
-      path: '/',
-      name: 'HelloWorld',
-      component: HelloWorld
-    }
-  ]
+const routes = [
+  {
+    //登录页
+    path: '/',
+    name: 'Login',
+    component: Login
+  },
+  {
+    path: '/main',
+    component: () => import('@/views/Main.vue')
+  }
+]
+
+const router = new VueRouter({
+  routes
 })
+
+export default router
