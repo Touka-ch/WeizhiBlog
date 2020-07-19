@@ -1,6 +1,6 @@
-HELP.md
+backend/HELP.md
 target/
-!.mvn/wrapper/maven-wrapper.jar
+!backend/.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
 
@@ -16,7 +16,6 @@ target/
 ### IntelliJ IDEA ###
 .idea
 *.iws
-*.iml
 *.ipr
 
 ### NetBeans ###
@@ -33,8 +32,8 @@ build/
 .vscode/
 
 ### Maven ###
-.mvn/
-mvnw
-mvnw.cmd
+backend/.mvn/
+backend/mvnw
+backend/mvnw.cmd
 
 

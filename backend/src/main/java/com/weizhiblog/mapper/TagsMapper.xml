@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.weizhiblog.mapper.TagsMapper">
+    <resultMap id="BaseResultMap" type="com.weizhiblog.bean.Tags">
+        <!--@Table tags-->
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="tagName" jdbcType="VARCHAR" property="tagName"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id,
+        tagName
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from tags
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        delete
+        from tags
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+    <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.weizhiblog.bean.Tags"
+            useGeneratedKeys="true">
+        insert into tags (tagName)
+        values (#{tagName,jdbcType=VARCHAR})
+    </insert>
+    <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.weizhiblog.bean.Tags"
+            useGeneratedKeys="true">
+        insert into tags
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="tagName != null">
+                tagName,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="tagName != null">
+                #{tagName,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.weizhiblog.bean.Tags">
+        update tags
+        <set>
+            <if test="tagName != null">
+                tagName = #{tagName,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.weizhiblog.bean.Tags">
+        update tags
+        set tagName = #{tagName,jdbcType=VARCHAR}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <update id="updateBatch" parameterType="java.util.List">
+        update tags
+        <trim prefix="set" suffixOverrides=",">
+            <trim prefix="tagName = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    when id = #{item.id,jdbcType=INTEGER} then #{item.tagName,jdbcType=VARCHAR}
+                </foreach>
+            </trim>
+        </trim>
+        where id in
+        <foreach close=")" collection="list" item="item" open="(" separator=", ">
+            #{item.id,jdbcType=INTEGER}
+        </foreach>
+    </update>
+    <update id="updateBatchSelective" parameterType="java.util.List">
+        update tags
+        <trim prefix="set" suffixOverrides=",">
+            <trim prefix="tagName = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    <if test="item.tagName != null">
+                        when id = #{item.id,jdbcType=INTEGER} then #{item.tagName,jdbcType=VARCHAR}
+                    </if>
+                </foreach>
+            </trim>
+        </trim>
+        where id in
+        <foreach close=")" collection="list" item="item" open="(" separator=", ">
+            #{item.id,jdbcType=INTEGER}
+        </foreach>
+    </update>
+    <insert id="batchInsert" keyColumn="id" keyProperty="id" parameterType="map" useGeneratedKeys="true">
+        insert into tags
+                (tagName)
+                values
+        <foreach collection="list" item="item" separator=",">
+            (#{item.tagName,jdbcType=VARCHAR})
+        </foreach>
+    </insert>
+    <insert id="insertOrUpdate" keyColumn="id" keyProperty="id" parameterType="com.weizhiblog.bean.Tags"
+            useGeneratedKeys="true">
+        insert into tags
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            tagName,
+        </trim>
+        values
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=INTEGER},
+            </if>
+            #{tagName,jdbcType=VARCHAR},
+        </trim>
+        on duplicate key update
+        <trim suffixOverrides=",">
+            <if test="id != null">
+                id = #{id,jdbcType=INTEGER},
+            </if>
+            tagName = #{tagName,jdbcType=VARCHAR},
+        </trim>
+    </insert>
+    <insert id="insertOrUpdateSelective" keyColumn="id" keyProperty="id" parameterType="com.weizhiblog.bean.Tags"
+            useGeneratedKeys="true">
+        insert into tags
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="tagName != null">
+                tagName,
+            </if>
+        </trim>
+        values
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="tagName != null">
+                #{tagName,jdbcType=VARCHAR},
+            </if>
+        </trim>
+        on duplicate key update
+        <trim suffixOverrides=",">
+            <if test="id != null">
+                id = #{id,jdbcType=INTEGER},
+            </if>
+            <if test="tagName != null">
+                tagName = #{tagName,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+</mapper>
