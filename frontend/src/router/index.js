@@ -6,11 +6,15 @@ Vue.use(VueRouter)
 
 const routes = [
   {
+    path: '/',
+    component: () => import('@views/Index.vue')
+  },
+  /*{
     //登录页
     path: '/',
     name: 'Login',
     component: Login
-  },
+  },*/
   {
     path: '/main',
     component: () => import('@/views/Main.vue')
