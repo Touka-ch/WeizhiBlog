@@ -46,4 +46,6 @@ public class Article {
     private Integer state;
 
     private Integer pageView;
+
+    private Boolean publicToOthers;
 }

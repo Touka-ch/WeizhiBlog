@@ -20,6 +20,7 @@ public class CategoryController {
 
     /**
      * 新建目录
+     *
      * @param category 目录信息
      * @return 是否新建成功
      */
@@ -30,34 +31,37 @@ public class CategoryController {
 
     /**
      * 删除指定目录
+     *
      * @param id 删除目录的id
      * @return 是否删除成功
      */
-    @RequestMapping(value = "/delete", method = {RequestMethod.POST,RequestMethod.DELETE})
+    @RequestMapping(value = "/delete", method = {RequestMethod.POST, RequestMethod.DELETE})
     public ResponseBean categoryDelete(@NotNull Integer id) {
         return categoryService.deleteCategory(id);
     }
 
     /**
      * 修改目录名称
+     *
      * @param category 目录信息
      * @return 是否修改成功
      */
-    @RequestMapping(value = "/update", method = {RequestMethod.POST,RequestMethod.PUT})
-    public ResponseBean categoryUpdte(@RequestBody Category category) {
+    @RequestMapping(value = "/update", method = {RequestMethod.POST, RequestMethod.PUT})
+    public ResponseBean categoryUpdate(@RequestBody Category category) {
         return categoryService.updateCategory(category);
     }
 
     /**
      * 查找用户在指定目录下的所有文章
+     *
      * @param uid 用户id
      * @param cid 目录id
      * @return
      */
-    @RequestMapping(value = "/get", method = {RequestMethod.POST,RequestMethod.DELETE})
-    public ResponseBean atticlGetByCategory(@RequestParam("uid") @NotNull Integer uid,
+    @RequestMapping(value = "/get", method = {RequestMethod.POST, RequestMethod.DELETE})
+    public ResponseBean articleGetByCategory(@RequestParam("uid") @NotNull Integer uid,
                                              @RequestParam("cid") @NotNull Integer cid) {
-        return categoryService.getArticleByCategory(uid,cid);
+        return categoryService.getArticleByCategory(uid, cid);
     }
 
 

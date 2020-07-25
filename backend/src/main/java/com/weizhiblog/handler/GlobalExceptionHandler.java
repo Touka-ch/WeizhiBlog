@@ -9,6 +9,7 @@ package com.weizhiblog.handler;
  */
 
 import com.weizhiblog.bean.ResponseBean;
+import com.weizhiblog.exception.MyRuntimeException;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -23,5 +24,11 @@ public class GlobalExceptionHandler {
     public ResponseBean handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
         log.error(e.getMessage(), e);
         return ResponseBean.builder().status(-999).message(Objects.requireNonNull(e.getBindingResult().getFieldError()).getDefaultMessage()).build();
+    }
+
+    @ExceptionHandler(MyRuntimeException.class)
+    public ResponseBean handleMyRuntimeException(MyRuntimeException e) {
+        log.error(e.getMessage(), e);
+        return ResponseBean.builder().status(e.getStatus()).message(e.getMessage()).build();
     }
 }
