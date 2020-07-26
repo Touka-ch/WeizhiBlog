@@ -95,4 +95,12 @@ public interface ArticleTagsMapper {
      * @return 插入成功则返回插入的行数
      */
     int batchInsert(@Param("list") List<ArticleTags> list);
+
+    ArticleTags selectByUidTid(@Param("aid")Integer aid,@Param("tid")Integer tid);
+
+    int deleteByAid(int aid);
+
+    ArticleTags selectByAid(Integer aid);
+
+
 }

@@ -27,7 +27,7 @@ public class TagController {
      * @return 是否打标签成功
      */
     @RequestMapping(value = "/add", method = {RequestMethod.POST})
-    public ResponseBean categoryAdd(@RequestBody @Validated ArticleTags articleTag) {
+    public ResponseBean tagAdd(@RequestBody @Validated ArticleTags articleTag) {
         return tagService.addTag(articleTag);
     }
 
@@ -37,7 +37,7 @@ public class TagController {
      * @return 是否打标签成功
      */
     @RequestMapping(value = "/addaddmutiple", method = {RequestMethod.POST})
-    public ResponseBean categoryAdds(@RequestBody @Validated List<ArticleTags> articleTags) {
+    public ResponseBean tagAdds(@RequestBody @Validated List<ArticleTags> articleTags) {
         return tagService.addTags(articleTags);
     }
 
@@ -47,7 +47,7 @@ public class TagController {
      * @return 是否删除成功
      */
     @RequestMapping(value = "/delete", method = {RequestMethod.POST,RequestMethod.DELETE})
-    public ResponseBean categoryDelete(@NotNull Integer id) {
+    public ResponseBean tagDelete(@NotNull Integer id) {
         return tagService.deleteTag(id);
     }
 
@@ -57,8 +57,13 @@ public class TagController {
      * @return 是否删除成功
      */
     @RequestMapping(value = "/deleteall", method = {RequestMethod.POST,RequestMethod.DELETE})
-    public ResponseBean categoryDeleteAll(@NotNull Integer id) {
+    public ResponseBean tagDeleteAll(@NotNull Integer id) {
         return tagService.deleteAllTags(id);
+    }
+
+    @RequestMapping(value = "/id", method = {RequestMethod.POST,RequestMethod.GET})
+    public ResponseBean getID(@NotNull String tagName) {
+        return tagService.getTagId(tagName);
     }
 
 }

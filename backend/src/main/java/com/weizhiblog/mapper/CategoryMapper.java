@@ -59,4 +59,6 @@ public interface CategoryMapper {
     int updateBatchSelective(List<Category> list);
 
     int batchInsert(@Param("list") List<Category> list);
+
+    Category getCategoryByCateName(String catename);
 }

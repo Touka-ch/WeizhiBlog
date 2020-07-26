@@ -95,4 +95,8 @@ public interface TagsMapper {
      * @return 插入成功则返回 1
      */
     int batchInsert(@Param("list") List<Tags> list);
+
+    Tags getIdByTagName(String tagName);
+
+    int insertByTagName(String tagName);
 }
