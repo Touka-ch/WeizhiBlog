@@ -5,12 +5,12 @@ import VueRouter from 'vue-router'
 Vue.use(VueRouter)
 
 const routes = [
-  /*{
+  {
     //登录页
-    path: '/',
-    name: 'Login',
-    component: Login
-  },*/
+    path: '/login',
+    name: 'login',
+    component: () => import('../views/Login')
+  },
   {
     path: '/main',
     component: () => import('@/views/Main.vue'),
