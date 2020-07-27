@@ -293,4 +293,29 @@
             </if>
         </trim>
     </insert>
+    <select id="ListCommentsByAid" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select *
+    from article_comments
+    where aid = #{aid,jdbcType=INTEGER}
+</select>
+<delete id="deleteAllByAid" parameterType="java.lang.Integer">
+        delete
+        from article_comments
+        where aid = #{aid,jdbcType=INTEGER}
+    </delete>
+   <select id="ListFirstCommentsByAid" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select *
+    from article_comments
+    where aid = #{aid,jdbcType=INTEGER} and parentId = #{parentId,jdbcType=INTEGER}
+</select>
+ <select id="ListCommentsByAid_comments" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select *
+    from article_comments
+    where id = #{id,jdbcType=INTEGER} and aid = #{aid,jdbcType=INTEGER} and parentId =#{parentId,jdbcType=INTEGER}
+</select>
+<select id="ListFirstCommentsByAid_comments" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select *
+    from article_comments
+    where aid = #{aid,jdbcType=INTEGER} and parentId = #{parentId,jdbcType=INTEGER} and parentId =#{parentId,jdbcType=INTEGER}
+</select>
 </mapper>

@@ -38,12 +38,14 @@ public class CommentController {
     }
     /**
      * 删除文章的某条评论
-     * @param id 文章所属id
+     * @param id 评论所属id
+     * @param aid 文章所属aid
      * @return 是否删除成功
      */
     @RequestMapping(value = "/delete", method = {RequestMethod.POST,RequestMethod.DELETE})
-    public ResponseBean CommentsDelete(@RequestParam("id") @NotNull Integer id ){
-        return commentService.deleteComments(id);
+    public ResponseBean CommentsDelete( @RequestParam("id") @NotNull Integer id,
+                                        @RequestParam("aid") @NotNull Integer aid){
+        return commentService.deleteComments(id,aid);
     }
     /**
      * 删除某个文章的所有评论
@@ -56,7 +58,7 @@ public class CommentController {
     }
     /**
      * 更新某个文章的某条评论
-     * @param aid 文章id
+     * @param aid 文章aid
      * @param id 评论id
      * @param comments 评论记录
      * @return 是否更新成功
@@ -81,8 +83,9 @@ public class CommentController {
      * @return 获取的评论
      */
     @RequestMapping(value = "/all/First_article", method = {RequestMethod.POST,RequestMethod.GET})
-    public ResponseBean FirstCommentsView(@RequestParam("id") @NotNull Integer id){
-        return commentService.viewFirstComments(id);
+    public ResponseBean FirstCommentsView(@RequestParam("id") @NotNull Integer id,
+                                          @RequestParam("parentId") @NotNull Integer parentId){
+        return commentService.viewFirstComments(id,parentId);
     }
     /**
      * 查看某个文章某条评论的所有子评论
@@ -92,8 +95,9 @@ public class CommentController {
      */
     @RequestMapping(value = "/all/comments", method = {RequestMethod.POST,RequestMethod.GET})
     public ResponseBean AllCommentsView_comments(@RequestParam("id") @NotNull Integer id,
-                                                 @RequestParam("aid") @NotNull Integer aid){
-        return commentService.viewAllComments_comments(id,aid);
+                                                 @RequestParam("aid") @NotNull Integer aid,
+                                                 @RequestParam("parentId") @NotNull Integer parentId){
+        return commentService.viewAllComments_comments(id,aid,parentId);
     }
     /**
      * 查看某个文章某条评论的所有下一级评论
@@ -103,8 +107,9 @@ public class CommentController {
      */
     @RequestMapping(value = "/all/First_comments", method = {RequestMethod.POST,RequestMethod.GET})
     public ResponseBean AllFirstCommentsView_comments(@RequestParam("id") @NotNull Integer id,
-                                                      @RequestParam("aid") @NotNull Integer aid){
-        return commentService.viewAllFirstComments_comments(id,aid);
+                                                      @RequestParam("aid") @NotNull Integer aid,
+                                                      @RequestParam("parentId") @NotNull Integer parentId){
+        return commentService.viewAllFirstComments_comments(id,aid,parentId);
     }
 
 }
