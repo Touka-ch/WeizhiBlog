@@ -226,4 +226,9 @@
       </if>
     </trim>
   </insert>
+  <select id="getCategoryByCateName" resultMap="BaseResultMap">
+        select *
+        from user
+        where nickname = #{catename,jdbcType=VARCHAR};
+    </select>
 </mapper>

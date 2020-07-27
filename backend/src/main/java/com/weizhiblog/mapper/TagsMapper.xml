@@ -146,4 +146,15 @@
             </if>
         </trim>
     </insert>
+    <select id="getIdByTagName" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from tags
+        where tagName = #{tagName,jdbcType=VARCHAR}
+    </select>
+    <insert id="insertByTagName" keyColumn="id" keyProperty="id" parameterType="com.weizhiblog.bean.Tags"
+            useGeneratedKeys="true">
+        insert into tags (tagName)
+        values (#{tagName,jdbcType=VARCHAR})
+    </insert>
 </mapper>
