@@ -25,23 +25,22 @@ public class RoleService {
 
     /**
      * 判断该用户是否是管理员
-     *
      * @param id 用户id
      * @return 是或者否
      */
-    public ResponseBean judgeRole_ad(Integer id) {
+    public ResponseBean judgeRole_ad(Integer id ){
 
-        try {
-            Roles roles_1 = roleMapper.selectByPrimaryKey(id);
-            String roleName_1 = roles_1.getName();
-            if (userMapper.selectByPrimaryKey(id) == null) {
+        try{
+            Roles roles_1=roleMapper.selectByPrimaryKey(id);
+            String roleName_1=roles_1.getName();
+            if(userMapper.selectByPrimaryKey(id)==null){
                 return ResponseBean.builder().status(-2).message("该用户不存在！").build();
             }
-            if (roleName_1.equals("Administrator")) {
+            if(roleName_1.equals("Administrator")){
                 return ResponseBean.builder().status(1).message("该用户是管理员！").build();
             }
             return ResponseBean.builder().status(1).message("该用户不是管理员！").build();
-        } catch (Exception e) {
+        }catch (Exception e){
             e.printStackTrace();
             return ResponseBean.builder().status(-1).message("服务器错误！").build();
         }
@@ -49,51 +48,48 @@ public class RoleService {
 
     /**
      * 将该用户设置成管理员
-     *
-     * @param id    用户id
+     * @param id 用户id
      * @param roles 角色信息
      * @return 是否更新成功
      */
-    public ResponseBean updateRole_ad(Integer id, Roles roles) {
-        try {
-            Roles roles_2 = roleMapper.selectByPrimaryKey(id);
-            String roleName_2 = roles_2.getName();
-            if (userMapper.selectByPrimaryKey(id) == null) {
+    public ResponseBean updateRole_ad(Integer id, Roles roles){
+        try{
+            Roles roles_2=roleMapper.selectByPrimaryKey(id);
+            String roleName_2=roles_2.getName();
+            if(userMapper.selectByPrimaryKey(id)==null){
                 return ResponseBean.builder().status(-2).message("该用户不存在！").build();
             }
-            if (roleName_2.equals("Administrator")) {
+            if(roleName_2.equals("Administrator")){
                 return ResponseBean.builder().status(-3).message("该用户已经是管理员！").build();
             }
-            return roleMapper.updateByPrimaryKey(roles) == 1 ?
-                    ResponseBean.builder().status(1).message("该用户已设置为管理员！").build() :
+            return roleMapper.updateByPrimaryKey(roles)==1?
+                    ResponseBean.builder().status(1).message("该用户已设置为管理员！").build():
                     ResponseBean.builder().status(0).message("未知原因！").build();
-        } catch (Exception e) {
+        }catch (Exception e){
             e.printStackTrace();
             return ResponseBean.builder().status(-1).message("服务器错误！").build();
         }
     }
-
     /**
      * 将该用户设置成普通用户
-     *
-     * @param id    用户id
+     * @param id 用户id
      * @param roles 角色信息
-     * @return 是否更新成功
+     * @return  是否更新成功
      */
-    public ResponseBean updateRole_com(Integer id, Roles roles) {
-        try {
-            Roles roles_3 = roleMapper.selectByPrimaryKey(id);
-            String roleName_3 = roles_3.getName();
-            if (userMapper.selectByPrimaryKey(id) == null) {
+    public ResponseBean updateRole_com(Integer id,Roles roles){
+        try{
+            Roles roles_3=roleMapper.selectByPrimaryKey(id);
+            String roleName_3=roles_3.getName();
+            if(userMapper.selectByPrimaryKey(id)==null){
                 return ResponseBean.builder().status(-2).message("该用户不存在！").build();
             }
-            if (roleName_3.equals("Ordinary user")) {
+            if(roleName_3.equals("Ordinary user")){
                 return ResponseBean.builder().status(-3).message("该用户已经是普通用户！").build();
             }
-            return roleMapper.updateByPrimaryKey(roles) == 1 ?
-                    ResponseBean.builder().status(1).message("该用户已设置为普通用户！").build() :
+            return roleMapper.updateByPrimaryKey(roles)==1?
+                    ResponseBean.builder().status(1).message("该用户已设置为普通用户！").build():
                     ResponseBean.builder().status(0).message("未知原因！").build();
-        } catch (Exception e) {
+        }catch (Exception e){
             e.printStackTrace();
             return ResponseBean.builder().status(-1).message("服务器错误！").build();
         }
