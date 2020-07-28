@@ -95,4 +95,6 @@ public interface RolesMapper {
      * @return 更新成功则返回 1
      */
     int batchInsert(@Param("list") List<Roles> list);
+
+
 }
