@@ -42,5 +42,6 @@ rebel.xml
 rebel-remote.xml
 backend/WeizhiBlog.iml
 .gitignore
+frontend
 
 
