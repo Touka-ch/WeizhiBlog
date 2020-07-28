@@ -1,12 +1,12 @@
 import axios from 'axios'
 
-//´´½¨axiosÊµÀı
+//åˆ›å»ºaxioså®ä¾‹
 const service = axios.create({
-  //ÇëÇó³¬Ê±Ê±¼ä
+  //è¯·æ±‚è¶…æ—¶æ—¶é—´
   timeout: 3000
 })
 
-//Ìí¼ÓÇëÇóÀ¹½ØÆ÷
+//æ·»åŠ è¯·æ±‚æ‹¦æˆªå™¨
 service.interceptors.request.use(
   config => {
     return config
@@ -15,7 +15,7 @@ service.interceptors.request.use(
     console.log(err)
   }
 )
-//ÏìÓ¦Í· ¿ÉÒÔÔÚÀïÃæÀ¹½Ø×´Ì¬Âë
+//å“åº”å¤´ å¯ä»¥åœ¨é‡Œé¢æ‹¦æˆªçŠ¶æ€ç 
 service.interceptors.request.use(
   response => {
     let res = {}

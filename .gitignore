@@ -17,6 +17,7 @@ target/
 .idea
 *.iws
 *.ipr
+backend/
 
 ### NetBeans ###
 /nbproject/private/

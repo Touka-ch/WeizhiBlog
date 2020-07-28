@@ -1,9 +1,9 @@
 import Mock from 'mockjs'
-import somApi from './someApi'
-//Éè¼ÆÑÓÊ± 200-2000ms
+import homeApi from './home'
+//è®¾è®¡å»¶æ—¶ 200-2000ms
 Mock.setup({
   timeout: '200-800'
 })
 
-//À¹½ØajaxÇëÇó
-Mock.mock(/\/user\/all/, 'get', somApi.getUser())
+//æ‹¦æˆªajaxè¯·æ±‚
+Mock.mock(/\/user\/all/, 'get', homeApi.getUser().data)

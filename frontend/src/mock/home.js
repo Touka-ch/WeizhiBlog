@@ -2,21 +2,17 @@
 
 const array = [
   {
-    status: 1,
-    meaaage: '×¢²á³É¹¦£¡'
-  },
-  {
     status: 0,
-    message: 'Î´Öª´íÎó£¡'
+    message: 'æœªçŸ¥é”™è¯¯ï¼'
   },
   {
     status: 1,
-    message: '»ñÈ¡³É¹¦',
+    message: 'è·å–æˆåŠŸ',
     object: [
       {
         id: 6,
         username: 'linghu',
-        nickname: 'Áîºü´Ğ',
+        nickname: 'ä»¤ç‹è‘±',
         password: '202cb962ac59075b964b07152d234b70',
         enabled: true,
         email: 'linghu@qq.com',
@@ -27,7 +23,7 @@ const array = [
       {
         id: 7,
         username: 'sang',
-        nickname: '½­ÄÏÒ»µãÓê',
+        nickname: 'æ±Ÿå—ä¸€ç‚¹é›¨',
         password: '202cb962ac59075b964b07152d234b70',
         enabled: true,
         email: 'sang123@qq.com',
@@ -38,7 +34,7 @@ const array = [
       {
         id: 10,
         username: 'qiaofeng',
-        nickname: 'ÇÇ·å',
+        nickname: 'ä¹”å³°',
         password: '202cb962ac59075b964b07152d234b70',
         enabled: true,
         email: 'qiaofeng@qq.com',
@@ -49,7 +45,7 @@ const array = [
       {
         id: 13,
         username: 'duanzhengchun',
-        nickname: '¶ÎÕı´¾',
+        nickname: 'æ®µæ­£æ·³',
         password: '202cb962ac59075b964b07152d234b70',
         enabled: false,
         email: 'duanzhengchun@qq.com',
@@ -64,8 +60,7 @@ const array = [
 export default {
   getUser: () => {
     return {
-      code: 20000,
-      data: array
+      data: array[Math.floor(Math.random() * 2)]
     }
   }
 }
