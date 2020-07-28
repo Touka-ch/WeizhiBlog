@@ -3,6 +3,7 @@ package com.weizhiblog.mapper;
 import com.weizhiblog.bean.Article;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
 
@@ -65,4 +66,19 @@ public interface ArticleMapper {
     int updateBatchSelective(List<Article> list);
 
     int batchInsert(@Param("list") List<Article> list);
+
+    @Select("SELECT LAST_INSERT_ID()")
+    int getLastInsertId();
+
+    @Select("SELECT * from article WHERE title = #{title} AND uid = #{uid}")
+    Article getArticleByTitleAndUid(String title, Integer uid);
+
+    @Select("SELECT * from article")
+    List<Article> listArticles();
+
+    @Select("SELECT * from article WHERE uid = #{uid}")
+    List<Article> listArticlesByUid(Integer uid);
+
+    @Select("SELECT * from article WHERE uid = #{uid} AND cid = #{cid}")
+    List<Article> listArticlesByUidAndCid(Integer uid,Integer cid);
 }

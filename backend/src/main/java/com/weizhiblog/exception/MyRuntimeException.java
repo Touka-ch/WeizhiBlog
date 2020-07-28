@@ -8,16 +8,14 @@ package com.weizhiblog.exception;
  * @lastModifiedTime 7月19日   8:32:45
  */
 
+import com.weizhiblog.bean.ResponseBean;
 import lombok.Getter;
 
 @Getter
 public class MyRuntimeException extends RuntimeException {
-    private final Integer status;
-    private final String message;
+    private ResponseBean responseBean;
 
-    public MyRuntimeException(Integer status, String message) {
-        super(message);
-        this.message = message;
-        this.status = status;
+    public MyRuntimeException(ResponseBean responseBean) {
+        super(responseBean.getMessage());
     }
 }

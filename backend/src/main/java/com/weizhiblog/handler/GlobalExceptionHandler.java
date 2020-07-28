@@ -29,6 +29,6 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MyRuntimeException.class)
     public ResponseBean handleMyRuntimeException(MyRuntimeException e) {
         log.error(e.getMessage(), e);
-        return ResponseBean.builder().status(e.getStatus()).message(e.getMessage()).build();
+        return e.getResponseBean();
     }
 }

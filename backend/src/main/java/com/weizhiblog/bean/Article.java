@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotNull;
 import java.sql.Timestamp;
 
 @Data
@@ -12,7 +13,9 @@ import java.sql.Timestamp;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Article {
+    @NotNull
     private Integer id;
+
 
     private String title;
 

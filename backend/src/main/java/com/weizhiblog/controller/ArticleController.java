@@ -13,6 +13,7 @@ import com.weizhiblog.bean.Article;
 import com.weizhiblog.bean.ResponseBean;
 import com.weizhiblog.service.ArticleService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -67,7 +68,7 @@ public class ArticleController {
      * @return ResponseBean
      */
     @RequestMapping(value = "/update", method = {RequestMethod.POST})
-    public ResponseBean updateArticle(@RequestBody Article article) {
+    public ResponseBean updateArticle(@RequestBody @Validated Article article) {
         return articleService.updateArticle(article);
     }
 
@@ -79,8 +80,8 @@ public class ArticleController {
      * @return ResponseBean
      */
     @RequestMapping(value = "/publicStatus", method = {RequestMethod.POST, RequestMethod.PUT})
-    public ResponseBean updateArticlePublicStatus(@RequestParam("id") List<Integer> id,
-                                                  @RequestParam("publicStatus") List<Integer> publicStatus) {
+    public ResponseBean updateArticlePublicStatus(@RequestParam("id") Integer id,
+                                                  @RequestParam("publicStatus") Boolean publicStatus) {
         return articleService.updateArticlePublicStatus(id, publicStatus);
     }
 

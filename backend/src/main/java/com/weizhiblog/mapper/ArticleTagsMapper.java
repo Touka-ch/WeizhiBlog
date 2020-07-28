@@ -3,6 +3,7 @@ package com.weizhiblog.mapper;
 import com.weizhiblog.bean.ArticleTags;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
 
@@ -102,5 +103,19 @@ public interface ArticleTagsMapper {
 
     ArticleTags selectByAid(Integer aid);
 
+    /**
+     * 根据 标签id找所有的规则
+     * @param tid 标签id
+     * @return 文章id集合
+     */
+    @Select("SELECT aid from article_tags WHERE tid = #{tid}")
+    List<Integer> listAidsByTid(Integer tid);
 
+    /**
+     * 根据文章id获取标签id集合
+     * @param aid 文章id
+     * @return 标签id集合
+     */
+    @Select("SELECT tid from article_tags WHERE aid = #{aid}")
+    List<Integer> listTidsByAid(Integer aid);
 }

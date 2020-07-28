@@ -41,6 +41,6 @@ backend/.rebel-remote.xml.bak
 rebel.xml
 rebel-remote.xml
 backend/WeizhiBlog.iml
-
+.gitignore
 
 
