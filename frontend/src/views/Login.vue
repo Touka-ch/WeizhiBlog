@@ -12,8 +12,8 @@
         <el-button type="primary" @click="onSubmit('loginForm')">登录</el-button>
       </el-form-item>
     </el-form>
-
-    <el-dialog title="温馨提示" :visible.sync="dialogVisible" width="30%" :before-close="handleClose">
+    <el-dialog title="温馨提示" :visible.sync="dialogVisible" width="30%">
+      <!--:before-close="handleClose"-->
       <span>请输入账号和密码</span>
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" @click="dialogVisible = false">确 定</el-button>

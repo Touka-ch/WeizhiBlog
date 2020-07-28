@@ -1,11 +1,13 @@
 <template>
   <header>
     <div class="r-content">
-      <el-dropdown trigger="click">
+      <el-dropdown>
         <span class="el-dropdown-link"><img :src="userImg" class="user" /> </span>
         <el-dropdown-menu slot="dropdown">
-          <el-dropdown-item> 退出</el-dropdown-item>
-          <el-dropdown-item>切换用户</el-dropdown-item>
+          <el-dropdown-item>
+            <div @click="login">切换用户</div>
+          </el-dropdown-item>
+          <el-dropdown-item>退出</el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
     </div>
@@ -18,6 +20,11 @@ export default {
   data() {
     return {
       userImg: require('..//assets/images/user (1).png')
+    }
+  },
+  methods: {
+    login() {
+      this.$router.push({ name: 'login' })
     }
   }
 }

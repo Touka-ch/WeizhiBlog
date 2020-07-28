@@ -1,20 +1,20 @@
 <template>
-  <el-menu default-active="2" class="el-menu-vertical-demo" background-color="#545c64" text-color="#fff" active-text-color="#ffd04b">
-    <el-submenu i="1" v-for="(item, i) in hasChildren" :key="i">
+  <el-menu default-active="2" class="el-menu-vertical-demo" background-color="#545c64" text-color="#fff" active-text-color="#ffd04b" :collapse="isCollapse">
+    <el-button type="primary" icon="el-icon-menu" @click="collapse"></el-button>
+    <el-submenu :index="item.path" v-for="item in hasChildren" :key="item.path">
+      <!--"(item, index) in hasChildren" :key="index"-->
       <template slot="title">
         <i :class="'el-icon-' + item.icon"></i>
         <span>{{ item.label }}</span>
       </template>
-      <el-menu-item-group>
-        <el-menu-item :i="item.path" v-for="(subItem, subi) in item.children" :key="subi">
-          <i :class="'el-icon-' + subItem.icon"></i>
-          <span>{{ subItem.label }}</span>
-        </el-menu-item>
-      </el-menu-item-group>
+      <el-menu-item :index="subItem.path" v-for="subItem in item.children" :key="subItem.path" @click="clickMenu(subItem)">
+        <i :class="'el-icon-' + subItem.icon"></i>
+        <span>{{ subItem.label }}</span>
+      </el-menu-item>
     </el-submenu>
-    <el-menu-item :i="item.path" v-for="item in noChildren" :key="item.path">
+    <el-menu-item :index="item.path" v-for="item in noChildren" :key="item.path" @click="clickMenu(item)">
       <i :class="'el-icon-' + item.icon"></i>
-      <span slot="title">{{ item.label }}</span>
+      <span>{{ item.label }}</span>
     </el-menu-item>
   </el-menu>
 </template>
@@ -24,7 +24,7 @@ export default {
   name: 'CommonAside.',
   computed: {
     noChildren() {
-      return this.asideMenu.filter((item => !item.children) && (item => item.seen))
+      return this.asideMenu.filter(item => !item.children)
     },
     hasChildren() {
       return this.asideMenu.filter(item => item.children)
@@ -35,24 +35,28 @@ export default {
       asideMenu: [
         {
           path: '/hub',
+          name: 'hub',
           label: '公共区',
           icon: 'loading',
           seen: true
         },
         {
           path: '/article',
+          name: 'article',
           label: '文章管理',
           icon: 'notebook-1',
           seen: true,
           children: [
             {
-              path: '/page1',
+              path: '/list',
+              name: 'list',
               label: '文章列表',
               icon: 'folder',
               seen: true
             },
             {
-              path: '/page2',
+              path: '/new',
+              name: 'new',
               label: '发表文章',
               icon: 'document-add',
               seen: true
@@ -61,31 +65,39 @@ export default {
         },
         {
           path: '/user',
+          name: 'user',
           label: '用户管理',
           icon: 'user',
           seen: true
         },
         {
           path: '/column',
-          label: '目录管理',
+          name: 'column',
+          label: '栏目管理',
           icon: 's-operation',
           seen: true
         },
         {
-          path: '/',
+          path: '/chart',
+          name: 'chart',
           label: '数据统计',
           icon: 's-data',
           seen: true
         }
-      ]
+      ],
+      isCollapse: false,
+      width: ''
     }
   },
-  mounted: function() {
-    for (let i = 0; i < this.noChildren.length; i++) {
-      const element = this.noChildren[i]
-      if (element.label == '用户管理') {
-        element.seen = false
-      }
+  methods: {
+    collapse() {
+      this.isCollapse = !this.isCollapse
+      this.$emit('collapse', this.isCollapse)
+      console.log('传送isCollapse')
+      return this.isCollapse
+    },
+    clickMenu(item) {
+      this.$router.push({ name: item.name })
     }
   }
 }
@@ -95,5 +107,8 @@ export default {
 .el-menu {
   height: 100%;
   border: none;
+}
+.el-button {
+  folat: right;
 }
 </style>
