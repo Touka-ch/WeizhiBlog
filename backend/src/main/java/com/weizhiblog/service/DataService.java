@@ -83,15 +83,16 @@ public class DataService {
     }
 
     /**
+     *
      * @param uid 用户id
-     * @param n   天数
+     * @param n 天数
      * @return Res
      */
     public ResponseBean getPvNumInNDayByUserId(Integer uid, Integer n) {
-        if (userMapper.selectByPrimaryKey(uid) == null) {
+        if (userMapper.selectByPrimaryKey(uid)==null){
             return ResponseBean.builder().status(-2).message("该用户不存在！").object(uid).build();
         }
-        if (n > 100) {
+        if (n>100){
             return ResponseBean.builder().status(-3).message("超过最大支持天数！").object(n).build();
         }
         int[] res = new int[n];
@@ -100,19 +101,19 @@ public class DataService {
         for (Data data : datas) {
             long time = data.getDay().getTime();
             long now = System.currentTimeMillis();
-            int pastDay = (int) ((now - time) % 1000 * 3600 * 24 + 1);
-            if (pastDay < n && pastDay > 0 && res[n] == 0) {
-                res[pastDay] = data.getPv();
+            int pastDay = (int) ((now-time)%1000*3600*24+1);
+            if (pastDay<n&&pastDay>0&&res[n]==0){
+                res[pastDay]=data.getPv();
             }
         }
         return ResponseBean.builder().status(1).message("获取成功！").object(res).build();
     }
 
     public ResponseBean getLikeNumInNDayByUserId(Integer uid, Integer n) {
-        if (userMapper.selectByPrimaryKey(uid) == null) {
+        if (userMapper.selectByPrimaryKey(uid)==null){
             return ResponseBean.builder().status(-2).message("该用户不存在！").object(uid).build();
         }
-        if (n > 100) {
+        if (n>100){
             return ResponseBean.builder().status(-3).message("超过最大支持天数！").object(n).build();
         }
         int[] res = new int[n];
@@ -121,19 +122,19 @@ public class DataService {
         for (Data data : datas) {
             long time = data.getDay().getTime();
             long now = System.currentTimeMillis();
-            int pastDay = (int) ((now - time) % 1000 * 3600 * 24 + 1);
-            if (pastDay < n && pastDay > 0 && res[n] == 0) {
-                res[pastDay] = data.getLikeNum();
+            int pastDay = (int) ((now-time)%1000*3600*24+1);
+            if (pastDay<n&&pastDay>0&&res[n]==0){
+                res[pastDay]=data.getLikeNum();
             }
         }
         return ResponseBean.builder().status(1).message("获取成功！").object(res).build();
     }
 
     public ResponseBean getCommentNumInNDayByUserId(Integer uid, Integer n) {
-        if (userMapper.selectByPrimaryKey(uid) == null) {
+        if (userMapper.selectByPrimaryKey(uid)==null){
             return ResponseBean.builder().status(-2).message("该用户不存在！").object(uid).build();
         }
-        if (n > 100) {
+        if (n>100){
             return ResponseBean.builder().status(-3).message("超过最大支持天数！").object(n).build();
         }
         int[] res = new int[n];
@@ -142,9 +143,9 @@ public class DataService {
         for (Data data : datas) {
             long time = data.getDay().getTime();
             long now = System.currentTimeMillis();
-            int pastDay = (int) ((now - time) % 1000 * 3600 * 24 + 1);
-            if (pastDay < n && pastDay > 0 && res[n] == 0) {
-                res[pastDay] = data.getCommentNum();
+            int pastDay = (int) ((now-time)%1000*3600*24+1);
+            if (pastDay<n&&pastDay>0&&res[n]==0){
+                res[pastDay]=data.getCommentNum();
             }
         }
         return ResponseBean.builder().status(1).message("获取成功！").object(res).build();
