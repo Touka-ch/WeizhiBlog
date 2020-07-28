@@ -50,10 +50,10 @@ public class TagService {
         try {
             for (ArticleTags articleTag : articleTags) {
                 if (articleTagsMapper.selectByPrimaryKey(articleTag.getId()) != null) {
-                    throw new MyRuntimeException(-2, "标签id已存在！");
+                    throw new MyRuntimeException(ResponseBean.builder().build());
                 }
                 if (articleTagsMapper.insert(articleTag) != 1) {
-                    throw new MyRuntimeException(0, "未知错误！");
+                    throw new MyRuntimeException(ResponseBean.builder().build());
                 }
             }
             return ResponseBean.builder().status(1).message("添加成功！").build();

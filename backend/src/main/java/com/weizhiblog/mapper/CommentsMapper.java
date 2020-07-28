@@ -1,9 +1,9 @@
 package com.weizhiblog.mapper;
 
 import com.weizhiblog.bean.Comments;
-import com.weizhiblog.bean.User;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
 
@@ -12,6 +12,7 @@ public interface CommentsMapper {
 
     /**
      * 根据评论id删除评论
+     *
      * @param id 评论id
      * @return 删除成功则返回删除的行数
      */
@@ -19,6 +20,7 @@ public interface CommentsMapper {
 
     /**
      * 插入文章的评论
+     *
      * @param record 文章评论
      * @return 插入成功则返回插入行数
      */
@@ -102,35 +104,53 @@ public interface CommentsMapper {
 
     /**
      * 根据文章id获取评论
+     *
      * @param aid 文章id
      * @return 获取成功则返回1
      */
- List<Comments> ListCommentsByAid(Integer aid);
+    List<Comments> ListCommentsByAid(Integer aid);
 
     /**
      * 通过文章id删除所有评论
+     *
      * @param aid 文章id
      * @return 获取成功则返回1
      */
     int deleteAllByAid(Integer aid);
+
     /**
      * 根据文章id获取一级评论
+     *
      * @param aid 文章id
      * @return 删除成功则返回1
      */
-    List<Comments> ListFirstCommentsByAid(@Param("aid")Integer aid);
+    List<Comments> ListFirstCommentsByAid(@Param("aid") Integer aid);
+
     /**
      * 根据评论id获取所有子评论
-     * @param id 评论id
+     *
+     * @param id  评论id
      * @param aid 文章aid
      * @return 获取成功则返回1
      */
-    List<Comments> ListCommentsByAid_comments(@Param("id")Integer id,@Param("aid")Integer aid);
+    List<Comments> ListCommentsByAid_comments(@Param("id") Integer id, @Param("aid") Integer aid);
+
     /**
      * 根据文评论id获取下一级评论
-     * @param id 评论id
+     *
+     * @param id  评论id
      * @param aid 文章id
      * @return 获取成功则返回1
      */
-    List<Comments> ListFirstCommentsByAid_comments(@Param("id")Integer id,@Param("aid")Integer aid);
+    List<Comments> ListFirstCommentsByAid_comments(@Param("id") Integer id, @Param("aid") Integer aid);
+
+
+    /**
+     * 该文章的所有评论
+     *
+     * @param aid 文章id
+     * @return 评论列表
+     */
+    @Select("SELECT * from comments WHERE aid = #{aid}")
+    List<Comments> listCommentsByAid(Integer aid);
 }

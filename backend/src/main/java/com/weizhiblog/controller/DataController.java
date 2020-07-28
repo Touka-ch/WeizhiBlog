@@ -75,9 +75,9 @@ public class DataController {
      * @return ResponseBean
      */
     @RequestMapping(value = "/starNDay", method = {RequestMethod.POST, RequestMethod.GET})
-    public ResponseBean getStarNumInNDayByUserId(@RequestParam("uid") Integer uid,
+    public ResponseBean getLikeNumInNDayByUserId(@RequestParam("uid") Integer uid,
                                                  @RequestParam("n") Integer n) {
-        return dataService.getStarNumInNDayByUserId(uid, n);
+        return dataService.getLikeNumInNDayByUserId(uid, n);
     }
 
     /**

@@ -172,10 +172,10 @@ public class UserService {
         try {
             for (Integer id : ids) {
                 if (userMapper.selectByPrimaryKey(id) == null) {
-                    throw new MyRuntimeException(2, "删除用户不存在！");
+                    throw new MyRuntimeException(ResponseBean.builder().build());
                 }
                 if (userMapper.deleteByPrimaryKey(id) != 1) {
-                    throw new MyRuntimeException(0, "未知错误！");
+                    throw new MyRuntimeException(ResponseBean.builder().build());
                 }
             }
             return ResponseBean.builder().status(1).message("删除成功！").build();
