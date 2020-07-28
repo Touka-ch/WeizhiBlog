@@ -87,7 +87,7 @@ public class CommentService {
                 return ResponseBean.builder().status(-2).message("文章无评论").build();
             }
             if(articleMapper.selectByPrimaryKey(id)==null) {
-                return ResponseBean.builder().status(-2).message("文章不存在").build();
+                return ResponseBean.builder().status(-3).message("文章不存在").build();
             }
             return commentsMapper.deleteAllByAid(id)==1?
                     ResponseBean.builder().status(1).message("删除成功").build():
@@ -115,10 +115,10 @@ public class CommentService {
                 return ResponseBean.builder().status(-3).message("文章不存在").build();
             }
             if (comments.getContent() == null) {
-                return ResponseBean.builder().status(-5).message("评论内容不为空").build();
+                return ResponseBean.builder().status(-4).message("更新评论内容为空").build();
             }
             return commentsMapper.updateByPrimaryKey(comments) == 1 ?
-                    ResponseBean.builder().status(1).message("更新成功！").object(comments).build() :
+                    ResponseBean.builder().status(1).message("更新成功！").build() :
                     ResponseBean.builder().status(0).message("未知错误！").build();
         } catch (Exception e) {
             e.printStackTrace();
@@ -143,7 +143,8 @@ public class CommentService {
             }
             return commentsMapper.ListCommentsByAid(id).size() == 0 ?
                     ResponseBean.builder().status(-2).message("评论数量为空！").build() :
-                    ResponseBean.builder().status(1).message("获取成功！").object(commentsMapper.ListCommentsByAid(id)).build();
+                    ResponseBean.builder().status(1).message("获取成功！").build();
+
         }catch (Exception e) {
             e.printStackTrace();
             return ResponseBean.builder().status(-1).message("服务器错误！").build();
@@ -153,10 +154,9 @@ public class CommentService {
     /**
      * 查看某个文章的一级评论
      * @param id 文章id
-     * @param parentId 评论级数（值为-1）
      * @return 获取的评论
      */
-    public ResponseBean viewFirstComments(Integer id,Integer parentId){
+    public ResponseBean viewFirstComments(Integer id){
         try{
             if (commentsMapper.ListCommentsByAid(id) == null) {
                 return ResponseBean.builder().status(-2).message("文章无评论").build();
@@ -165,7 +165,7 @@ public class CommentService {
             if (articleMapper.selectByPrimaryKey(id) == null) {
                 return ResponseBean.builder().status(-3).message("文章不存在").build();
             }
-            return commentsMapper.ListFirstCommentsByAid(id,parentId).size() == 0 ?
+            return commentsMapper.ListFirstCommentsByAid(id).size() == 0 ?
                     ResponseBean.builder().status(-2).message("评论数量为空！").build() :
                     ResponseBean.builder().status(1).message("获取成功！").object(commentsMapper.ListCommentsByAid(id)).build();
 
@@ -180,10 +180,9 @@ public class CommentService {
      * 查看某个文章某条评论的所有子评论
      * @param id 评论id
      * @param aid 文章id
-     * @param parentId 评论级数
      * @return 获取的评论
      */
-    public ResponseBean viewAllComments_comments(Integer id,Integer aid,Integer parentId){
+    public ResponseBean viewAllComments_comments(Integer id,Integer aid){
         try{
             if (commentsMapper.ListCommentsByAid(id) == null) {
                 return ResponseBean.builder().status(-2).message("文章无评论").build();
@@ -192,7 +191,7 @@ public class CommentService {
             if (articleMapper.selectByPrimaryKey(id) == null) {
                 return ResponseBean.builder().status(-3).message("文章不存在").build();
             }
-            return commentsMapper.ListCommentsByAid_comments(id,aid,parentId).size()==0?
+            return commentsMapper.ListCommentsByAid_comments(id,aid).size()==0?
                     ResponseBean.builder().status(-2).message("评论数量为空！").build() :
                     ResponseBean.builder().status(1).message("获取成功！").build();
         }catch (Exception e) {
@@ -205,10 +204,9 @@ public class CommentService {
      * 查看某个文章某条评论的所有下一级评论
      * @param id 评论id
      * @param aid 文章id
-     * @param parentId 评论级数 (值-1）
      * @return 获取的评论
      */
-    public ResponseBean viewAllFirstComments_comments(Integer id,Integer aid,Integer parentId){
+    public ResponseBean viewAllFirstComments_comments(Integer id,Integer aid){
         try{
             if (commentsMapper.ListCommentsByAid(id) == null) {
                 return ResponseBean.builder().status(-2).message("文章无评论").build();
@@ -217,7 +215,7 @@ public class CommentService {
             if (articleMapper.selectByPrimaryKey(id) == null) {
                 return ResponseBean.builder().status(-3).message("文章不存在").build();
             }
-            return commentsMapper.ListFirstCommentsByAid_comments(id,aid,parentId).size() == 0 ?
+            return commentsMapper.ListFirstCommentsByAid_comments(id,aid).size() == 0 ?
                     ResponseBean.builder().status(-2).message("评论数量为空！").build() :
                     ResponseBean.builder().status(1).message("获取成功！").object(commentsMapper.ListCommentsByAid(id)).build();
 

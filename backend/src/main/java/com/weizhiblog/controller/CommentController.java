@@ -83,9 +83,8 @@ public class CommentController {
      * @return 获取的评论
      */
     @RequestMapping(value = "/all/First_article", method = {RequestMethod.POST,RequestMethod.GET})
-    public ResponseBean FirstCommentsView(@RequestParam("id") @NotNull Integer id,
-                                          @RequestParam("parentId") @NotNull Integer parentId){
-        return commentService.viewFirstComments(id,parentId);
+    public ResponseBean FirstCommentsView(@RequestParam("id") @NotNull Integer id){
+        return commentService.viewFirstComments(id);
     }
     /**
      * 查看某个文章某条评论的所有子评论
@@ -95,9 +94,9 @@ public class CommentController {
      */
     @RequestMapping(value = "/all/comments", method = {RequestMethod.POST,RequestMethod.GET})
     public ResponseBean AllCommentsView_comments(@RequestParam("id") @NotNull Integer id,
-                                                 @RequestParam("aid") @NotNull Integer aid,
-                                                 @RequestParam("parentId") @NotNull Integer parentId){
-        return commentService.viewAllComments_comments(id,aid,parentId);
+                                                 @RequestParam("aid") @NotNull Integer aid
+                                                 ){
+        return commentService.viewAllComments_comments(id,aid);
     }
     /**
      * 查看某个文章某条评论的所有下一级评论
@@ -107,9 +106,9 @@ public class CommentController {
      */
     @RequestMapping(value = "/all/First_comments", method = {RequestMethod.POST,RequestMethod.GET})
     public ResponseBean AllFirstCommentsView_comments(@RequestParam("id") @NotNull Integer id,
-                                                      @RequestParam("aid") @NotNull Integer aid,
-                                                      @RequestParam("parentId") @NotNull Integer parentId){
-        return commentService.viewAllFirstComments_comments(id,aid,parentId);
+                                                      @RequestParam("aid") @NotNull Integer aid
+                                                      ){
+        return commentService.viewAllFirstComments_comments(id,aid);
     }
 
 }

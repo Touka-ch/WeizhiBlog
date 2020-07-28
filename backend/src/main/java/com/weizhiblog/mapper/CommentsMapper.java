@@ -116,24 +116,21 @@ public interface CommentsMapper {
     /**
      * 根据文章id获取一级评论
      * @param aid 文章id
-     * @param parentId 评论级数(值为-1)
      * @return 删除成功则返回1
      */
-    List<Comments> ListFirstCommentsByAid(@Param("aid")Integer aid,@Param("parentId")Integer parentId);
+    List<Comments> ListFirstCommentsByAid(@Param("aid")Integer aid);
     /**
-     * 根据评论id获取一级评论
+     * 根据评论id获取所有子评论
      * @param id 评论id
      * @param aid 文章aid
-     * @param parentId 评论级数
      * @return 获取成功则返回1
      */
-    List<Comments> ListCommentsByAid_comments(@Param("id")Integer id,@Param("aid")Integer aid,@Param("parentId")Integer parentId);
+    List<Comments> ListCommentsByAid_comments(@Param("id")Integer id,@Param("aid")Integer aid);
     /**
-     * 根据文评论id获取一级评论
+     * 根据文评论id获取下一级评论
      * @param id 评论id
      * @param aid 文章id
-     * @param parentId 评论级数(值-1)
      * @return 获取成功则返回1
      */
-    List<Comments> ListFirstCommentsByAid_comments(@Param("id")Integer id,@Param("aid")Integer aid,@Param("parentId")Integer parentId);
+    List<Comments> ListFirstCommentsByAid_comments(@Param("id")Integer id,@Param("aid")Integer aid);
 }
