@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-form ref="loginForm" :model="form" :rules="rules" label-width="80px" class="login-box">
-      <h3 class="login-title">欢迎登录</h3>
+      <h2 class="login-title">玮织博客用户登录</h2>
       <el-form-item label="账号" prop="username">
         <el-input type="text" placeholder="请输入账号" v-model="form.username" />
       </el-form-item>
@@ -10,6 +10,9 @@
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="onSubmit('loginForm')">登录</el-button>
+      </el-form-item>
+      <el-form-item label="没有账号，">
+        <p @click="register">立即注册</p>
       </el-form-item>
     </el-form>
     <el-dialog title="温馨提示" :visible.sync="dialogVisible" width="30%">
@@ -39,7 +42,8 @@ export default {
       },
 
       // 对话框显示和隐藏
-      dialogVisible: false
+      dialogVisible: false,
+      register1: ''
     }
   },
   methods: {
@@ -54,6 +58,9 @@ export default {
           return false
         }
       })
+    },
+    register() {
+      this.$router.push('/register')
     }
   }
 }
@@ -72,6 +79,7 @@ export default {
 }
 
 .login-title {
+  font-size: 20px;
   text-align: center;
   margin: 0 auto 40px auto;
   color: #303133;
