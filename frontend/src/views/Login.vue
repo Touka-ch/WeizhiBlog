@@ -12,7 +12,7 @@
         <el-button type="primary" @click="onSubmit('loginForm')">登录</el-button>
       </el-form-item>
       <el-form-item label="没有账号，">
-        <p @click="register">立即注册</p>
+        <el-button type="text" @click="register">立即注册</el-button>
       </el-form-item>
     </el-form>
     <el-dialog title="温馨提示" :visible.sync="dialogVisible" width="30%">

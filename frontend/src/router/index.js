@@ -5,6 +5,11 @@ import VueRouter from 'vue-router'
 Vue.use(VueRouter)
 
 const routes = [
+  /*{
+    path: '/',
+    name: 'index',
+    component: () => import('../views/Index')
+  },*/
   {
     //登录页
     path: '/login',
