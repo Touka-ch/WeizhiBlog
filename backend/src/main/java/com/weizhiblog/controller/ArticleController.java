@@ -35,6 +35,16 @@ public class ArticleController {
         return articleService.insertArticle(article);
     }
 
+
+    /**
+     * @param id 文章id
+     * @return Res
+     */
+    @RequestMapping(value = "/delete", method = {RequestMethod.POST, RequestMethod.PUT})
+    public ResponseBean deleteArticle(@RequestParam("id") Integer id) {
+        return articleService.deleteArticle(id);
+    }
+
     /**
      * 修改文章的存在状态 1为正常、2为删除、0为草稿
      *
@@ -91,8 +101,8 @@ public class ArticleController {
      * @return ResponseBean
      */
     @RequestMapping(value = "/all", method = {RequestMethod.POST, RequestMethod.GET})
-    public ResponseBean getAllArticles() {
-        return articleService.getAllArticles();
+    public ResponseBean listAllArticles() {
+        return articleService.listAllArticles();
     }
 
     /**
@@ -102,8 +112,8 @@ public class ArticleController {
      * @return ResponseBean
      */
     @RequestMapping(value = "/fromUser", method = {RequestMethod.POST, RequestMethod.GET})
-    public ResponseBean getAllArticlesFromUser(@RequestParam("uid") Integer uid) {
-        return articleService.getAllArticlesFromUser(uid);
+    public ResponseBean listAllArticlesFromUser(@RequestParam("uid") Integer uid) {
+        return articleService.listAllArticlesFromUser(uid);
     }
 
     /**
@@ -113,8 +123,8 @@ public class ArticleController {
      * @return ResponseBean
      */
     @RequestMapping(value = "/fromTag", method = {RequestMethod.POST})
-    public ResponseBean getAllArticlesFromTag(@RequestParam("tid") Integer tid) {
-        return articleService.fromTagArticle(tid);
+    public ResponseBean listAllArticlesFromTag(@RequestParam("tid") Integer tid) {
+        return articleService.listAllArticlesFromTag(tid);
     }
 
     /**
@@ -125,9 +135,9 @@ public class ArticleController {
      * @return ResponseBean
      */
     @RequestMapping(value = "/fromUserCategory", method = {RequestMethod.POST, RequestMethod.GET})
-    public ResponseBean getAllArticlesFromUserAndCategory(@RequestParam("uid") Integer uid,
-                                                          @RequestParam("cid") Integer cid) {
-        return articleService.getAllArticlesFromUserAndCategory(uid, cid);
+    public ResponseBean listAllArticlesFromUserAndCategory(@RequestParam("uid") Integer uid,
+                                                           @RequestParam("cid") Integer cid) {
+        return articleService.listAllArticlesFromUserAndCategory(uid, cid);
     }
 
     /**
@@ -138,9 +148,9 @@ public class ArticleController {
      * @return ResponseBean
      */
     @RequestMapping(value = "/fromUserTag", method = {RequestMethod.POST})
-    public ResponseBean getAllArticlesFromUserAndTag(@RequestParam("uid") Integer uid,
-                                                     @RequestParam("tid") Integer tid) {
-        return articleService.getAllArticlesFromUserAndTag(uid, tid);
+    public ResponseBean listAllArticlesFromUserAndTag(@RequestParam("uid") Integer uid,
+                                                      @RequestParam("tid") Integer tid) {
+        return articleService.listAllArticlesFromUserAndTag(uid, tid);
     }
 
     /**
@@ -150,8 +160,8 @@ public class ArticleController {
      * @return ResponseBean
      */
     @RequestMapping(value = "/allTags", method = {RequestMethod.POST, RequestMethod.GET})
-    public ResponseBean getAllTagsFromArticle(@RequestParam("id") Integer id) {
-        return articleService.allTagsArticle(id);
+    public ResponseBean listAllTagsFromArticle(@RequestParam("id") Integer id) {
+        return articleService.listAllTagsFromArticle(id);
     }
 
     /**
@@ -161,8 +171,8 @@ public class ArticleController {
      * @return ResponseBean
      */
     @RequestMapping(value = "/allComments", method = {RequestMethod.POST, RequestMethod.GET})
-    public ResponseBean getAllCommentsFromArticle(@RequestParam("id") Integer id) {
-        return articleService.allCommentsArticle(id);
+    public ResponseBean listAllCommentsFromArticle(@RequestParam("id") Integer id) {
+        return articleService.listAllCommentsFromArticle(id);
     }
 
 }

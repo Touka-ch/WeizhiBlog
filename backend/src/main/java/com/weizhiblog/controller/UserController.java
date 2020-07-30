@@ -48,9 +48,9 @@ public class UserController {
      * @return 用户登录是否成功
      */
     @RequestMapping(value = "/login", method = {RequestMethod.POST})
-    public ResponseBean userLogin(@RequestParam("username") @Size(max = 20, min = 3) @NotNull String username,
-                                  @RequestParam("password") @Size(max = 20, min = 3) @NotNull String password,
-                                  @RequestParam("captcha") String captcha) {
+    public ResponseBean userLogin(@RequestParam("username") String username,
+                                  @RequestParam("password") String password,
+                                  @RequestParam(value = "captcha", required = false) String captcha) {
         return userService.loginUser(username, password, captcha);
     }
 
@@ -93,7 +93,7 @@ public class UserController {
      * @return 是否删除成功
      */
     @RequestMapping(value = "/delete/selective", method = {RequestMethod.DELETE, RequestMethod.POST})
-    public ResponseBean deleteSelectedUsers(@RequestBody List<Integer> ids) {
+    public ResponseBean deleteSelectedUsers(@RequestParam List<Integer> ids) {
         return userService.deleteSelectedUsers(ids);
     }
 
@@ -123,8 +123,16 @@ public class UserController {
     public ResponseBean updateUserPassword(@RequestParam("id") Integer id,
                                            @RequestParam("oldPwd") @NotNull @Size(max = 20, min = 3) String oldPwd,
                                            @RequestParam("newPwd") @NotNull @Size(max = 20, min = 3) String newPwd,
-                                           @RequestParam("captcha") String captcha) {
+                                           @RequestParam(value = "captcha", required = false) String captcha) {
         return userService.updateUserPassword(id, oldPwd, newPwd, captcha);
     }
 
+    /**
+     * @param id 用户id
+     * @return Res
+     */
+    @RequestMapping(value = "/{id}", method = {RequestMethod.POST, RequestMethod.GET})
+    private ResponseBean getUserById(@PathVariable("id") Integer id) {
+        return userService.getUserById(id);
+    }
 }

@@ -294,28 +294,35 @@
         </trim>
     </insert>
     <select id="ListCommentsByAid" parameterType="java.lang.Integer" resultMap="BaseResultMap">
-    select *
-    from comments
-    where aid = #{aid,jdbcType=INTEGER}
-</select>
-<delete id="deleteAllByAid" parameterType="java.lang.Integer">
+        select *
+        from comments
+        where aid = #{aid,jdbcType=INTEGER}
+    </select>
+    <delete id="deleteAllByAid" parameterType="java.lang.Integer">
         delete
         from comments
         where aid = #{aid,jdbcType=INTEGER}
     </delete>
-   <select id="ListFirstCommentsByAid" parameterType="java.lang.Integer" resultMap="BaseResultMap">
-    select comments_1.*
-    from comments comments_1
-    where aid = #{aid,jdbcType=INTEGER} and comments_1.parentId=-1
-</select>
- <select id="ListCommentsByAid_comments" parameterType="java.lang.Integer" resultMap="BaseResultMap">
-    select comments_3.*
-    from comments comments_2,comments comments_3
-    where aid = #{aid,jdbcType=INTEGER} and comments_2.id = #{id,jdbcType=INTEGER} and comments_3.parentId &lt;comments_2.parentId
-</select>
-<select id="ListFirstCommentsByAid_comments" parameterType="java.lang.Integer" resultMap="BaseResultMap">
-    select comments_5.*
-    from comments comments_5,comments comments_4
-    where aid = #{aid,jdbcType=INTEGER} and comments_4.id = #{id,jdbcType=INTEGER} and comments_5.parentId = comments_4.parentId-1
-</select>
+    <select id="ListFirstCommentsByAid" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select comments_1.*
+        from comments comments_1
+        where aid = #{aid,jdbcType=INTEGER}
+          and comments_1.parentId = -1
+    </select>
+    <select id="ListCommentsByAid_comments" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select comments_3.*
+        from comments comments_2,
+             comments comments_3
+        where aid = #{aid,jdbcType=INTEGER}
+          and comments_2.id = #{id,jdbcType=INTEGER}
+          and comments_3.parentId &lt; comments_2.parentId
+    </select>
+    <select id="ListFirstCommentsByAid_comments" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select comments_5.*
+        from comments comments_5,
+             comments comments_4
+        where aid = #{aid,jdbcType=INTEGER}
+          and comments_4.id = #{id,jdbcType=INTEGER}
+          and comments_5.parentId = comments_4.parentId - 1
+    </select>
 </mapper>

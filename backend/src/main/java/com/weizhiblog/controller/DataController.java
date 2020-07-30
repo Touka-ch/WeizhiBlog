@@ -38,7 +38,7 @@ public class DataController {
      * @param uid 用户id
      * @return ResponseBean
      */
-    @RequestMapping(value = "/star", method = {RequestMethod.POST, RequestMethod.GET})
+    @RequestMapping(value = "/like", method = {RequestMethod.POST, RequestMethod.GET})
     public ResponseBean getLikeNumByUserId(@RequestParam("uid") Integer uid) {
         return dataService.getLikeNumByUserId(uid);
     }
@@ -74,7 +74,7 @@ public class DataController {
      * @param n   天数
      * @return ResponseBean
      */
-    @RequestMapping(value = "/starNDay", method = {RequestMethod.POST, RequestMethod.GET})
+    @RequestMapping(value = "/likeNDay", method = {RequestMethod.POST, RequestMethod.GET})
     public ResponseBean getLikeNumInNDayByUserId(@RequestParam("uid") Integer uid,
                                                  @RequestParam("n") Integer n) {
         return dataService.getLikeNumInNDayByUserId(uid, n);
