@@ -18,3 +18,9 @@ mybatis:
   type-aliases-package: com.weizhiblog.bean
   configuration:
     map-underscore-to-camel-case: off
+
+logging:
+  level:
+    root: info
+  file:
+    name: backend/src/main/resources/log/my.log

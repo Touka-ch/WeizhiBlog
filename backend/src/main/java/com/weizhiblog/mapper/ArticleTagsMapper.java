@@ -97,7 +97,7 @@ public interface ArticleTagsMapper {
      */
     int batchInsert(@Param("list") List<ArticleTags> list);
 
-    ArticleTags selectByUidTid(@Param("aid")Integer aid,@Param("tid")Integer tid);
+    ArticleTags selectByUidTid(@Param("aid") Integer aid, @Param("tid") Integer tid);
 
     int deleteByAid(int aid);
 
@@ -105,6 +105,7 @@ public interface ArticleTagsMapper {
 
     /**
      * 根据 标签id找所有的规则
+     *
      * @param tid 标签id
      * @return 文章id集合
      */
@@ -112,10 +113,20 @@ public interface ArticleTagsMapper {
     List<Integer> listAidsByTid(Integer tid);
 
     /**
-     * 根据文章id获取标签id集合
+     * 根据aid获取tid集合
+     *
      * @param aid 文章id
      * @return 标签id集合
      */
     @Select("SELECT tid from article_tags WHERE aid = #{aid}")
     List<Integer> listTidsByAid(Integer aid);
+
+    /**
+     *
+     * @param aid
+     * @param tid
+     * @return
+     */
+    @Select("SELECT * FROM article_tags WHERE aid = #{aid} AND tid = #{tid}")
+    ArticleTags listArticleTagsByAidAndTid(Integer aid,Integer tid);
 }

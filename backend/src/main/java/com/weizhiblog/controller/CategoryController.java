@@ -25,8 +25,8 @@ public class CategoryController {
      * @return 是否新建成功
      */
     @RequestMapping(value = "/add", method = {RequestMethod.POST})
-    public ResponseBean categoryAdd(@RequestBody @Validated Category category) {
-        return categoryService.insertCategory(category);
+    public ResponseBean addCategory(@RequestBody @Validated Category category) {
+        return categoryService.addCategory(category);
     }
 
     /**
@@ -36,7 +36,7 @@ public class CategoryController {
      * @return 是否删除成功
      */
     @RequestMapping(value = "/delete", method = {RequestMethod.POST, RequestMethod.DELETE})
-    public ResponseBean categoryDelete(@NotNull Integer id) {
+    public ResponseBean deleteCategory(@NotNull @RequestParam("id") Integer id) {
         return categoryService.deleteCategory(id);
     }
 
@@ -47,7 +47,7 @@ public class CategoryController {
      * @return 是否修改成功
      */
     @RequestMapping(value = "/update", method = {RequestMethod.POST, RequestMethod.PUT})
-    public ResponseBean categoryUpdate(@RequestBody Category category) {
+    public ResponseBean updateCategory(@RequestBody Category category) {
         return categoryService.updateCategory(category);
     }
 
@@ -56,13 +56,20 @@ public class CategoryController {
      *
      * @param uid 用户id
      * @param cid 目录id
-     * @return
+     * @return Res
      */
-    @RequestMapping(value = "/get", method = {RequestMethod.POST, RequestMethod.DELETE})
-    public ResponseBean articleGetByCategory(@RequestParam("uid") @NotNull Integer uid,
-                                             @RequestParam("cid") @NotNull Integer cid) {
-        return categoryService.getArticleByCategory(uid, cid);
+    @RequestMapping(value = "/articles", method = {RequestMethod.POST, RequestMethod.GET})
+    public ResponseBean listArticlesByUidAndCid(@RequestParam("uid") @NotNull Integer uid,
+                                                @RequestParam("cid") @NotNull Integer cid) {
+        return categoryService.addCategory(uid, cid);
     }
 
-
+    /**
+     * @param uid 用户id
+     * @return Res
+     */
+    @RequestMapping(value = "/allByUid", method = {RequestMethod.POST, RequestMethod.GET})
+    public ResponseBean listAllCategoriesByUid(@RequestParam("uid") Integer uid) {
+        return categoryService.listAllCategoriesByUid(uid);
+    }
 }

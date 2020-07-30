@@ -1,6 +1,7 @@
 package com.weizhiblog.mapper;
 
 import com.weizhiblog.bean.Comments;
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
@@ -103,49 +104,6 @@ public interface CommentsMapper {
      *************************************************************/
 
     /**
-     * 根据文章id获取评论
-     *
-     * @param aid 文章id
-     * @return 获取成功则返回1
-     */
-    List<Comments> ListCommentsByAid(Integer aid);
-
-    /**
-     * 通过文章id删除所有评论
-     *
-     * @param aid 文章id
-     * @return 获取成功则返回1
-     */
-    int deleteAllByAid(Integer aid);
-
-    /**
-     * 根据文章id获取一级评论
-     *
-     * @param aid 文章id
-     * @return 删除成功则返回1
-     */
-    List<Comments> ListFirstCommentsByAid(@Param("aid") Integer aid);
-
-    /**
-     * 根据评论id获取所有子评论
-     *
-     * @param id  评论id
-     * @param aid 文章aid
-     * @return 获取成功则返回1
-     */
-    List<Comments> ListCommentsByAid_comments(@Param("id") Integer id, @Param("aid") Integer aid);
-
-    /**
-     * 根据文评论id获取下一级评论
-     *
-     * @param id  评论id
-     * @param aid 文章id
-     * @return 获取成功则返回1
-     */
-    List<Comments> ListFirstCommentsByAid_comments(@Param("id") Integer id, @Param("aid") Integer aid);
-
-
-    /**
      * 该文章的所有评论
      *
      * @param aid 文章id
@@ -153,4 +111,18 @@ public interface CommentsMapper {
      */
     @Select("SELECT * from comments WHERE aid = #{aid}")
     List<Comments> listCommentsByAid(Integer aid);
+
+    /**
+     * @param uid
+     * @return
+     */
+    @Delete("DELETE FROM comments WHERE uid = #{uid}")
+    int deleteCommentsByUid(Integer uid);
+
+    /**
+     * @param pid
+     * @return
+     */
+    @Select("SELECT * FROM comments WHERE parentId = #{pid} ")
+    List<Comments> listChildrenCommentsByPid(Integer pid);
 }

@@ -1,11 +1,13 @@
 package com.weizhiblog.controller;
 
 import com.weizhiblog.bean.ResponseBean;
-import com.weizhiblog.bean.Roles;
 import com.weizhiblog.service.RoleService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.constraints.NotNull;
 
@@ -19,40 +21,42 @@ import javax.validation.constraints.NotNull;
  */
 @Log4j2
 @RestController
-@RequestMapping("/comments")
+@RequestMapping("/role")
 public class RoleController {
     @Autowired
     RoleService roleService;
+
     /**
      * 判断该用户是否是管理员
-     * @param id 用户id
+     *
+     * @param uid 用户id
      * @return 是或者否
      */
-    @RequestMapping(value = "/update", method = {RequestMethod.POST,RequestMethod.GET})
-    public ResponseBean Role_adJudge(@RequestParam("id") @NotNull Integer id){
-        return roleService.judgeRole_ad(id);
+    @RequestMapping(value = "/isAdmin", method = {RequestMethod.POST, RequestMethod.GET})
+    public ResponseBean isAdmin(@RequestParam("uid") @NotNull Integer uid) {
+        return roleService.isAdmin(uid);
     }
+
     /**
      * 将该用户设置成管理员
-     * @param id 用户id
-     * @param roles 角色信息
+     *
+     * @param uid 用户id
      * @return 是否更新成功
      */
-    @RequestMapping(value = "/update/ad", method = {RequestMethod.POST,RequestMethod.GET})
-    public ResponseBean Role_adUpdate(@RequestParam("id") @NotNull Integer id,
-                                      @RequestBody Roles roles){
-        return roleService.updateRole_ad(id,roles);
+    @RequestMapping(value = "/setAdmin", method = {RequestMethod.POST, RequestMethod.GET})
+    public ResponseBean setAdmin(@RequestParam("uid") @NotNull Integer uid) {
+        return roleService.setAdmin(uid);
     }
+
     /**
      * 将该用户设置成普通用户
-     * @param id 用户id
-     * @param roles 角色信息
-     * @return  是否更新成功
+     *
+     * @param uid 用户id
+     * @return 是否更新成功
      */
-    @RequestMapping(value = "/update/com", method = {RequestMethod.POST,RequestMethod.GET})
-    public ResponseBean Role_comUpdate(@RequestParam("id") @NotNull Integer id,
-                                       @RequestBody Roles roles){
-        return roleService.updateRole_com(id,roles);
+    @RequestMapping(value = "/setOrdinary", method = {RequestMethod.POST, RequestMethod.GET})
+    public ResponseBean setOrdinary(@RequestParam("uid") @NotNull Integer uid) {
+        return roleService.setOrdinary(uid);
     }
 
 

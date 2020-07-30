@@ -29,8 +29,8 @@ public class Comments {
     private Timestamp publishTime;
 
     /**
-    * -1表示正常回复，其他值表示是评论的回复
-    */
+     * -1表示正常回复，其他值表示是评论的回复
+     */
     private Integer parentId;
 
     /**

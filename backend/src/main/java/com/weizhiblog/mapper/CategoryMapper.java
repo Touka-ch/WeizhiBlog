@@ -1,6 +1,7 @@
 package com.weizhiblog.mapper;
 
 import com.weizhiblog.bean.Category;
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
@@ -67,9 +68,15 @@ public interface CategoryMapper {
 
     int batchInsert(@Param("list") List<Category> list);
 
-    Category getCategoryByCateName(String catename);
-
     @Select("SELECT * from category WHERE id = #{cid} AND uid = #{uid}")
     Category getCategoryByCidAndUid(Integer cid, Integer uid);
 
+    @Select("SELECT * FROM category WHERE uid = #{uid} AND cateName = #{cateName}")
+    Category getCategoryByUidAndCateName(Integer uid,String cateName);
+
+    @Delete("DELETE FROM category WHERE uid = #{uid} ")
+    int deleteCategoryByUid(Integer uid);
+
+    @Select("SELECT * FROM category WHERE uid = #{uid} ")
+    List<Category> listCategoriesByUid(Integer uid);
 }

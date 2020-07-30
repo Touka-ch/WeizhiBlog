@@ -390,7 +390,7 @@
         where nickname = #{nickname,jdbcType=VARCHAR};
     </select>
     <select id="listUsers" resultMap="BaseResultMap">
-    select *
-    from user ;
-</select>
+        select *
+        from user ;
+    </select>
 </mapper>

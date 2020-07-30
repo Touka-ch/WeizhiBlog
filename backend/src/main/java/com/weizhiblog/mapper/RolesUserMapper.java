@@ -1,8 +1,10 @@
 package com.weizhiblog.mapper;
 
 import com.weizhiblog.bean.RolesUser;
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
 
@@ -29,4 +31,10 @@ public interface RolesUserMapper {
     int updateBatchSelective(List<RolesUser> list);
 
     int batchInsert(@Param("list") List<RolesUser> list);
+
+    @Select("SELECT * from roles_user WHERE uid = #{uid}")
+    List<RolesUser> listRolesUserByUid(Integer uid);
+
+    @Delete("DELETE FROM roles_user WHERE uid = #{uid} ")
+    int deleteRolesUsersByUid(Integer uid);
 }
