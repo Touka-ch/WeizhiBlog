@@ -1,0 +1,77 @@
+package com.weizhiblog.utils;
+
+
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.*;
+import java.util.UUID;
+
+/**
+ * 文件操作工具类
+ */
+@Slf4j
+public class FileUtils {
+
+    /**
+     * 写入文件
+     * @param target
+     * @param src
+     * @throws IOException
+     */
+    public static void write(String target, InputStream src) throws IOException {
+        log.info(target);
+        OutputStream os = new FileOutputStream(new File(target));
+        byte[] buf = new byte[1024];
+        int len;
+        while (-1 != (len = src.read(buf))) {
+            os.write(buf,0,len);
+        }
+        os.flush();
+        os.close();
+    }
+
+    /**
+     * 分块写入文件
+     * @param target
+     * @param targetSize
+     * @param src
+     * @param srcSize
+     * @param chunks
+     * @param chunk
+     * @throws IOException
+     */
+    public static void writeWithBlok(String target, Long targetSize, InputStream src, Long srcSize, Integer chunks, Integer chunk) throws IOException {
+        RandomAccessFile randomAccessFile = new RandomAccessFile(target,"rw");
+        randomAccessFile.setLength(targetSize);
+        if (chunk == chunks - 1 && chunk != 0) {
+            randomAccessFile.seek(chunk * (targetSize - srcSize) / chunk);
+        } else {
+            randomAccessFile.seek(chunk * srcSize);
+        }
+        byte[] buf = new byte[1024];
+        int len;
+        while (-1 != (len = src.read(buf))) {
+            randomAccessFile.write(buf,0,len);
+        }
+        randomAccessFile.close();
+    }
+
+    /**
+     * 生成随机文件名
+     * @return
+     */
+    public static String generateFileName() {
+        return UUID.randomUUID().toString();
+    }
+
+    /**
+     * 获取文件扩展名
+     * @param file
+     * @return
+     */
+    public static String getExt(MultipartFile file) {
+        String fileName = file.getOriginalFilename();
+        return fileName.substring(fileName.lastIndexOf(".") + 1);
+    }
+}

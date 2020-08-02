@@ -92,65 +92,6 @@ public class CategoryService {
     }
 
     /**
-     * 修改目录
-     *
-     * @param category 目录信息
-     * @return 是否修改成功
-     * 关于 status
-     * 1：更新成功
-     * 0：未知原因
-     * -2：该目录不存在
-     * -3：未发生改变
-     * -4：目录名称重复
-     */
-    public ResponseBean updateCategory(Category category) {
-        String cateName = category.getCateName();
-        Integer id = category.getId();
-        Integer uid = category.getUid();
-        category.setDate(null);
-        category.setUid(null);
-        Category sqlCategory = categoryMapper.selectByPrimaryKey(id);
-        if (sqlCategory == null) {
-            return ResponseBean.builder().status(-2).message("该目录不存在").object(id).build();
-        }
-        if (sqlCategory.getCateName().equals(cateName)) {
-            return ResponseBean.builder().status(-3).message("未发生改变！").object(id).build();
-        }
-        Category categoryByUidAndCateName = categoryMapper.getCategoryByUidAndCateName(uid, cateName);
-        if (categoryByUidAndCateName != null) {
-            return ResponseBean.builder().status(-4).message("目录名称重复！！").object(id).build();
-        }
-        int i = categoryMapper.updateByPrimaryKeySelective(category);
-        if (i == 1) {
-            return ResponseBean.builder().status(1).message("更新成功").object(category).build();
-        } else {
-            throw new MyRuntimeException(ResponseBean.builder().status(0).message("数据库错误！").object(uid).build());
-        }
-    }
-
-    /**
-     * 找出用户在指定目录下所有文章
-     *
-     * @param uid 用户id
-     * @param cid 目录id
-     * @return 是否查询成功
-     */
-    public ResponseBean addCategory(int uid, int cid) {
-        if (userMapper.selectByPrimaryKey(uid) == null) {
-            return ResponseBean.builder().status(-2).message("该用户不存在").object(uid).build();
-        }
-        if (categoryMapper.selectByPrimaryKey(cid) == null) {
-            return ResponseBean.builder().status(-3).message("该目录不存在").object(cid).build();
-        }
-        List<Article> articles = articleMapper.listArticlesByUidAndCid(uid, cid);
-        if (articles == null || articles.size() == 0) {
-            return ResponseBean.builder().status(-4).message("该目录为空目录").object(cid).build();
-        } else {
-            return ResponseBean.builder().status(1).message("成功！").object(articles).build();
-        }
-    }
-
-    /**
      * @param uid uid
      * @return Res
      */
@@ -162,5 +103,53 @@ public class CategoryService {
         return categories == null || categories.size() == 0 ?
                 ResponseBean.builder().status(-3).message("该用户目录为空").build() :
                 ResponseBean.builder().status(1).message("获取成功！").object(categories).build();
+    }
+
+    public ResponseBean putCategory(Integer id, Category category) {
+        String cateName = category.getCateName();
+        Integer categoryId = category.getId();
+        Integer uid = category.getUid();
+        if (!id.equals(categoryId)){
+            return ResponseBean.builder().status(-5).message("id错误").object(categoryId).build();
+        }
+        Category sqlCategory = categoryMapper.selectByPrimaryKey(categoryId);
+        if (sqlCategory == null) {
+            return ResponseBean.builder().status(-2).message("该目录不存在").object(categoryId).build();
+        }
+        Category categoryByUidAndCateName = categoryMapper.getCategoryByUidAndCateName(uid, cateName);
+        if (categoryByUidAndCateName != null && !categoryByUidAndCateName.getId().equals(id)) {
+            return ResponseBean.builder().status(-4).message("目录名称重复！！").object(categoryId).build();
+        }
+        int i = categoryMapper.updateByPrimaryKey(category);
+        if (i == 1) {
+            return ResponseBean.builder().status(1).message("更新成功").object(category).build();
+        } else {
+            throw new MyRuntimeException(ResponseBean.builder().status(0).message("数据库错误！").object(uid).build());
+        }
+    }
+
+    public ResponseBean patchCategory(Integer id, Category category) {
+        String cateName = category.getCateName();
+        Integer categoryId = category.getId();
+        Integer uid = category.getUid();
+        category.setId(id);
+        if (!id.equals(categoryId)){
+            return ResponseBean.builder().status(-5).message("id错误").object(categoryId).build();
+        }
+        Category sqlCategory = categoryMapper.selectByPrimaryKey(categoryId);
+        if (sqlCategory == null) {
+            return ResponseBean.builder().status(-2).message("该目录不存在").object(categoryId).build();
+        }
+        Category categoryByUidAndCateName = categoryMapper.getCategoryByUidAndCateName(uid, cateName);
+        if (categoryByUidAndCateName != null && !categoryByUidAndCateName.getId().equals(id)) {
+            return ResponseBean.builder().status(-4).message("目录名称重复！！").object(categoryId).build();
+        }
+        log.info(category);
+        int i = categoryMapper.updateByPrimaryKeySelective(category);
+        if (i == 1) {
+            return ResponseBean.builder().status(1).message("更新成功").object(categoryMapper.selectByPrimaryKey(category.getId())).build();
+        } else {
+            throw new MyRuntimeException(ResponseBean.builder().status(0).message("数据库错误！").object(uid).build());
+        }
     }
 }

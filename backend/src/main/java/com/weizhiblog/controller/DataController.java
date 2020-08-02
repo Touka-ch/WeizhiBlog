@@ -3,9 +3,9 @@ package com.weizhiblog.controller;
 import com.weizhiblog.bean.ResponseBean;
 import com.weizhiblog.service.DataService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /*
@@ -27,8 +27,8 @@ public class DataController {
      * @param uid 用户id
      * @return ResponseBean
      */
-    @RequestMapping(value = "/pv", method = {RequestMethod.POST, RequestMethod.GET})
-    public ResponseBean getPvNumByUserId(@RequestParam("uid") Integer uid) {
+    @GetMapping("/pv/{uid}")
+    public ResponseBean getPvNumByUserId(@PathVariable("uid") Integer uid) {
         return dataService.getPvNumByUserId(uid);
     }
 
@@ -38,8 +38,8 @@ public class DataController {
      * @param uid 用户id
      * @return ResponseBean
      */
-    @RequestMapping(value = "/like", method = {RequestMethod.POST, RequestMethod.GET})
-    public ResponseBean getLikeNumByUserId(@RequestParam("uid") Integer uid) {
+    @GetMapping("/like/{uid}")
+    public ResponseBean getLikeNumByUserId(@PathVariable("uid") Integer uid) {
         return dataService.getLikeNumByUserId(uid);
     }
 
@@ -49,8 +49,8 @@ public class DataController {
      * @param uid 用户id
      * @return ResponseBean
      */
-    @RequestMapping(value = "/comment", method = {RequestMethod.POST, RequestMethod.GET})
-    public ResponseBean getCommentNumByUserId(@RequestParam("uid") Integer uid) {
+    @GetMapping("/comment/{uid}")
+    public ResponseBean getCommentNumByUserId(@PathVariable("uid") Integer uid) {
         return dataService.getCommentNumByUserId(uid);
     }
 
@@ -61,9 +61,9 @@ public class DataController {
      * @param n   天数
      * @return ResponseBean
      */
-    @RequestMapping(value = "/pvNDay", method = {RequestMethod.POST, RequestMethod.GET})
-    public ResponseBean getPvNumInNDayByUserId(@RequestParam("uid") Integer uid,
-                                               @RequestParam("n") Integer n) {
+    @GetMapping("/pv/{uid}/{n}")
+    public ResponseBean getPvNumInNDayByUserId(@PathVariable("uid") Integer uid,
+                                               @PathVariable("n") Integer n) {
         return dataService.getPvNumInNDayByUserId(uid, n);
     }
 
@@ -74,9 +74,9 @@ public class DataController {
      * @param n   天数
      * @return ResponseBean
      */
-    @RequestMapping(value = "/likeNDay", method = {RequestMethod.POST, RequestMethod.GET})
-    public ResponseBean getLikeNumInNDayByUserId(@RequestParam("uid") Integer uid,
-                                                 @RequestParam("n") Integer n) {
+    @GetMapping("like/{uid}/{n}")
+    public ResponseBean getLikeNumInNDayByUserId(@PathVariable("uid") Integer uid,
+                                                 @PathVariable("n") Integer n) {
         return dataService.getLikeNumInNDayByUserId(uid, n);
     }
 
@@ -87,9 +87,9 @@ public class DataController {
      * @param n   天数
      * @return ResponseBean
      */
-    @RequestMapping(value = "/commentNDay", method = {RequestMethod.POST, RequestMethod.GET})
-    public ResponseBean getCommentNumInNDayByUserId(@RequestParam("uid") Integer uid,
-                                                    @RequestParam("n") Integer n) {
+    @GetMapping("comment/{uid}/{n}")
+    public ResponseBean getCommentNumInNDayByUserId(@PathVariable("uid") Integer uid,
+                                                    @PathVariable("n") Integer n) {
         return dataService.getCommentNumInNDayByUserId(uid, n);
     }
 
