@@ -19,96 +19,48 @@ import javax.validation.constraints.NotNull;
  */
 @Log4j2
 @RestController
-@RequestMapping("/comment")
+@RequestMapping("/comments")
 public class CommentController {
     @Autowired
     CommentService commentService;
 
-    /**
-     * 该文章添加评论
-     *
-     * @param comment 评论记录
-     * @return 是否添加成功
-     */
-    @RequestMapping(value = "/add", method = {RequestMethod.POST})
+
+    @PostMapping
     public ResponseBean addComments(@RequestBody Comments comment) {
         return commentService.addComment(comment);
     }
 
-    /**
-     * 删除文章的某条评论
-     *
-     * @param id 评论id
-     * @return 是否删除成功
-     */
-    @RequestMapping(value = "/delete", method = {RequestMethod.POST, RequestMethod.DELETE})
-    public ResponseBean deleteComment(@RequestParam("id") @NotNull Integer id) {
+
+    @DeleteMapping("/{id}")
+    public ResponseBean deleteComment(@PathVariable("id") @NotNull Integer id) {
         return commentService.deleteComment(id);
     }
 
-    /**
-     * 删除某个文章的所有评论
-     *
-     * @param aid 文章所属id
-     * @return 是否删除成功
-     */
-    @RequestMapping(value = "/delete/all", method = {RequestMethod.POST, RequestMethod.DELETE})
-    public ResponseBean deleteAllCommentsByAid(@RequestParam("aid") @NotNull Integer aid) {
+    @DeleteMapping("/article/{aid}")
+    public ResponseBean deleteAllCommentsByAid(@PathVariable("aid") @NotNull Integer aid) {
         return commentService.deleteAllCommentsByAid(aid);
     }
 
-    /**
-     * 更新某个文章的某条评论
-     *
-     * @param comment 评论记录
-     * @return 是否更新成功
-     */
-    @RequestMapping(value = "/update", method = {RequestMethod.POST, RequestMethod.PUT})
-    public ResponseBean updateComment(@RequestBody Comments comment) {
-        return commentService.updateComment(comment);
+    @PutMapping("/{id}")
+    public ResponseBean putComment(@PathVariable Integer id,
+                                     @RequestBody Comments comment) {
+        return commentService.putComment(id,comment);
     }
 
-    /**
-     * 查看某个文章的所有评论
-     *
-     * @param aid 文章id
-     * @return 获取的评论
-     */
-    @RequestMapping(value = "/all", method = {RequestMethod.POST, RequestMethod.GET})
-    public ResponseBean listAllCommentsByAid(@RequestParam("aid") @NotNull Integer aid) {
+    @PatchMapping("/{id}")
+    public ResponseBean patchComment(@PathVariable Integer id,
+                                     @RequestBody Comments comment) {
+        return commentService.patchComment(id,comment);
+    }
+
+
+    @GetMapping("/article/{aid}")
+    public ResponseBean listAllCommentsByAid(@PathVariable("aid") @NotNull Integer aid) {
         return commentService.listAllCommentsByAid(aid);
     }
 
-    /**
-     * 查看某个文章的一级评论
-     *
-     * @param aid 文章id
-     * @return 获取的评论
-     */
-    @RequestMapping(value = "/all/level1", method = {RequestMethod.POST, RequestMethod.GET})
-    public ResponseBean listAllLevel1CommentsByAid(@RequestParam("aid") @NotNull Integer aid) {
-        return commentService.listAllLevel1CommentsByAid(aid);
-    }
-
-    /**
-     * 查看某个文章某条评论的所有子评论
-     *
-     * @param id 评论id
-     * @return 获取的评论
-     */
-    @RequestMapping(value = "/children", method = {RequestMethod.POST, RequestMethod.GET})
-    public ResponseBean listAllChildrenComments(@RequestParam("id") @NotNull Integer id) {
-        return commentService.listAllChildrenComments(id);
-    }
-
-    /**
-     * 查看某个文章某条评论的所有下一级评论
-     *
-     * @param id 评论id
-     * @return 获取的评论
-     */
-    @RequestMapping(value = "/nextLevel", method = {RequestMethod.POST, RequestMethod.GET})
-    public ResponseBean listNextLevelComments(@RequestParam("id") @NotNull Integer id) {
+    @GetMapping("/{id}/level1")
+    public ResponseBean listNextLevelComments(@PathVariable("id") @NotNull Integer id) {
         return commentService.listNextLevelComments(id);
     }
 

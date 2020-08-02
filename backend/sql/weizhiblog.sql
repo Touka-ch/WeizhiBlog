@@ -13,8 +13,8 @@ create table category
 (
     id       int auto_increment
         primary key,
-    cateName varchar(64) null,
-    date     date        null,
+    cateName varchar(64) ,
+    date     date        ,
     uid      int         not null
 );
 
@@ -22,14 +22,14 @@ create table roles
 (
     id   int auto_increment
         primary key,
-    name varchar(32) null
+    name varchar(32)
 );
 
 create table tags
 (
     id      int auto_increment
         primary key,
-    tagName varchar(32) null,
+    tagName varchar(32),
     constraint tagName
         unique (tagName)
 );
@@ -38,13 +38,13 @@ create table user
 (
     id       int auto_increment
         primary key,
-    username varchar(64)          null,
-    nickname varchar(64)          null,
-    password varchar(255)         null,
-    enabled  tinyint(1) default 1 null,
-    email    varchar(64)          null,
-    userface varchar(255)         null,
-    regTime  datetime             null
+    username varchar(64)          ,
+    nickname varchar(64)          ,
+    password varchar(255)         ,
+    enabled  tinyint(1) default 1 ,
+    email    varchar(64)          ,
+    userface varchar(255)         ,
+    regTime  datetime
 );
 
 create table article
@@ -52,16 +52,16 @@ create table article
     id             int auto_increment
         primary key,
     title          varchar(255)         not null,
-    mdContent      text                 null comment 'md文件源码',
-    htmlContent    text                 null comment 'html源码',
-    summary        text                 null,
+    mdContent      text                  comment 'md文件源码',
+    htmlContent    text                  comment 'html源码',
+    summary        text                 ,
     cid            int                  not null,
     uid            int                  not null,
-    publishDate    timestamp            null,
-    editTime       timestamp            null,
+    publishDate    timestamp            ,
+    editTime       timestamp            ,
     commentNum     int        default 0 not null,
     likeNum        int        default 0 not null,
-    state          int                  null comment '0表示草稿箱，1表示已发表，2表示已删除',
+    state          int                   comment '0表示草稿箱，1表示已发表，2表示已删除',
     pageView       int        default 0 not null,
     publicToOthers tinyint(1) default 0 not null,
     constraint article_ibfk_1
@@ -80,8 +80,8 @@ create table article_tags
 (
     id  int auto_increment
         primary key,
-    aid int null,
-    tid int null,
+    aid int ,
+    tid int ,
     constraint article_tags_ibfk_1
         foreign key (aid) references article (id)
             on delete cascade,
@@ -96,11 +96,11 @@ create table comments
 (
     id          int auto_increment
         primary key,
-    aid         int       null,
-    content     text      null,
-    publishTime timestamp null,
-    parentId    int       null comment '-1表示正常回复，其他值表示是评论的回复',
-    uid         int       null,
+    aid         int       ,
+    content     text      ,
+    publishTime timestamp ,
+    parentId    int        comment '-1表示正常回复，其他值表示是评论的回复',
+    uid         int       ,
     constraint comments_ibfk_1
         foreign key (aid) references article (id),
     constraint comments_ibfk_2
@@ -122,12 +122,12 @@ create table data
 (
     id         int auto_increment
         primary key,
-    uid        int                                 null,
-    aid        int                                 null,
-    day        timestamp default CURRENT_TIMESTAMP null,
-    pv         int                                 null,
-    commentNum int                                 null,
-    likeNum    int                                 null,
+    uid        int                                 ,
+    aid        int                                 ,
+    day        timestamp default CURRENT_TIMESTAMP ,
+    pv         int                                 ,
+    commentNum int                                 ,
+    likeNum    int                                 ,
     constraint data_article_aid_id_fk
         foreign key (aid) references article (id),
     constraint data_user_uid_id
@@ -138,8 +138,8 @@ create table roles_user
 (
     id  int auto_increment
         primary key,
-    rid int default 2 null,
-    uid int           null,
+    rid int default 2 ,
+    uid int           ,
     constraint roles_user_ibfk_1
         foreign key (rid) references roles (id),
     constraint roles_user_ibfk_2
@@ -150,8 +150,8 @@ create table roles_user
 create index rid
     on roles_user (rid);
 
-create
-    definer = root@localhost procedure countData()
+delimiter //
+create procedure countData()
 begin
     declare aid int default 0;
     declare total int default 0;
@@ -161,7 +161,7 @@ begin
     declare commentNum int default 0;
     declare likeNum int default 0;
     declare done int default 0;
-    DECLARE cur CURSOR FOR SELECT a.id, a.uid, a.pageView, a.likeNum, a.commentNum from article a;
+    DECLARE cur CURSOR FOR SELECT a.id,a.uid,a.pageView,a.likeNum,a.commentNum from article a;
     -- 指定游标循环结束时的返回值
     declare continue handler for not found set done = 1;
     -- 打开游标
@@ -169,19 +169,17 @@ begin
     -- 初始化 变量
     set total = 0;
     -- while 循环
-    while done != 1
-        do
+    while done != 1 do
             fetch cur into aid,uid,pageView,likeNum,commentNum;
-            insert into data(`uid`, `aid`, `day`, `pv`, `commentNum`, `likeNum`)
-            values (uid, aid, day, pageView, likeNum, commentNum);
+            insert into data(`uid`,`aid`,`day`,`pv`,`commentNum`,`likeNum`) values (uid,aid,day,pageView,likeNum,commentNum);
         end while;
     -- 关闭游标
     close cur;
-end;
+end//
+delimiter ;
 
-create definer = root@localhost event countData on schedule
+create event countData on schedule
     every '24' HOUR
-        starts '2020-07-29 10:32:44'
     on completion preserve
     enable
     do

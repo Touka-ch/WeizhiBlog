@@ -16,163 +16,67 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import javax.validation.constraints.NotNull;
 
 @RestController
-@RequestMapping("/article")
+@RequestMapping("/articles")
 public class ArticleController {
     @Autowired
     ArticleService articleService;
 
-    /**
-     * 添加一篇文章
-     *
-     * @param article 文章对象
-     * @return ResponseBean
-     */
-    @RequestMapping(value = "/add", method = {RequestMethod.POST, RequestMethod.PUT})
+    @PostMapping
     public ResponseBean insertArticle(@RequestBody Article article) {
         return articleService.insertArticle(article);
     }
 
-
-    /**
-     * @param id 文章id
-     * @return Res
-     */
-    @RequestMapping(value = "/delete", method = {RequestMethod.POST, RequestMethod.PUT})
-    public ResponseBean deleteArticle(@RequestParam("id") Integer id) {
+    @DeleteMapping("/{id}")
+    public ResponseBean deleteArticle(@PathVariable("id") Integer id) {
         return articleService.deleteArticle(id);
     }
 
-    /**
-     * 修改文章的存在状态 1为正常、2为删除、0为草稿
-     *
-     * @param id    文章id
-     * @param state 文章存在状态
-     * @return ResponseBean
-     */
-    @RequestMapping(value = "/state", method = {RequestMethod.POST, RequestMethod.PUT})
-    public ResponseBean updateArticleState(@RequestParam("id") Integer id,
-                                           @RequestParam("state") Integer state) {
-        return articleService.updateArticleState(id, state);
+
+    @PutMapping("/{id}")
+    public ResponseBean putArticle(@NotNull @PathVariable Integer id,
+                                   @RequestBody @Validated Article article) {
+        return articleService.putArticle(id, article);
     }
 
-    /**
-     * 批量修改文章的存在状态
-     *
-     * @param ids   文章id的集合
-     * @param state 文章存在状态
-     * @return ResponseBean
-     */
-    @RequestMapping(value = "/state/selective", method = {RequestMethod.POST, RequestMethod.PUT})
-    public ResponseBean updateSelectiveArticleState(@RequestParam("ids") List<Integer> ids,
-                                                    @RequestParam("state") Integer state) {
-        return articleService.updateSelectiveArticleState(ids, state);
+    @PatchMapping("/{id}")
+    public ResponseBean patchArticle(@NotNull @PathVariable Integer id,
+                                     @RequestBody @Validated Article article) {
+        return articleService.patchArticle(id, article);
     }
 
-    /**
-     * 修改文章
-     *
-     * @param article 文章
-     * @return ResponseBean
-     */
-    @RequestMapping(value = "/update", method = {RequestMethod.POST})
-    public ResponseBean updateArticle(@RequestBody @Validated Article article) {
-        return articleService.updateArticle(article);
-    }
-
-    /**
-     * 设置文章的公开状态是私密还是公开
-     *
-     * @param id           文章id
-     * @param publicStatus 文章公开状态
-     * @return ResponseBean
-     */
-    @RequestMapping(value = "/publicStatus", method = {RequestMethod.POST, RequestMethod.PUT})
-    public ResponseBean updateArticlePublicStatus(@RequestParam("id") Integer id,
-                                                  @RequestParam("publicStatus") Boolean publicStatus) {
-        return articleService.updateArticlePublicStatus(id, publicStatus);
-    }
-
-    /**
-     * 获取所有文章
-     *
-     * @return ResponseBean
-     */
-    @RequestMapping(value = "/all", method = {RequestMethod.POST, RequestMethod.GET})
+    @GetMapping
     public ResponseBean listAllArticles() {
         return articleService.listAllArticles();
     }
 
-    /**
-     * 获取某用户所有文章
-     *
-     * @param uid 用户id
-     * @return ResponseBean
-     */
-    @RequestMapping(value = "/fromUser", method = {RequestMethod.POST, RequestMethod.GET})
-    public ResponseBean listAllArticlesFromUser(@RequestParam("uid") Integer uid) {
+    @GetMapping("/user/{uid}")
+    public ResponseBean listAllArticlesFromUser(@PathVariable("uid") Integer uid) {
         return articleService.listAllArticlesFromUser(uid);
     }
 
-    /**
-     * 获取打了该标签的所有文章
-     *
-     * @param tid 标签id
-     * @return ResponseBean
-     */
-    @RequestMapping(value = "/fromTag", method = {RequestMethod.POST})
-    public ResponseBean listAllArticlesFromTag(@RequestParam("tid") Integer tid) {
+    @GetMapping("/tag/{tid}")
+    public ResponseBean listAllArticlesFromTag(@PathVariable("tid") Integer tid) {
         return articleService.listAllArticlesFromTag(tid);
     }
 
-    /**
-     * 获取某用户某目录的所有文章
-     *
-     * @param uid 用户id
-     * @param cid 目录id
-     * @return ResponseBean
-     */
-    @RequestMapping(value = "/fromUserCategory", method = {RequestMethod.POST, RequestMethod.GET})
-    public ResponseBean listAllArticlesFromUserAndCategory(@RequestParam("uid") Integer uid,
-                                                           @RequestParam("cid") Integer cid) {
+    @GetMapping("/user/{uid}/category/{cid}")
+    public ResponseBean listAllArticlesFromUserAndCategory(@PathVariable("uid") Integer uid,
+                                                           @PathVariable("cid") Integer cid) {
         return articleService.listAllArticlesFromUserAndCategory(uid, cid);
     }
 
-    /**
-     * 获取某用户打了某标签
-     *
-     * @param uid 用户id
-     * @param tid 标签id
-     * @return ResponseBean
-     */
-    @RequestMapping(value = "/fromUserTag", method = {RequestMethod.POST})
-    public ResponseBean listAllArticlesFromUserAndTag(@RequestParam("uid") Integer uid,
-                                                      @RequestParam("tid") Integer tid) {
+    @GetMapping("/user/{uid}/tag/{tid}")
+    public ResponseBean listAllArticlesFromUserAndTag(@PathVariable("uid") Integer uid,
+                                                      @PathVariable("tid") Integer tid) {
         return articleService.listAllArticlesFromUserAndTag(uid, tid);
     }
 
-    /**
-     * 获取某文章的所有标签
-     *
-     * @param id 文章id
-     * @return ResponseBean
-     */
-    @RequestMapping(value = "/allTags", method = {RequestMethod.POST, RequestMethod.GET})
-    public ResponseBean listAllTagsFromArticle(@RequestParam("id") Integer id) {
-        return articleService.listAllTagsFromArticle(id);
-    }
-
-    /**
-     * 获取某文章的所评论
-     *
-     * @param id 文章id
-     * @return ResponseBean
-     */
-    @RequestMapping(value = "/allComments", method = {RequestMethod.POST, RequestMethod.GET})
-    public ResponseBean listAllCommentsFromArticle(@RequestParam("id") Integer id) {
-        return articleService.listAllCommentsFromArticle(id);
+    @GetMapping("/{id}")
+    public ResponseBean getArticleById(@PathVariable("id") Integer id) {
+        return articleService.getArticleById(id);
     }
 
 }

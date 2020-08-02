@@ -11,10 +11,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import javax.validation.constraints.NotNull;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @Service
@@ -83,34 +80,6 @@ public class UserService {
     }
 
     /**
-     * 用户登录
-     *
-     * @param username 用户名
-     * @param password 用户密码
-     * @param captcha  验证码
-     * @return 是否登录成功
-     */
-    public ResponseBean loginUser(String username,
-                                  String password,
-                                  String captcha) {
-        User user = userMapper.getUserByUsername(username);
-        if (user == null) {//用户不存在
-            return ResponseBean.builder().status(-4).message("不存在该用户！").object(username).build();
-        }
-        List<RolesUser> rolesUsers = rolesUserMapper.listRolesUserByUid(user.getId());
-        List<Integer> roles = new ArrayList<>();
-        for (RolesUser rolesUser : rolesUsers) {
-            roles.add(rolesUser.getRid());
-        }
-        Map<String, Object> map = new HashMap<>();
-        map.put("user", user);
-        map.put("roles", roles);
-        return !user.getPassword().equals(password) ?
-                ResponseBean.builder().status(-2).message("密码错误！").build() :
-                ResponseBean.builder().status(1).message("登录成功！").object(map).build();
-    }
-
-    /**
      * 删除用户
      *
      * @param id 用户id
@@ -153,51 +122,7 @@ public class UserService {
         }
     }
 
-    /**
-     * 更新用户
-     *
-     * @param user 用户信息
-     * @return 是否更新成功
-     */
-    @Transactional
-    public ResponseBean updateUser(User user) {
-        if (user.getId() == null) {
-            return ResponseBean.builder().status(-5).message("id不能为空！").build();
-        }
-        User sqlUser = userMapper.selectByPrimaryKey(user.getId());
-        if (sqlUser == null) {
-            return ResponseBean.builder().status(-6).message("此id无对应用户！").object(user.getId()).build();
-        }
-        if (user.getUsername() != null) {
-            sqlUser = userMapper.getUserByUsername(user.getUsername());
-            if (sqlUser != null && !sqlUser.getId().equals(user.getId())) {
-                return ResponseBean.builder().status(-2).message("用户名已被占用！").object(user.getUsername()).build();
-            }
-        }
-        if (user.getEmail() != null) {
-            sqlUser = userMapper.getUserByEmail(user.getEmail());
-            if (sqlUser != null && !sqlUser.getId().equals(user.getId())) {
-                return ResponseBean.builder().status(-3).message("邮箱已被注册！").object(user.getEmail()).build();
-            }
-        }
-        if (user.getNickname() != null) {
-            sqlUser = userMapper.getUserByNickname(user.getNickname());
-            if (sqlUser != null && !sqlUser.getId().equals(user.getId())) {
-                return ResponseBean.builder().status(-4).message("昵称被占用！").object(user.getNickname()).build();
-            }
-        }
-        if (userMapper.updateByPrimaryKeySelective(user) == 1) {
-            return ResponseBean.builder().status(1).message("更新成功！").object(userMapper.selectByPrimaryKey(user.getId())).build();
-        } else {
-            throw new MyRuntimeException(ResponseBean.builder().status(0).message("未知错误！").build());
-        }
-    }
 
-    /**
-     * 获取所有用户
-     *
-     * @return 所有用户
-     */
     public ResponseBean listUsers() {
         List<User> users = userMapper.listUsers();
         if (users == null) {
@@ -206,51 +131,6 @@ public class UserService {
         return users.size() == 0 ?
                 ResponseBean.builder().status(-2).message("用户数量为空！").build() :
                 ResponseBean.builder().status(1).message("获取成功！").object(users).build();
-    }
-
-    /**
-     * 删除选中用户
-     *
-     * @param ids 选中用户列表
-     * @return 是否删除成功
-     */
-    @Transactional
-    public ResponseBean deleteSelectedUsers(List<Integer> ids) {
-        for (Integer id : ids) {
-            if (userMapper.selectByPrimaryKey(id) == null) {
-                throw new MyRuntimeException(ResponseBean.builder().status(-2).message("该用户不存在").object(id).build());
-            }
-            try {
-                this.deleteUser(id);
-            } catch (MyRuntimeException e) {
-                throw e;
-            }
-        }
-        return ResponseBean.builder().status(1).message("删除成功！").build();
-    }
-
-    /**
-     * 更新用户状态
-     *
-     * @param id     用户id
-     * @param enable 新状态
-     * @return 是否更新成功
-     */
-    public ResponseBean updateUserStatus(Integer id,
-                                         boolean enable) {
-        User user = userMapper.selectByPrimaryKey(id);
-        if (user == null) {
-            return ResponseBean.builder().status(-2).message("此id不存在对应用户！").build();
-        }
-        if (user.getEnabled() == enable) {
-            return ResponseBean.builder().status(-3).message("状态未改变！").build();
-        }
-        user.setEnabled(enable);
-        if (userMapper.updateByPrimaryKey(user) == 1) {
-            return ResponseBean.builder().status(1).message("更新成功！").build();
-        } else {
-            throw new MyRuntimeException(ResponseBean.builder().status(0).message("数据库错误！询问管理员！").build());
-        }
     }
 
     /**
@@ -297,4 +177,74 @@ public class UserService {
         }
         return ResponseBean.builder().status(1).message("获取成功！").object(user).build();
     }
+
+    public ResponseBean putUser(Integer id, User user) {
+        if (id == null || user.getId()==null) {
+            return ResponseBean.builder().status(-5).message("id不能为空！").build();
+        }
+        if (!id.equals(user.getId())){
+            return ResponseBean.builder().status(-7).message("id有误！").build();
+        }
+        User sqlUser = userMapper.selectByPrimaryKey(id);
+        if (sqlUser == null) {
+            return ResponseBean.builder().status(-6).message("此id无对应用户！").object(id).build();
+        }
+        if (user.getUsername() != null) {
+            sqlUser = userMapper.getUserByUsername(user.getUsername());
+            if (sqlUser != null && !sqlUser.getId().equals(id)) {
+                return ResponseBean.builder().status(-2).message("用户名已被占用！").object(user.getUsername()).build();
+            }
+        }
+        if (user.getEmail() != null) {
+            sqlUser = userMapper.getUserByEmail(user.getEmail());
+            if (sqlUser != null && !sqlUser.getId().equals(id)) {
+                log.info(sqlUser.toString());
+                log.info(id.toString());
+                return ResponseBean.builder().status(-3).message("邮箱已被注册！").object(user.getEmail()).build();
+            }
+        }
+        if (user.getNickname() != null) {
+            sqlUser = userMapper.getUserByNickname(user.getNickname());
+            if (sqlUser != null && !sqlUser.getId().equals(user.getId())) {
+                return ResponseBean.builder().status(-4).message("昵称被占用！").object(user.getNickname()).build();
+            }
+        }
+        userMapper.updateByPrimaryKey(user);
+        return ResponseBean.builder().status(1).message("更新成功！").object(userMapper.selectByPrimaryKey(id)).build();
+    }
+
+    public ResponseBean patchUser(Integer id, User user) {
+        if (id == null) {
+            return ResponseBean.builder().status(-5).message("id不能为空！").build();
+        }
+        User sqlUser = userMapper.selectByPrimaryKey(id);
+        if (sqlUser == null) {
+            return ResponseBean.builder().status(-6).message("此id无对应用户！").object(id).build();
+        }
+        if (user.getUsername() != null) {
+            sqlUser = userMapper.getUserByUsername(user.getUsername());
+            if (sqlUser != null && !sqlUser.getId().equals(id)) {
+                return ResponseBean.builder().status(-2).message("用户名已被占用！").object(user.getUsername()).build();
+            }
+        }
+        if (user.getEmail() != null) {
+            sqlUser = userMapper.getUserByEmail(user.getEmail());
+            if (sqlUser != null && !sqlUser.getId().equals(id)) {
+                return ResponseBean.builder().status(-3).message("邮箱已被注册！").object(user.getEmail()).build();
+            }
+        }
+        if (user.getNickname() != null) {
+            sqlUser = userMapper.getUserByNickname(user.getNickname());
+            if (sqlUser != null && !sqlUser.getId().equals(user.getId())) {
+                return ResponseBean.builder().status(-4).message("昵称被占用！").object(user.getNickname()).build();
+            }
+        }
+        int i = userMapper.updateByPrimaryKeySelective(user);
+        if (i == 1) {
+            return ResponseBean.builder().status(1).message("更新成功！").object(userMapper.selectByPrimaryKey(user.getId())).build();
+        } else {
+            throw new MyRuntimeException(ResponseBean.builder().status(0).message("未知错误！").build());
+        }
+    }
+
 }
