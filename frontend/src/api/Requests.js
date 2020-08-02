@@ -1,65 +1,17 @@
 import { Service } from './Service.js'
-export function UserLogin() {
-  //UserLogin-登录
+/*
+ * post   注册        {{base}}/users
+ * delete 删除        {{base}}/users/:id
+ * put    更新(全部)   {{base}}/users/:id
+ * patch  更新（部分）  {{base}}/users/:id
+ * get    所有用户     {{base}}/users
+ * get    单个用户     {{base}}/users/:id
+ */
+export function userRequest(method, id, data) {
   return Service({
-    url: '/user/login',
-    method: 'post'
-  })
-}
-export function UserSignUP() {
-  //UserSignUp-注册
-  return Service({
-    url: '/user/signup',
-    method: 'post'
-  })
-}
-export function UserDelete() {
-  //UserDelete-删除
-  return Service({
-    url: '/user/delete',
-    method: 'post'
-  })
-}
-export function UserDeleteSelective() {
-  //UserDeleteSelective-删除多个用户
-  return Service({
-    url: '/user/delete/selective',
-    method: 'post'
-  })
-}
-export function UserUpdate() {
-  //UserUpdate-更新
-  return Service({
-    url: '/user/update',
-    method: 'post'
-  })
-}
-export function UserEnable() {
-  //UserEnable-更新用户状态
-  return Service({
-    url: '/user/enable',
-    method: 'post'
-  })
-}
-export function UserUpdatePassword() {
-  //UserUpdatePassword-更新用户密码
-  return Service({
-    url: '/user/password',
-    method: 'post'
-  })
-}
-export function ListAllUser() {
-  //ListAllUser-查询所有用户
-  return Service({
-    url: '/user/all',
-    method: 'get'
-  })
-}
-export function GetUserInfo() {
-  //GetUserInfo-查询单个用户
-  return Service({
-    url: '/user/88888',
-    method: 'get'
+    method: method,
+    url: '/users/' + (id ? id : ''),
+    data: JSON.stringify(data)
   })
 }
 export function addArticle() {

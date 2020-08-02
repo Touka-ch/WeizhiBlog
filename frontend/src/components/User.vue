@@ -65,6 +65,7 @@
 </template>
 
 <script>
+import { userRequest } from '../api/Requests'
 export default {
   name: 'User',
   computed: {
@@ -83,6 +84,7 @@ export default {
         region: ''
       },
       ruleForm: {
+        id: '',
         username: '',
         password: '',
         nickname: '',
@@ -103,21 +105,25 @@ export default {
       tableData: [{}],
       search: '',
       info: '',
-      errors: ''
+      errors: '',
+      index: null,
+      row: ''
     }
   },
   created() {
-    this.$http.get('/user/all').then(res => {
-      //console.log(res)
-      this.info = res
-      this.tableData = res.object
-      //this.tableData = res.data.object
-      //console.log(res.data.object)
-      this.error()
-    })
+    this.getAllUser()
   },
+  activated() {},
   mounted() {},
   methods: {
+    getAllUser() {
+      //获取所有用户
+      userRequest('get').then(res => {
+        this.info = res
+        this.tableData = res.object
+        this.error()
+      })
+    },
     error() {
       if (this.info.status == 0) this.errors = true
       else {
@@ -139,24 +145,46 @@ export default {
       this.reload()
     },*/
     updateUser() {
-      this.$http.post('/user/update').then(res => {
-        console.log(res)
+      userRequest('patch', this.ruleForm.id, this.ruleForm).then(res => {
+        if (res.status == 1) {
+          this.$notify({
+            title: '成功',
+            message: res.message,
+            type: 'success'
+          })
+          this.getAllUser()
+        } else
+          this.$notify({
+            title: '失败',
+            message: res.message,
+            type: 'error'
+          })
       })
       this.dialogFormVisible = false
     },
     handleEdit(index, row) {
+      this.row = row
       this.dialogFormVisible = true
-      this.ruleForm.username = (index, row).username
-      this.ruleForm.password = (index, row).password
-      this.ruleForm.nickname = (index, row).nickname
-      this.ruleForm.email = (index, row).email
+      this.ruleForm = (index, row)
       //console.log((index, row).email)
     },
     handleDelete(index, row) {
-      this.$http.post('/user/delete').then(res => {
-        console.log(res)
+      //删除用户
+      userRequest('delete', (index, row).id).then(res => {
+        if (res.status == 1) {
+          this.$notify({
+            title: '成功',
+            message: '删除成功',
+            type: 'success'
+          })
+          this.getAllUser()
+        } else
+          this.$notify({
+            title: '失败',
+            message: '删除失败',
+            type: 'error'
+          })
       })
-      console.log(index, row)
     }
   }
 }
