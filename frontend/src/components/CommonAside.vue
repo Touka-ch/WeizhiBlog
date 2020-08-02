@@ -93,7 +93,7 @@ export default {
     collapse() {
       this.isCollapse = !this.isCollapse
       this.$emit('collapse', this.isCollapse)
-      console.log('传送isCollapse')
+      //console.log('传送isCollapse')
       return this.isCollapse
     },
     clickMenu(item) {
@@ -107,8 +107,5 @@ export default {
 .el-menu {
   height: 100%;
   border: none;
-}
-.el-button {
-  folat: right;
 }
 </style>

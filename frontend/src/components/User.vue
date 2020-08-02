@@ -5,7 +5,7 @@
       <!--:data="tableData.filter(data => !search || data.username.toLowerCase().includes(search.toLowerCase()))"-->
       <el-table-column label="用户名" prop="username" sortable> </el-table-column>
       <el-table-column label="密码" prop="password"> </el-table-column>
-      <el-table-column label="昵称" prop="nickname"> </el-table-column>
+      <el-table-column label="昵称" prop="nickname" sortable> </el-table-column>
       <el-table-column
         prop="enabled"
         label="启用"
@@ -18,7 +18,7 @@
         filter-placement="bottom-end"
       >
         <template slot-scope="scope">
-          <el-tag :type="scope.row.enabled == true ? 'success' : 'info'">{{ scope.row.enabled }}</el-tag>
+          <el-tag :type="scope.row.enabled === true ? 'success' : 'info'">{{ scope.row.enabled }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column label="角色" prop="roles"> </el-table-column>
@@ -32,7 +32,7 @@
       <el-table-column align="right">
         <template slot="header">
           <!-- slot-scope="scope" -->
-          <input v-model="search" size="mini" placeholder="输入关键字搜索" />
+          <input v-model="search" placeholder="输入关键字搜索" />
         </template>
         <template slot-scope="scope">
           <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
@@ -40,21 +40,20 @@
         </template>
       </el-table-column>
     </el-table>
-    <!-- Form -->
-    <el-dialog title="编辑用户" :visible.sync="dialogFormVisible">
+    <!-- Form  小bug 如果原来用户名或者密码大于20个，不点击输入框的时候，不会报错-->
+    <el-dialog title="编辑用户" :visible.sync="dialogFormVisible" width="500px">
       <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="login-box">
-        <h2 class="login-title">注册新用户</h2>
         <el-form-item label="用户名" prop="username">
-          <el-input placeholder="不少于3个字符" v-model="ruleForm.username"></el-input>
+          <el-input v-model="ruleForm.username"></el-input>
         </el-form-item>
         <el-form-item label="昵称" prop="nickname">
-          <el-input placeholder="想个好听的名字吧!" v-model="ruleForm.nickname"></el-input>
+          <el-input v-model="ruleForm.nickname"></el-input>
         </el-form-item>
         <el-form-item label="密码" prop="password">
-          <el-input type="password" placeholder="不少于3个字符" v-model="ruleForm.password"></el-input>
+          <el-input type="password" v-model="ruleForm.password"></el-input>
         </el-form-item>
         <el-form-item label="邮箱" prop="email">
-          <el-input placeholder="请输入常用的邮箱" v-model="ruleForm.email"></el-input>
+          <el-input v-model="ruleForm.email"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -109,20 +108,24 @@ export default {
   },
   created() {
     this.$http.get('/user/all').then(res => {
-      this.info = res.data
-      this.tableData = res.data.object
+      //console.log(res)
+      this.info = res
+      this.tableData = res.object
       //this.tableData = res.data.object
-      //console.log(res.data)
+      //console.log(res.data.object)
       this.error()
     })
-    //this.error('created')
   },
-  mounted() {
-    this.error()
-  },
+  mounted() {},
   methods: {
     error() {
       if (this.info.status == 0) this.errors = true
+      else {
+        this.$message({
+          message: '数据加载成功',
+          type: 'success'
+        })
+      }
     },
     filterTag(value, row) {
       return row.enabled === value
