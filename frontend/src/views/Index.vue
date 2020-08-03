@@ -2,14 +2,19 @@
   <div>
     <el-container>
       <el-header>
-        <h1 class="header">玮 织 博 客</h1>
+        <div class="header">
+          <el-image
+          src="../assets/images/header.png"
+          :fit="fit">
+          </el-image>
+        </div>
         <div class="nav">
           <el-link icon="el-icon-user" @click="goback">后台登录</el-link>
           <el-link href="">关于</el-link>
           <el-link href="">友链</el-link>
           <el-link href="">统计</el-link>
           <el-link href="">归档</el-link>
-          <el-link href="Index2.vue">首页</el-link>
+          <el-link href="/#/index">首页</el-link>
         </div>
       </el-header>
       <el-main class="el-main">

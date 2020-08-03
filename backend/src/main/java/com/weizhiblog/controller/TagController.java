@@ -1,69 +1,50 @@
 package com.weizhiblog.controller;
 
-import com.weizhiblog.bean.ArticleTags;
 import com.weizhiblog.bean.ResponseBean;
+import com.weizhiblog.service.ArticleService;
 import com.weizhiblog.service.TagService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Log4j2
 @RestController
-@RequestMapping("/tag")
+@RequestMapping("/tags")
 public class TagController {
     @Autowired
     TagService tagService;
+    @Autowired
+    ArticleService articleService;
 
-    /**
-     * 给文章打标签
-     * @param articleTag 文章标签对应关系
-     * @return 是否打标签成功
-     */
-    @RequestMapping(value = "/add", method = {RequestMethod.POST})
-    public ResponseBean tagAdd(@RequestBody @Validated ArticleTags articleTag) {
-        return tagService.addTag(articleTag);
+    @PostMapping("/article/{aid}")
+    public ResponseBean tagAdd(@NotNull @RequestParam("tag") String tag,
+                               @NotNull @PathVariable("aid") Integer aid) {
+        return tagService.addTag(tag, aid);
     }
 
-    /**
-     * 给文章打多个标签
-     * @param articleTags 文章标签对应关系表
-     * @return 是否打标签成功
-     */
-    @RequestMapping(value = "/addaddmutiple", method = {RequestMethod.POST})
-    public ResponseBean tagAdds(@RequestBody @Validated List<ArticleTags> articleTags) {
-        return tagService.addTags(articleTags);
+    @PostMapping("/article/{aid}/multi")
+    public ResponseBean addMultipleTags(@RequestParam("tags") List<String> tags,
+                                        @PathVariable("aid") Integer aid) {
+        return tagService.addTags(tags, aid);
     }
 
-    /**
-     * 删除某文章某个标签
-     * @param id 文章标签对应关系id
-     * @return 是否删除成功
-     */
-    @RequestMapping(value = "/delete", method = {RequestMethod.POST,RequestMethod.DELETE})
-    public ResponseBean tagDelete(@NotNull Integer id) {
-        return tagService.deleteTag(id);
+    @DeleteMapping("/{tid}/article/{aid}")
+    public ResponseBean deleteTagByAidNidTid(@PathVariable("aid") Integer aid,
+                                             @PathVariable("tid") Integer tid) {
+        return tagService.deleteTag(tid, aid);
     }
 
-    /**
-     * 删除某文章所有标签
-     * @param id 文章id
-     * @return 是否删除成功
-     */
-    @RequestMapping(value = "/deleteall", method = {RequestMethod.POST,RequestMethod.DELETE})
-    public ResponseBean tagDeleteAll(@NotNull Integer id) {
-        return tagService.deleteAllTags(id);
+    @DeleteMapping("/article/{aid}")
+    public ResponseBean deleteAllTagsByAid(@NotNull @PathVariable Integer aid) {
+        return tagService.deleteAllTags(aid);
     }
 
-    @RequestMapping(value = "/id", method = {RequestMethod.POST,RequestMethod.GET})
-    public ResponseBean getID(@NotNull String tagName) {
-        return tagService.getTagId(tagName);
+    @GetMapping("/article/{aid}")
+    public ResponseBean listTagsByAid(@NotNull @PathVariable Integer aid) {
+        return articleService.listAllTagsByAid(aid);
     }
 
 }

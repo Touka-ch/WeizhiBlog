@@ -80,5 +80,5 @@ public interface ArticleMapper {
     List<Article> listArticlesByUid(Integer uid);
 
     @Select("SELECT * from article WHERE uid = #{uid} AND cid = #{cid}")
-    List<Article> listArticlesByUidAndCid(Integer uid,Integer cid);
+    List<Article> listArticlesByUidAndCid(Integer uid, Integer cid);
 }

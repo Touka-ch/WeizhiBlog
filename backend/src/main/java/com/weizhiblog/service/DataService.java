@@ -3,13 +3,18 @@ package com.weizhiblog.service;
 import com.weizhiblog.bean.Article;
 import com.weizhiblog.bean.Data;
 import com.weizhiblog.bean.ResponseBean;
+import com.weizhiblog.bean.User;
 import com.weizhiblog.mapper.ArticleMapper;
 import com.weizhiblog.mapper.DataMapper;
 import com.weizhiblog.mapper.UserMapper;
+import com.weizhiblog.utils.DateUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 /*
@@ -20,6 +25,7 @@ import java.util.List;
  * @lastModifiedTime 7月22日   12:44:24
  */
 @Service
+@Slf4j
 public class DataService {
     @Autowired
     ArticleMapper articleMapper;
@@ -35,8 +41,9 @@ public class DataService {
      * @return Res
      */
     public ResponseBean getPvNumByUserId(Integer uid) {
-        if (userMapper.selectByPrimaryKey(uid) == null) {
-            ResponseBean.builder().status(-2).message("该用户不存在！").object(uid).build();
+        User user = userMapper.selectByPrimaryKey(uid);
+        if (user == null) {
+            return ResponseBean.builder().status(-2).message("该用户不存在！").object(uid).build();
         }
         List<Article> articles = articleMapper.listArticlesByUid(uid);
         Integer pv = 0;
@@ -54,7 +61,7 @@ public class DataService {
      */
     public ResponseBean getLikeNumByUserId(Integer uid) {
         if (userMapper.selectByPrimaryKey(uid) == null) {
-            ResponseBean.builder().status(-2).message("该用户不存在！").object(uid).build();
+            return ResponseBean.builder().status(-2).message("该用户不存在！").object(uid).build();
         }
         List<Article> articles = articleMapper.listArticlesByUid(uid);
         Integer lm = 0;
@@ -72,7 +79,7 @@ public class DataService {
      */
     public ResponseBean getCommentNumByUserId(Integer uid) {
         if (userMapper.selectByPrimaryKey(uid) == null) {
-            ResponseBean.builder().status(-2).message("该用户不存在！").object(uid).build();
+            return ResponseBean.builder().status(-2).message("该用户不存在！").object(uid).build();
         }
         List<Article> articles = articleMapper.listArticlesByUid(uid);
         Integer cm = 0;
@@ -83,71 +90,58 @@ public class DataService {
     }
 
     /**
-     *
      * @param uid 用户id
-     * @param n 天数
+     * @param n   天数
      * @return Res
      */
     public ResponseBean getPvNumInNDayByUserId(Integer uid, Integer n) {
-        if (userMapper.selectByPrimaryKey(uid)==null){
-            return ResponseBean.builder().status(-2).message("该用户不存在！").object(uid).build();
-        }
-        if (n>100){
-            return ResponseBean.builder().status(-3).message("超过最大支持天数！").object(n).build();
-        }
-        int[] res = new int[n];
-        List<Data> datas = dataMapper.listDatasByUid(uid);
-        Collections.reverse(datas);
-        for (Data data : datas) {
-            long time = data.getDay().getTime();
-            long now = System.currentTimeMillis();
-            int pastDay = (int) ((now-time)%1000*3600*24+1);
-            if (pastDay<n&&pastDay>0&&res[n]==0){
-                res[pastDay]=data.getPv();
-            }
-        }
-        return ResponseBean.builder().status(1).message("获取成功！").object(res).build();
+        return getNumInNDayBuUid(uid, n, 1);
     }
 
     public ResponseBean getLikeNumInNDayByUserId(Integer uid, Integer n) {
-        if (userMapper.selectByPrimaryKey(uid)==null){
+        return getNumInNDayBuUid(uid, n, 2);
+    }
+
+    public ResponseBean getCommentNumInNDayByUserId(Integer uid, Integer n) {
+        return getNumInNDayBuUid(uid, n, 3);
+    }
+
+    private ResponseBean getNumInNDayBuUid(Integer uid, Integer n, Integer flag) {
+        if (userMapper.selectByPrimaryKey(uid) == null) {
             return ResponseBean.builder().status(-2).message("该用户不存在！").object(uid).build();
         }
-        if (n>100){
+        if (n > 100) {
             return ResponseBean.builder().status(-3).message("超过最大支持天数！").object(n).build();
         }
         int[] res = new int[n];
         List<Data> datas = dataMapper.listDatasByUid(uid);
         Collections.reverse(datas);
         for (Data data : datas) {
-            long time = data.getDay().getTime();
-            long now = System.currentTimeMillis();
-            int pastDay = (int) ((now-time)%1000*3600*24+1);
-            if (pastDay<n&&pastDay>0&&res[n]==0){
-                res[pastDay]=data.getLikeNum();
+            Calendar calendar2 = Calendar.getInstance();
+            calendar2.set(calendar2.get(Calendar.YEAR), calendar2.get(Calendar.MONTH), calendar2.get(Calendar.DAY_OF_MONTH),
+                    23, 59, 59);
+            Date endOfDate = calendar2.getTime();
+            int pastDay = DateUtils.differentDaysByMillisecond(data.getDay(), endOfDate);
+            switch (flag) {
+                case 1: {
+                    if (pastDay < n && pastDay >= 0) {
+                        res[pastDay] += data.getPv();
+                    }
+                }
+                case 2: {
+                    if (pastDay < n && pastDay >= 0) {
+                        res[pastDay] += data.getLikeNum();
+                    }
+                }
+                case 3: {
+                    if (pastDay < n && pastDay >= 0) {
+                        res[pastDay] += data.getCommentNum();
+                    }
+                }
             }
+            log.info(data.toString());
         }
         return ResponseBean.builder().status(1).message("获取成功！").object(res).build();
     }
 
-    public ResponseBean getCommentNumInNDayByUserId(Integer uid, Integer n) {
-        if (userMapper.selectByPrimaryKey(uid)==null){
-            return ResponseBean.builder().status(-2).message("该用户不存在！").object(uid).build();
-        }
-        if (n>100){
-            return ResponseBean.builder().status(-3).message("超过最大支持天数！").object(n).build();
-        }
-        int[] res = new int[n];
-        List<Data> datas = dataMapper.listDatasByUid(uid);
-        Collections.reverse(datas);
-        for (Data data : datas) {
-            long time = data.getDay().getTime();
-            long now = System.currentTimeMillis();
-            int pastDay = (int) ((now-time)%1000*3600*24+1);
-            if (pastDay<n&&pastDay>0&&res[n]==0){
-                res[pastDay]=data.getCommentNum();
-            }
-        }
-        return ResponseBean.builder().status(1).message("获取成功！").object(res).build();
-    }
 }

@@ -10,7 +10,9 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.validation.constraints.NotNull;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /*
  *
@@ -33,340 +35,246 @@ public class ArticleService {
     @Autowired
     TagsMapper tagsMapper;
     @Autowired
+    DataMapper dataMapper;
+    @Autowired
     CommentsMapper commentsMapper;
 
-    /**
-     * 添加文章
-     *
-     * @param article 文章实例
-     * @return ResponseBean
-     */
+
     @Transactional
     public ResponseBean insertArticle(Article article) {
-        try {
-            String title = article.getTitle();
-            Integer cid = article.getCid();
-            Integer uid = article.getUid();
-            Article article1 = articleMapper.getArticleByTitleAndUid(title, uid);
-            if (article1 != null) {
-                return ResponseBean.builder().status(-2).message("标题重复！").object(article1).build();
-            }
-            User user = userMapper.selectByPrimaryKey(uid);
-            if (user == null) {
-                return ResponseBean.builder().status(-4).message("用户不存在！").object(article.getUid()).build();
-            }
-            Category category = categoryMapper.getCategoryByCidAndUid(cid, uid);
-            if (category == null) {
-                return ResponseBean.builder().status(-3).message("目录不存在！").object(article.getCid()).build();
-            }
-            article.setPublishDate(new Timestamp(System.currentTimeMillis()));
-            article.setEditTime(new Timestamp(System.currentTimeMillis()));
-            article.setCommentNum(0);
-            article.setLikeNum(0);
-            article.setState(1);
-            article.setPageView(0);
-            if (article.getPublicToOthers() != null) {
-                article.setPublicToOthers(false);
-            }
-            return articleMapper.insert(article) == 1 ?
-                    ResponseBean.builder().status(1).message("添加文章成功！").object(articleMapper.getLastInsertId()).build() :
-                    ResponseBean.builder().status(0).message("未知原因！").build();
-        } catch (Exception e) {
-            return ResponseBean.builder().status(-1).message("服务器错误！").build();
+        String title = article.getTitle();
+        Integer cid = article.getCid();
+        Integer uid = article.getUid();
+        Article article1 = articleMapper.getArticleByTitleAndUid(title, uid);
+        if (article1 != null) {
+            return ResponseBean.builder().status(-2).message("标题重复！").object(article1).build();
         }
+        User user = userMapper.selectByPrimaryKey(uid);
+        if (user == null) {
+            return ResponseBean.builder().status(-4).message("用户不存在！").object(article.getUid()).build();
+        }
+        Category category = categoryMapper.getCategoryByCidAndUid(cid, uid);
+        if (category == null) {
+            return ResponseBean.builder().status(-3).message("目录不存在！").object(article.getCid()).build();
+        }
+        article.setPublishDate(new Timestamp(System.currentTimeMillis()));
+        article.setEditTime(new Timestamp(System.currentTimeMillis()));
+        article.setCommentNum(0);
+        article.setLikeNum(0);
+        article.setPageView(0);
+        if (article.getState() != 1 && article.getState() != -1 && article.getState() != 0) {
+            return ResponseBean.builder().status(-5).message("没有此状态！").build();
+        }
+        if (article.getPublicToOthers() != null) {
+            article.setPublicToOthers(false);
+        }
+        return articleMapper.insert(article) == 1 ?
+                ResponseBean.builder().status(1).message("添加文章成功！").object(articleMapper.selectByPrimaryKey(articleMapper.getLastInsertId())).build() :
+                ResponseBean.builder().status(0).message("未知原因！").build();
     }
 
-    /**
-     * 根据id更新文章状态
-     *
-     * @param id    文章id
-     * @param state 文章状态
-     * @return Res
-     */
-    public ResponseBean updateArticleState(Integer id, Integer state) {
-        try {
-            Article article1 = articleMapper.selectByPrimaryKey(id);
-            if (article1 == null) {
-                return ResponseBean.builder().status(-2).message("该id对应文章不存在！").object(id).build();
-            }
-            if (state != 0 && state != 1 && state != -1) {
-                return ResponseBean.builder().status(-3).message("没有此状态！").object(state).build();
-            }
-            Article article = new Article();
-            article.setId(id);
-            article.setState(state);
-            int i = articleMapper.updateByPrimaryKey(article);
-            return i == 1 ?
-                    ResponseBean.builder().status(1).message("修改成功！").build() :
-                    ResponseBean.builder().status(-4).message("未发生更改！").object(id).build();
-
-        } catch (Exception e) {
-            return ResponseBean.builder().status(-1).message("服务器错误！").build();
+    @Transactional
+    public ResponseBean deleteArticle(Integer id) {
+        Article article = articleMapper.selectByPrimaryKey(id);
+        if (article == null) {
+            return ResponseBean.builder().status(-2).message("该文章不存在").object(id).build();
         }
+        dataMapper.deleteDataByAid(id);
+        List<Comments> comments = commentsMapper.listCommentsByAid(id);
+        if (comments.size() != 0) {//删除该用户每篇文章的评论,这里可能存在删除评论出错的问题。
+            //具体表现为 先删父评论时，子评论有父评论的外键。这里先不管，遇到问题再说
+            for (Comments comment : comments) {
+                commentsMapper.deleteByPrimaryKey(comment.getId());
+            }
+        }
+        //删文章标签对应关系
+        articleTagsMapper.deleteByAid(id);
+        //评论删完了就删文章
+        Article article1 = articleMapper.selectByPrimaryKey(id);
+        articleMapper.deleteByPrimaryKey(id);
+        return ResponseBean.builder().status(1).message("成功").object(article1).build();
     }
 
-    /**
-     * 批量更新文章状态
-     *
-     * @param ids   id集合
-     * @param state 状态
-     * @return Res
-     */
-    public ResponseBean updateSelectiveArticleState(List<Integer> ids, Integer state) {
-        if (state != 0 && state != 1 && state != -1) {
-            return ResponseBean.builder().status(-3).message("没有此状态！").object(state).build();
+    @Transactional
+    public ResponseBean putArticle(@NotNull Integer id, Article article) {
+        Integer uid = article.getUid();
+        Integer cid = article.getCid();
+        String title = article.getTitle();
+        @NotNull Integer articleId = article.getId();
+        Integer state = article.getState();
+        Article article1 = articleMapper.selectByPrimaryKey(articleId);
+        if (article1 == null) {
+            return ResponseBean.builder().status(-2).message("文章id不存在！").object(articleId).build();
         }
-        Article article = new Article();
-        article.setState(state);
-        try {
-            for (Integer id : ids) {
-                Article article1 = articleMapper.selectByPrimaryKey(id);
-                if (article1 == null) {
-                    return ResponseBean.builder().status(-2).message("该id对应文章不存在！").object(id).build();
-                }
-                article.setId(id);
-                int i = articleMapper.updateByPrimaryKey(article);
-                if (i != 1) {
-                    return ResponseBean.builder().status(-4).message("未发生更改！").object(id).build();
-                }
-            }
-            return ResponseBean.builder().status(1).message("修改成功！").build();
-        } catch (Exception e) {
-            return ResponseBean.builder().status(-1).message("服务器错误！").build();
+        if (!id.equals(articleId)) {
+            return ResponseBean.builder().status(-8).message("id错误！").object(state).build();
         }
+        if (state != null && state != 1 && state != 0 && state != -1) {
+            return ResponseBean.builder().status(-4).message("没有此状态！").object(state).build();
+        }
+        if (uid != null && userMapper.selectByPrimaryKey(uid) == null) {
+            return ResponseBean.builder().status(-5).message("不存在该用户！").object(uid).build();
+        }
+        if (categoryMapper.getCategoryByCidAndUid(cid, uid) == null) {
+            return ResponseBean.builder().status(-7).message("没有此目录！").object(cid).build();
+        }
+        Article articleByTitleAndUid = articleMapper.getArticleByTitleAndUid(title, uid);
+        if (articleByTitleAndUid != null && !articleByTitleAndUid.getId().equals(id)) {
+            return ResponseBean.builder().status(-3).message("标题重复！").build();
+        }
+        article.setEditTime(new Timestamp(System.currentTimeMillis()));
+        if (article.getPublishDate() == null) {
+            article.setPublishDate(article1.getPublishDate());
+        }
+        int i = articleMapper.updateByPrimaryKey(article);
+        return i == 1 ? ResponseBean.builder().status(1).message("更新成功！").object(article).build() :
+                ResponseBean.builder().status(-1).message("未知错误！").build();
     }
 
-
-    /**
-     * 更新文章
-     *
-     * @param article 文章
-     * @return ResponseBean
-     */
-    public ResponseBean updateArticle(Article article) {
-        try {
-            Integer uid = article.getUid();
-            Integer cid = article.getCid();
-            String title = article.getTitle();
-            @NotNull Integer id = article.getId();
-            Integer state = article.getState();
-            if (state != null && state != 1 && state != 0 && state != -1) {
-                return ResponseBean.builder().status(-4).message("没有此状态！").object(state).build();
-            }
-            if (uid != null && userMapper.selectByPrimaryKey(uid) == null) {
-                return ResponseBean.builder().status(-5).message("不存在该用户！").object(uid).build();
-            }
-            if (categoryMapper.getCategoryByCidAndUid(cid, uid) == null) {
-                return ResponseBean.builder().status(-7).message("没有此目录！").object(cid).build();
-            }
-            Article article1 = articleMapper.selectByPrimaryKey(id);
-            if (article1 == null) {
-                return ResponseBean.builder().status(-2).message("文章id不存在！").object(id).build();
-            }
-            String title1 = article1.getTitle();
-            if (title.equals(title1)) {
-                return ResponseBean.builder().status(-6).message("标题未改变！").object(id).build();
-            }
-            if (articleMapper.getArticleByTitleAndUid(title, uid) != null) {
-                return ResponseBean.builder().status(-3).message("标题重复！").object(id).build();
-            }
-            int i = articleMapper.updateByPrimaryKeySelective(article);
-            return i == 1 ? ResponseBean.builder().status(1).message("更新成功！").build() :
-                    ResponseBean.builder().status(-1).message("未知错误！").build();
-        } catch (Exception e) {
-            return ResponseBean.builder().status(-1).message("服务器错误！").build();
+    @Transactional
+    public ResponseBean patchArticle(@NotNull Integer id, Article article) {
+        Integer uid = article.getUid();
+        Integer cid = article.getCid();
+        String title = article.getTitle();
+        Integer state = article.getState();
+        Article article1 = articleMapper.selectByPrimaryKey(id);
+        article.setId(id);
+        if (article1 == null) {
+            return ResponseBean.builder().status(-2).message("文章id不存在！").object(id).build();
         }
-    }
-
-    /**
-     * @param id           文章id
-     * @param publicStatus 文章公开状态
-     * @return Res
-     */
-    public ResponseBean updateArticlePublicStatus(Integer id, Boolean publicStatus) {
-        try {
-            Article article = articleMapper.selectByPrimaryKey(id);
-            if (article == null) {
-                return ResponseBean.builder().status(-2).message("该文章id不存在！").object(id).build();
-            }
-            if (article.getPublicToOthers() == publicStatus) {
-                return ResponseBean.builder().status(-3).message("公开状态未改变！").object(id).build();
-            }
-            article.setPublicToOthers(publicStatus);
-            int i = articleMapper.updateByPrimaryKey(article);
-            return i == 1 ? ResponseBean.builder().status(1).message("修改成功！").build() :
-                    ResponseBean.builder().status(0).message("未知错误！").build();
-        } catch (Exception e) {
-            return ResponseBean.builder().status(-1).message("服务器错误！").build();
+        if (state != null && state != 1 && state != 0 && state != -1) {
+            return ResponseBean.builder().status(-4).message("没有此状态！").object(state).build();
         }
+        if (uid != null && userMapper.selectByPrimaryKey(uid) == null) {
+            return ResponseBean.builder().status(-5).message("不存在该用户！").object(uid).build();
+        }
+        if (uid != null && cid != null && categoryMapper.getCategoryByCidAndUid(cid, uid) == null) {
+            return ResponseBean.builder().status(-7).message("没有此目录！").object(cid).build();
+        }
+        Article articleByTitleAndUid = articleMapper.getArticleByTitleAndUid(title, uid);
+        if (articleByTitleAndUid != null && !articleByTitleAndUid.getId().equals(id)) {
+            return ResponseBean.builder().status(-3).message("标题重复！").build();
+        }
+        int i = articleMapper.updateByPrimaryKeySelective(article);
+        Article article2 = articleMapper.selectByPrimaryKey(id);
+        return i == 1 ? ResponseBean.builder().status(1).message("更新成功！").object(article2).build() :
+                ResponseBean.builder().status(-1).message("未知错误！").build();
     }
 
 
-    /**
-     * 获取所有文章
-     *
-     * @return Res
-     */
-    public ResponseBean getAllArticles() {
-        try {
-            List<Article> articles = articleMapper.listArticles();
-            if (articles.size() == 0) {
-                return ResponseBean.builder().status(-2).message("文章列表为空！").build();
-            }
-            return ResponseBean.builder().status(1).message("获取成功！").object(articles).build();
-        } catch (Exception e) {
-            return ResponseBean.builder().status(-1).message("服务器错误！").build();
+    public ResponseBean listAllArticles() {
+        List<Article> articles = articleMapper.listArticles();
+        if (articles == null || articles.size() == 0) {
+            return ResponseBean.builder().status(-2).message("文章列表为空！").build();
         }
+        return ResponseBean.builder().status(1).message("获取成功！").object(articles).build();
     }
 
-    /**
-     * 查询该用户所有文章
-     *
-     * @param uid 用户id
-     * @return Res
-     */
-    public ResponseBean getAllArticlesFromUser(Integer uid) {
-        try {
-            User user = userMapper.selectByPrimaryKey(uid);
-            if (user == null) {
-                return ResponseBean.builder().status(-2).message("该用户不存在！").object(uid).build();
-            }
-            List<Article> articles = articleMapper.listArticlesByUid(uid);
-            if (articles.size() == 0) {
-                return ResponseBean.builder().status(-3).message("文章列表为空！").object(uid).build();
-            }
-            return ResponseBean.builder().status(1).message("获取成功！").object(articles).build();
-        } catch (Exception e) {
-            return ResponseBean.builder().status(-1).message("服务器错误！").build();
+
+    public ResponseBean listAllArticlesFromUser(Integer uid) {
+        User user = userMapper.selectByPrimaryKey(uid);
+        if (user == null) {
+            return ResponseBean.builder().status(-2).message("该用户不存在！").object(uid).build();
         }
+        List<Article> articles = articleMapper.listArticlesByUid(uid);
+        if (articles == null || articles.size() == 0) {
+            return ResponseBean.builder().status(-3).message("文章列表为空！").object(uid).build();
+        }
+        return ResponseBean.builder().status(1).message("获取成功！").object(articles).build();
     }
 
-    /**
-     * 获取有某标签的文章列表
-     *
-     * @param tid 标签id
-     * @return Res
-     */
-    public ResponseBean fromTagArticle(Integer tid) {
-        try {
-            if (tagsMapper.selectByPrimaryKey(tid) == null) {
-                return ResponseBean.builder().status(-2).message("该标签不存在！").object(tid).build();
-            }
-            List<Integer> aids = articleTagsMapper.listAidsByTid(tid);
-            List<Article> articles = new ArrayList<>();
-            for (Integer aid : aids) {
-                articles.add(articleMapper.selectByPrimaryKey(aid));
-            }
-            return ResponseBean.builder().status(1).message("获取成功！").object(articles).build();
-        } catch (Exception e) {
-            return ResponseBean.builder().status(-1).message("服务器错误！").build();
+
+    public ResponseBean listAllArticlesFromTag(Integer tid) {
+        if (tagsMapper.selectByPrimaryKey(tid) == null) {
+            return ResponseBean.builder().status(-2).message("该标签不存在！").object(tid).build();
         }
+        List<Integer> aids = articleTagsMapper.listAidsByTid(tid);
+        List<Article> articles = new ArrayList<>();
+        for (Integer aid : aids) {
+            articles.add(articleMapper.selectByPrimaryKey(aid));
+        }
+        return ResponseBean.builder().status(1).message("获取成功！").object(articles).build();
     }
 
-    /**
-     * 根据用户id和目录id找出文章，即某用户的某目录的文章列表
-     *
-     * @param uid 用户id
-     * @param cid 目录id
-     * @return Res
-     */
-    public ResponseBean getAllArticlesFromUserAndCategory(Integer uid, Integer cid) {
-        try {
-            if (userMapper.selectByPrimaryKey(uid) == null) {
-                return ResponseBean.builder().status(-2).message("该用户不存在！").object(uid).build();
-            }
-            if (categoryMapper.selectByPrimaryKey(cid) == null) {
-                return ResponseBean.builder().status(-3).message("该目录不存在！").object(cid).build();
-            }
-            List<Article> articles = articleMapper.listArticlesByUidAndCid(uid, cid);
-            return articles.size() == 0 ? ResponseBean.builder().status(-4).message("文章列表为空！").build() :
-                    ResponseBean.builder().status(1).message("获取成功！").object(articles).build();
-        } catch (Exception e) {
-            return ResponseBean.builder().status(-1).message("服务器错误！").build();
+
+    public ResponseBean listAllArticlesFromUserAndCategory(Integer uid, Integer cid) {
+        if (userMapper.selectByPrimaryKey(uid) == null) {
+            return ResponseBean.builder().status(-2).message("该用户不存在！").object(uid).build();
         }
+        if (categoryMapper.selectByPrimaryKey(cid) == null) {
+            return ResponseBean.builder().status(-3).message("该目录不存在！").object(cid).build();
+        }
+        List<Article> articles = articleMapper.listArticlesByUidAndCid(uid, cid);
+        return articles == null || articles.size() == 0 ?
+                ResponseBean.builder().status(-4).message("文章列表为空！").build() :
+                ResponseBean.builder().status(1).message("获取成功！").object(articles).build();
     }
 
-    /**
-     * 获取某用户打了某标签的所有文章
-     *
-     * @param uid 用户id
-     * @param tid 标签id
-     * @return Res
-     */
-    public ResponseBean getAllArticlesFromUserAndTag(Integer uid, Integer tid) {
-        try {
-            if (userMapper.selectByPrimaryKey(uid) == null) {
-                return ResponseBean.builder().status(-2).message("此用户不存在！").object(uid).build();
-            }
-            if (tagsMapper.selectByPrimaryKey(tid) == null) {
-                return ResponseBean.builder().status(-3).message("此标签不存在").object(tid).build();
-            }
-            List<Article> articles = articleMapper.listArticlesByUid(uid);
-            List<Integer> aids = articleTagsMapper.listAidsByTid(tid);
-            List<Integer> uaids = new ArrayList<>();
-            for (Article article : articles) {
-                uaids.add(article.getUid());
-            }
-            uaids.retainAll(aids);
-            articles.clear();
-            for (Integer uaid : uaids) {
-                articles.add(articleMapper.selectByPrimaryKey(uaid));
-            }
-            return ResponseBean.builder().status(1).message("获取成功！").object(articles).build();
-        } catch (Exception e) {
-            return ResponseBean.builder().status(-1).message("服务器错误！").build();
+
+    public ResponseBean listAllArticlesFromUserAndTag(Integer uid, Integer tid) {
+        if (userMapper.selectByPrimaryKey(uid) == null) {
+            return ResponseBean.builder().status(-2).message("此用户不存在！").object(uid).build();
         }
+        if (tagsMapper.selectByPrimaryKey(tid) == null) {
+            return ResponseBean.builder().status(-3).message("此标签不存在").object(tid).build();
+        }
+        List<Article> articles = articleMapper.listArticlesByUid(uid);
+        for (Article article : articles) {
+            ArticleTags articleTags = articleTagsMapper.listArticleTagsByAidAndTid(article.getId(), tid);
+            if (articleTags == null) {
+                articles.remove(article);
+            }
+        }
+        return ResponseBean.builder().status(1).message("获取成功！").object(articles).build();
     }
 
-    /**
-     * 获取该文章所有标签
-     *
-     * @param id 文章id
-     * @return Res
-     */
-    public ResponseBean allTagsArticle(Integer id) {
-        try {
-            Article article = articleMapper.selectByPrimaryKey(id);
-            if (article == null) {
-                return ResponseBean.builder().status(-2).message("该用户不存在！").object(id).build();
+
+    public ResponseBean listAllTagsByAid(Integer id) {
+        Article article = articleMapper.selectByPrimaryKey(id);
+        if (article == null) {
+            return ResponseBean.builder().status(-2).message("该文章不存在！").object(id).build();
+        }
+        List<Integer> tids = articleTagsMapper.listTidsByAid(id);
+        List<Tags> tags = new ArrayList<>();
+        Tags tag;
+        for (Integer tid : tids) {
+            tag = tagsMapper.selectByPrimaryKey(tid);
+            if (tag == null) {
+                log.error("有标签错误，请及时处理！" + tid);
+            } else {
+                tags.add(tag);
             }
-            List<Integer> tids = articleTagsMapper.listTidsByAid(id);
-            List<Tags> tags = new ArrayList<>();
-            Tags tag;
-            for (Integer tid : tids) {
-                tag = tagsMapper.selectByPrimaryKey(tid);
-                if (tag == null) {
-                    log.error("有标签错误，请及时处理！" + tid);
-                } else {
-                    tags.add(tag);
-                }
-            }
+        }
+        if (tags.size() != 0) {
             return ResponseBean.builder().status(1).message("获取成功！").object(tags).build();
-        } catch (Exception e) {
-            return ResponseBean.builder().status(-1).message("服务器错误！").build();
+        } else {
+            return ResponseBean.builder().status(-3).message("标签列表为空！").build();
         }
     }
 
-    /**
-     * 获取该文章所有评论
-     *
-     * @param id 文章id
-     * @return Res
-     */
-    public ResponseBean allCommentsArticle(Integer id) {
-        try {
-            Article article = articleMapper.selectByPrimaryKey(id);
-            if (article == null) {
-                return ResponseBean.builder().status(-2).message("该文章不存在！").object(id).build();
-            }
-            List<Comments> comments = commentsMapper.listCommentsByAid(id);
-            return comments.size() == 0 ?
-                    ResponseBean.builder().status(-3).message("评论列表为空！").build() :
-                    ResponseBean.builder().status(1).message("获取成功！").build();
-        } catch (Exception e) {
-            return ResponseBean.builder().status(-1).message("服务器错误！").build();
+
+    public ResponseBean listAllCommentsByAid(Integer id) {
+        Article article = articleMapper.selectByPrimaryKey(id);
+        if (article == null) {
+            return ResponseBean.builder().status(-2).message("该文章不存在！").object(id).build();
         }
+        List<Comments> comments = commentsMapper.listCommentsByAid(id);
+        return comments == null || comments.size() == 0 ?
+                ResponseBean.builder().status(-3).message("评论列表为空！").build() :
+                ResponseBean.builder().status(1).message("获取成功！").object(comments).build();
     }
 
+
+    public ResponseBean getArticleById(Integer id) {
+        Article article = articleMapper.selectByPrimaryKey(id);
+        if (article == null) {
+            return ResponseBean.builder().status(-2).message("文章不存在").build();
+        }
+        Map<String, Object> map = new HashMap<>();
+        map.put("article", article);
+        map.put("comments", listAllCommentsByAid(id).getObject());
+        map.put("tags", listAllTagsByAid(id).getObject());
+        return ResponseBean.builder().status(1).message("获取成功").object(map).build();
+    }
 
 }

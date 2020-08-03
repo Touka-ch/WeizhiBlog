@@ -97,6 +97,4 @@ public interface TagsMapper {
     int batchInsert(@Param("list") List<Tags> list);
 
     Tags getIdByTagName(String tagName);
-
-    int insertByTagName(String tagName);
 }
