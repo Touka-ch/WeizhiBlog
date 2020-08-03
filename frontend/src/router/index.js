@@ -5,11 +5,11 @@ import VueRouter from 'vue-router'
 Vue.use(VueRouter)
 
 const routes = [
-  /*{
+  {
     path: '/',
     name: 'index',
     component: () => import('../views/Index')
-  },*/
+  },
   {
     //登录页
     path: '/login',
@@ -28,7 +28,7 @@ const routes = [
       {
         path: '/article',
         name: 'article',
-        component: () => import('@/components/Article.vue')
+        component: () => import('@/components/CommonArticle.vue')
       },
       {
         path: '/hub',

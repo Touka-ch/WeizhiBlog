@@ -125,7 +125,7 @@ export default {
       })
     },
     error() {
-      if (this.info.status == 0) this.errors = true
+      if (this.info.status == '0') this.errors = true
       else {
         this.$message({
           message: '数据加载成功',
@@ -146,7 +146,7 @@ export default {
     },*/
     updateUser() {
       userRequest('patch', this.ruleForm.id, this.ruleForm).then(res => {
-        if (res.status == 1) {
+        if (res.status == '1') {
           this.$notify({
             title: '成功',
             message: res.message,
@@ -171,7 +171,7 @@ export default {
     handleDelete(index, row) {
       //删除用户
       userRequest('delete', (index, row).id).then(res => {
-        if (res.status == 1) {
+        if (res.status == '1') {
           this.$notify({
             title: '成功',
             message: '删除成功',

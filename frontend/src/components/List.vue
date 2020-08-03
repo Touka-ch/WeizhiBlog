@@ -1,12 +1,12 @@
 <template>
-  <div>
-    list
-  </div>
+  <common-article></common-article>
 </template>
 
 <script>
+import CommonArticle from './CommonArticle'
 export default {
-  name: 'List'
+  name: 'List',
+  components: { CommonArticle }
 }
 </script>
 

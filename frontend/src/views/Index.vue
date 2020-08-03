@@ -9,27 +9,41 @@
           <el-link href="">友链</el-link>
           <el-link href="">统计</el-link>
           <el-link href="">归档</el-link>
-          <el-link href="Index.vue">首页</el-link>
+          <el-link href="Index2.vue">首页</el-link>
         </div>
       </el-header>
-      <el-main>
-        <div class="lef">
-          <div class="mig">
-            <el-carousel :interval="5000" arrow="always" height="400px">
-              <el-carousel-item v-for="item in imgList" :key="item.id">
-                <el-row>
-                  <el-col :span="24"><img ref="imgHeight" :src="item.idView"/></el-col>
-                </el-row>
-              </el-carousel-item>
-            </el-carousel>
-          </div>
-          <div class="f"></div>
-          <div class="f"></div>
-          <br />
-          <el-link href="" :underline="false">更多...</el-link>
+      <el-main class="el-main">
+        <div style="width: 70%; margin:10px auto 30px auto">
+          <el-carousel :interval="5000" height="300px">
+            <el-carousel-item v-for="item in imgList" :key="item.id">
+              <el-image fit="fill" :src="item.idView" />
+            </el-carousel-item>
+          </el-carousel>
         </div>
-        <div class="rig">
-          <p class="jj">博主简介:</p>
+        <div style="width: 85%; margin:10px auto 30px auto">
+          <el-row :gutter="40">
+            <!--间隔距离-->
+            <el-col :span="16">
+              <div class="blog">
+                <common-article> </common-article>
+              </div>
+            </el-col>
+            <el-col :span="8">
+              <div class="other">
+                <div class="friend">
+                  <el-card class="box-card">
+                    <div slot="header" class="d-flex align-items-center">
+                      <img class="card-icon" src="src/assets/images/lianjie.png" />
+                      <span>为空</span>
+                      <el-button class="ml-auto" style="padding: 3px 0" type="text"> </el-button>
+                    </div>
+                    <div class="text item"><a href="#">某某的博客</a></div>
+                    <div class="text item"><a href="#">某某的博客</a></div>
+                  </el-card>
+                </div>
+              </div>
+            </el-col>
+          </el-row>
         </div>
       </el-main>
     </el-container>
@@ -37,15 +51,17 @@
 </template>
 
 <script>
+import CommonArticle from '../components/CommonArticle'
 export default {
   name: 'Index',
+  components: { CommonArticle },
   data() {
     return {
       imgList: [
-        { id: 0, idView: require('../assets/images/22_1.jpg') },
-        { id: 1, idView: require('../assets/images/22_2.jpg') },
-        { id: 2, idView: require('../assets/images/22_3.jpg') },
-        { id: 3, idView: require('../assets/images/22_4.jpg') }
+        { id: 0, idView: require('../assets/images/1.jpg') },
+        { id: 1, idView: require('../assets/images/2.jpg') },
+        { id: 2, idView: require('../assets/images/3.jpg') },
+        { id: 3, idView: require('../assets/images/4.jpg') }
       ]
     }
   },
@@ -61,17 +77,15 @@ export default {
 .el-header {
   background-color: #ffffff;
   color: #333;
-  /*text-align: center;*/
   line-height: 60px;
-  height: 200px;
 }
 .header {
-  margin-left: 300px;
+  margin-left: 15%;
   float: left;
   font-size: 30px;
 }
 .nav {
-  margin-right: 50px;
+  margin-right: 3%;
 }
 .el-link {
   color: #33aef0;
@@ -81,41 +95,10 @@ export default {
 .el-main {
   background: #eeeeee;
 }
-.lef {
-  float: left;
-  height: 1200px;
-  width: 50%;
-  margin-left: 15%;
+.el-col {
+  border-radius: 4px;
 }
-.mig {
-  height: 400px;
-  weidth: 100%;
-}
-.el-carousel__item h3 {
-  color: #475669;
-  font-size: 18px;
-  line-height: 300px;
-}
-.f {
-  height: 300px;
-  weidth: 100%;
-  margin-top: 20px;
-  border: 1px solid #333333;
-}
-.rig {
-  float: left;
-  height: 500px;
-  width: 25%;
-  margin-left: 5%;
-  border: 1px solid #333333;
-}
-.jj {
-  color: #333333;
-  font-size: 20px;
-  margin-top: 20px;
-  margin-left: 20px;
-}
-.a {
-  text-decoration: none;
+.other {
+  background: #d3dce6;
 }
 </style>

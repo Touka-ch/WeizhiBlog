@@ -21,7 +21,7 @@
 </template>
 
 <script>
-import EChart from './EChart'
+import EChart from './CommonEChart'
 export default {
   name: 'Chart',
   components: { EChart },
