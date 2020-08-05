@@ -1,79 +1,22 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-//import Login from '../views/Login'
+import Home from '../views/Home.vue'
 
 Vue.use(VueRouter)
 
-const routes = [
+  const routes = [
   {
     path: '/',
-    name: 'index',
-    component: () => import('../views/Index'),
-    children: [
-      {
-        path: '/article',
-        params: 'id',
-        name: 'article',
-        component: () => import('../components/CommonArticle')
-      }
-    ]
+    name: 'Home',
+    component: Home
   },
   {
-    path: '/test',
-    name: 'test',
-    component: () => import('../components/test')
-  },
-  {
-    //登录页
-    path: '/login',
-    name: 'login',
-    component: () => import('../views/Login')
-  },
-  {
-    path: '/register',
-    name: 'register',
-    component: () => import('../views/Register')
-  },
-  {
-    path: '/main',
-    component: () => import('@/views/Main.vue'),
-    children: [
-      {
-        path: '/main/article',
-        name: 'article',
-        component: () => import('@/components/CommonList.vue')
-      },
-      {
-        path: '/main/hub',
-        name: 'hub',
-        component: () => import('@/components/Hub.vue')
-      },
-      {
-        path: '/main/list',
-        name: 'list',
-        component: () => import('@/components/List.vue')
-      },
-      {
-        path: '/main/new',
-        name: 'new',
-        component: () => import('@/components/New.vue')
-      },
-      {
-        path: '/main/user',
-        name: 'user',
-        component: () => import('@/components/User.vue')
-      },
-      {
-        path: '/main/column',
-        name: 'column',
-        component: () => import('@/components/Column.vue')
-      },
-      {
-        path: '/main/chart',
-        name: 'chart',
-        component: () => import('@/components/Chart.vue')
-      }
-    ]
+    path: '/about',
+    name: 'About',
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () => import(/* webpackChunkName: "about" */ '../views/About.vue')
   }
 ]
 
