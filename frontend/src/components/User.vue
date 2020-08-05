@@ -34,7 +34,8 @@
           <!-- slot-scope="scope" -->
           <input v-model="search" placeholder="输入关键字搜索" />
         </template>
-        <template slot-scope="scope">
+        <template v-slot="scope">
+          <!-- slot-scope="scope" v-slot="scope"-->
           <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
           <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
         </template>
@@ -152,7 +153,7 @@ export default {
             message: res.message,
             type: 'success'
           })
-          this.getAllUser()
+          //this.getAllUser()
         } else
           this.$notify({
             title: '失败',
@@ -177,7 +178,7 @@ export default {
             message: '删除成功',
             type: 'success'
           })
-          this.getAllUser()
+          //this.getAllUser()
         } else
           this.$notify({
             title: '失败',

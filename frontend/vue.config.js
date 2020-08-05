@@ -3,6 +3,7 @@ module.exports = {
     port: 8080,
     open: true,
     proxy: {
+      /*
       // 开发环境代理配置
       '/api': {
         // 匹配 /dev-api 开头的请求，
@@ -14,7 +15,7 @@ module.exports = {
           // 如 /dev-api/db.json 代理到 https://localhost:8080/db.json
           '^/api': ''
         }
-      }
+      }*/
     }
   },
   css: {

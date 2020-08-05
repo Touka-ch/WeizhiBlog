@@ -1,5 +1,9 @@
 <template>
-  <mavon-editor v-model="context" @save="saveDoc" @change="updateDoc" />
+  <!--<mavon-editor v-model="context" @save="saveDoc" @change="updateDoc" />-->
+  <div>
+    <div>题目：<el-input></el-input></div>
+    <mavon-editor v-model="context" @save="saveDoc" @change="updateDoc"></mavon-editor>
+  </div>
 </template>
 
 <script>
@@ -7,7 +11,7 @@ export default {
   name: 'New',
   data() {
     return {
-      context: ' ', //输入的数据
+      context: '', //输入的数据
       html: ''
     }
   },

@@ -1,10 +1,12 @@
 <template>
-  <div>column</div>
+  <common-category></common-category>
 </template>
 
 <script>
+import CommonCategory from './CommonCategory'
 export default {
-  name: 'Column'
+  name: 'Column',
+  components: { CommonCategory }
 }
 </script>
 

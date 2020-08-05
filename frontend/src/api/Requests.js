@@ -1,11 +1,12 @@
 import { Service } from './Service.js'
 /*
- * post   注册        {{base}}/users
- * delete 删除        {{base}}/users/:id
- * put    更新(全部)   {{base}}/users/:id
- * patch  更新（部分）  {{base}}/users/:id
- * get    所有用户     {{base}}/users
- * get    单个用户     {{base}}/users/:id
+ * User
+ * post   注册                {{base}}/users
+ * delete 删除                {{base}}/users/:id
+ * put    更新(全部)           {{base}}/users/:id
+ * patch  更新（部分）          {{base}}/users/:id
+ * get    所有用户             {{base}}/users
+ * get    单个用户             {{base}}/users/:id
  */
 export function userRequest(method, id, data) {
   return Service({
@@ -14,284 +15,167 @@ export function userRequest(method, id, data) {
     data: JSON.stringify(data)
   })
 }
-export function addArticle() {
-  //addArticle-添加一篇文章
+/*
+ * Article
+ * post   增加                {{base}}/articles
+ * delete 删除                {{base}}/articles/:id
+ * put    更新(全部)属性        {{base}}/articles/:id
+ * patch  更新（部分）          {{base}}/articles/:id
+ * get    所有文章             {{base}}/articles
+ * *********************************************************************
+ * get    某用户所有文章        {{base}}/articles/user/:uid
+ * *********************************************************************
+ * get    某标签所有文章        {{base}}/articles/tag/:tid
+ * *********************************************************************
+ * get    某用户某目录所有文章    {{base}}/articles/user/:uid/category/:cid
+ * *********************************************************************
+ * get    某用户某标签所有文章    {{base}}/articles/user/:uid/tag/:tid
+ * *********************************************************************
+ * get    某文章所有标签         {{base}}/articles/:id/tags
+ */
+export function articleRequest(method, id, data) {
   return Service({
-    url: '/article/add',
-    method: 'post'
+    method: method,
+    url: '/articles/' + (id ? id : ''),
+    data: JSON.stringify(data)
   })
 }
-export function deleteArticle() {
-  //deleteArticle-删除一篇文章
+export function articleUserRequest(uid) {
   return Service({
-    url: '/article/delete',
-    method: 'post'
+    method: 'get',
+    url: '/articles/user/' + (uid ? uid : '')
   })
 }
-export function updateArticleState() {
-  //updateArticleState-更新文章状态（删除、草稿、正常）
+export function tagArticleRequest(tid) {
   return Service({
-    url: '/article/state',
-    method: 'post'
+    method: 'get',
+    url: '/articles/tag/' + (tid ? tid : '')
   })
 }
-export function updateSelectiveArticleState() {
-  //updateSelectiveArticleState-更新所选文章状态
+export function articleUserCategoryRequest(uid, cid) {
   return Service({
-    url: '/article/state/selective',
-    method: 'post'
+    method: 'get',
+    url: '/articles/user/' + (uid ? uid : '') + '/category/' + (cid ? cid : '')
   })
 }
-export function updateArticle() {
-  //updateArticle-更新文章
+export function articleUserTagRequest(uid, tid) {
   return Service({
-    url: '/article/update',
-    method: 'post'
+    method: 'get',
+    url: '/articles/user/' + (uid ? uid : '') + '/tag/' + (tid ? tid : '')
   })
 }
-export function updateArticlePublicStatus() {
-  //updateArticlePublicStatus-更新文章公开状态
+export function articleTagRequest(id) {
   return Service({
-    url: '/article/publicStatus',
-    method: 'post'
+    method: 'get',
+    url: '/articles/' + (id ? id : '') + '/tags'
   })
 }
-export function listAllArticles() {
-  //listAllArticles-列出所有文章
+/*
+ * Category
+ * post   添加用户目录          {{base}}/categories   //post里面要输入用户id 是第二个位置
+ * delete 删除                {{base}}/categories/:id
+ * put    更新(全部)属性        {{base}}/categories/:id
+ * patch  更新（部分）          {{base}}/categories/:id
+ * *********************************************************************
+ * get    某用户所有目录        {{base}}/categories/user/:uid
+ */
+export function categoryRequest(method, id, data) {
   return Service({
-    url: '/article/all',
-    method: 'post'
+    method: method,
+    url: '/articles/' + (id ? id : ''),
+    data: JSON.stringify(data)
   })
 }
-export function listAllArticlesFromUser() {
-  //listAllArticlesFromUser
+export function categoryUserRequest(uid) {
   return Service({
-    url: '/article/fromUser',
-    method: 'post'
+    method: 'get',
+    url: '/articles/usr/' + (uid ? uid : '')
   })
 }
-export function listAllArticlesFromTag() {
-  //listAllArticlesFromTag
+/*
+ * Tag
+ * post   添加文章标签          {{base}}/tags/article/:aid
+ * delete 删除所有标签          {{base}}/tags/article/:aid
+ * get    文章所有标签          {{base}}/tags/article/:aid
+ * *********************************************************************
+ * post   添加多个标签          {{base}}/tags/article/:aid/multi
+ * *********************************************************************
+ * delete 删除文章某个标签       {{base}}/tags/:tid/article/:aid
+ */
+export function tagRequest(method, aid, data) {
   return Service({
-    url: '/article/fromTag',
-    method: 'post'
+    method: method,
+    url: '/articles/' + (aid ? aid : ''),
+    data: JSON.stringify(data)
   })
 }
-export function listAllArticlesFromUserAndCategory() {
-  //listAllArticlesFromUserAndCategory
+export function mulTagRequest(aid, data) {
   return Service({
-    url: '/article/fromUserCategory',
-    method: 'post'
+    method: 'post',
+    url: '/tags/article/' + (aid ? aid : '') + '/multi',
+    data: JSON.stringify(data)
   })
 }
-
-export function listAllArticlesFromUserAndTag() {
-  //listAllTagsFromArticle
+export function tagDeleteRequest(tid, aid, data) {
   return Service({
-    url: '/article/fromUserTag',
-    method: 'post'
+    method: 'delete',
+    url: '/tags/' + (tid ? tid : '') + '/article/' + (aid ? aid : ''),
+    data: JSON.stringify(data)
   })
 }
-export function listAllTagsFromArticle() {
-  //listAllTagsFromArticle
+/*
+ * Role
+ * get    判断权限              {{base}}/role/isAdmin/:uid
+ * put    设置管理员             {{base}}/role/setAdmin/:uid
+ * put    设置普通用户           {{base}}/role/setOrdinary/:uid
+ */
+export function isAdminRequest(uid) {
   return Service({
-    url: '/article/allTags',
-    method: 'post'
+    method: 'get',
+    url: '/role/isAdmin/' + (uid ? uid : '')
   })
 }
-export function listAllCommentsFromArticle() {
-  //listAllTagsFromArticle
+export function setAdminRequest(uid) {
   return Service({
-    url: '/article/allTags',
-    method: 'post'
+    method: 'put',
+    url: '/role/setAdmin/' + (uid ? uid : '')
   })
 }
-export function deleteCategory() {
-  //deleteCategory-删除某目录
+export function setOrdinaryRequest(uid) {
   return Service({
-    url: '/category/delete',
-    method: 'post'
+    method: 'put',
+    url: '/role/setOrdinary/' + (uid ? uid : '')
   })
 }
-export function AddCategory() {
-  //AddCategory-某用户添加目录
+/*
+ * Data
+ * get    浏览量                {{base}}/data/pv/:uid
+ * get    喜欢数                {{base}}/data/like/:uid
+ * put    用户评论           {{base}}/role/setOrdinary/:uid
+ */
+//暂未完成
+export function pvRequest(uid) {
   return Service({
-    url: '/category/add',
-    method: 'post'
+    method: 'get',
+    url: '/data/pv/' + (uid ? uid : '')
   })
 }
-export function updateCategory() {
-  //updateCategory-更新目录名
+export function likeRequest(uid) {
   return Service({
-    url: '/article/allTags',
-    method: 'post'
+    method: 'get',
+    url: '/data/like/' + (uid ? uid : '')
   })
 }
-export function listAllCategoriesByUid() {
-  //listAllCategoriesByUid-某用户所有目录
+/*
+ * File
+ * get    浏览量                {{local}}/file
+ * get    喜欢数                {{base}}/data/like/:uid
+ * put    用户评论
+ */
+export function fileRequest(file) {
   return Service({
-    url: '/category/update',
-    method: 'post'
-  })
-}
-export function listArticlesByUidAndCid() {
-  //listArticlesByUidAndCid某目录所有文章
-  return Service({
-    url: '/category/articles',
-    method: 'post'
-  })
-}
-export function addComment() {
-  //addComment-添加评论
-  return Service({
-    url: '/comment/add',
-    method: 'post'
-  })
-}
-export function deleteComment() {
-  //deleteComment-删除评论
-  return Service({
-    url: '/comment/delete',
-    method: 'post'
-  })
-}
-export function deleteAllCommentsByAid() {
-  //deleteAllCommentsByAid-删除某文章所有评论
-  return Service({
-    url: '/comment/delete/all',
-    method: 'post'
-  })
-}
-export function updateComment() {
-  //updateComment-更新评论内容
-  return Service({
-    url: '}/comment/update',
-    method: 'post'
-  })
-}
-export function listAllCommentsByAid() {
-  //listAllCommentsByAid-某文章所有评论
-  return Service({
-    url: '/comment/all',
-    method: 'post'
-  })
-}
-export function listAllLevel1CommentsByAid() {
-  //listAllCommentsByAid-某文章所有一级评论
-  return Service({
-    url: '/comment/all/level1',
-    method: 'post'
-  })
-}
-export function listAllChildrenComments() {
-  //listAllChildrenComments-某评论所有子评论
-  return Service({
-    url: '/comment/children',
-    method: 'post'
-  })
-}
-export function listNextLevelComments() {
-  //listNextLevelComments-某评论所有直接子评论
-  return Service({
-    url: '/comment/children',
-    method: 'post'
-  })
-}
-export function AddTag() {
-  //AddTag-给某文章添加一个标签
-  return Service({
-    url: '/tag/add',
-    method: 'post'
-  })
-}
-export function AddMultipleTags() {
-  //AddMultipleTags-给某文章添加多个标签
-  return Service({
-    url: '/tag/add/multiple',
-    method: 'post'
-  })
-}
-export function DeleteTagInArticle() {
-  //DeleteTagInArticle-删除某文章的某个标签
-  return Service({
-    url: '/tag/delete',
-    method: 'post'
-  })
-}
-export function DeleteAllTagsInArticle() {
-  //DeleteAllTagsInArticle-删除某文章的所有标签
-  return Service({
-    url: '/tag/deleteAll',
-    method: 'post'
-  })
-}
-export function isAdmin() {
-  //isAdmin判断用户是不是管理员
-  return Service({
-    url: '/role/isAdmin',
-    method: 'post'
-  })
-}
-export function setAdmin() {
-  //设置用户为管理员
-  return Service({
-    url: '/role/setAdmin',
-    method: 'post'
-  })
-}
-export function setOrdinary() {
-  //设置用户为普通用户员
-  return Service({
-    url: '/role/setOrdinary',
-    method: 'post'
-  })
-}
-export function pvByUid() {
-  //设置用户为管理员
-  return Service({
-    url: '/data/pv',
-    method: 'post'
-  })
-}
-export function likeNumByUid() {
-  //likeNumByUid
-  return Service({
-    url: '/data/like',
-    method: 'post'
-  })
-}
-export function commentsByUid() {
-  //likeNumByUid
-  return Service({
-    url: '/data/comment',
-    method: 'post'
-  })
-}
-export function pvByUidN() {
-  //likeNumByUid
-  return Service({
-    url: '/data/pvNDay',
-    method: 'post'
-  })
-}
-export function likeNumByUidN() {
-  //likeNumByUidN
-  return Service({
-    url: '/data/likeNDay',
-    method: 'post'
-  })
-}
-export function commentsByUidN() {
-  //likeNumByUid
-  return Service({
-    url: '/data/commentNDay',
-    method: 'post'
-  })
-}
-export function uploadFile() {
-  //likeNumByUid
-  return Service({
-    url: '/file/upload',
-    method: 'post'
+    method: 'post',
+    url: '/file',
+    data: file
   })
 }
