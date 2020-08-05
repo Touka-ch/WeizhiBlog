@@ -16,8 +16,7 @@
           <el-col :span="4">
             <i class="el-icon-collection-tag">
               <span>：</span>
-              <el-tag size="mini" style="font-size: 14px"><!--{{ this.listData. }}--></el-tag>
-              <!--文章没标签-->
+              <el-tag size="mini" style="font-size: 14px" v-for="tag in item.tags" :key="tag.id">{{ tag.tagName }}</el-tag>
             </i>
           </el-col>
         </el-row>
@@ -65,7 +64,8 @@ export default {
               likeNum: '',
               State: '',
               pageView: '',
-              publicToOthers: ''
+              publicToOthers: '',
+              tags:[]
             }
           ]
         }
@@ -89,7 +89,13 @@ export default {
           likeNum: '',
           State: '',
           pageView: '',
-          publicToOthers: ''
+          publicToOthers: '',
+          tags:[
+                  {
+                    id: '',
+                    tagName: ''
+                  }
+          ]
         }
       ]
     }

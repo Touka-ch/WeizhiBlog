@@ -24,9 +24,12 @@
           <!--间隔距离-->
           <el-col :span="16">
             <div class="blog">
-              <common-list v-if="isDisplay" @postId="goRouter"> </common-list>
-              <common-article v-else></common-article>
-              <router-view />
+              <el-container>
+              <router-view>
+                <common-list v-if="isDisplay" @postId="goRouter"> </common-list>
+                <common-article v-else></common-article>
+              </router-view>
+              </el-container>
             </div>
           </el-col>
           <el-col :span="8">
@@ -47,12 +50,14 @@
       </div>
     </el-main>
   </el-container>
+
 </template>
 
 <script>
 import CommonList from '../components/CommonList'
 import CommonCategory from '../components/CommonCategory'
 import CommonArticle from '../components/CommonArticle'
+import { articleRequest } from '../api/Requests'
 export default {
   name: 'Index',
   components: { CommonArticle, CommonCategory, CommonList },
@@ -65,7 +70,8 @@ export default {
         { id: 3, idView: require('../assets/images/4.jpg') }
       ],
       isDisplay: true,
-      id: ''
+      id: '',
+      articles: []
     }
   },
   methods: {
@@ -74,8 +80,15 @@ export default {
     },
     goRouter(id) {
       this.id = id
-      this.router.push({ name: 'index', params: { id: id } })
+      this.router.push({ name: 'article', params: { id: id } })
     }
+  },
+  created() {
+    articleRequest('get').then( res => {
+      console.log(res)
+      this.articles = res
+    })
+
   }
 }
 </script>

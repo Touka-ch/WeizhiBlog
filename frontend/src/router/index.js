@@ -7,9 +7,16 @@ Vue.use(VueRouter)
 const routes = [
   {
     path: '/',
-    params: 'id',
     name: 'index',
-    component: () => import('../views/Index')
+    component: () => import('../views/Index'),
+    children: [
+      {
+        path: '/article',
+        params: 'id',
+        name: 'article',
+        component: () => import('../components/CommonArticle')
+      }
+    ]
   },
   {
     path: '/test',
