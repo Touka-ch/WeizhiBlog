@@ -193,18 +193,19 @@
             </if>
         </trim>
     </insert>
-     <select id="selectByUidTid" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    <select id="selectByUidTid" parameterType="java.lang.Integer" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
         from article_tags
-        where aid = #{aid,jdbcType=INTEGER} and tid = #{tid,jdbcType=INTEGER}
+        where aid = #{aid,jdbcType=INTEGER}
+          and tid = #{tid,jdbcType=INTEGER}
     </select>
     <delete id="deleteByAid" parameterType="java.lang.Integer">
         delete
         from article_tags
         where aid = #{aid,jdbcType=INTEGER}
     </delete>
-     <select id="selectByAid" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    <select id="selectByAid" parameterType="java.lang.Integer" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
         from article_tags

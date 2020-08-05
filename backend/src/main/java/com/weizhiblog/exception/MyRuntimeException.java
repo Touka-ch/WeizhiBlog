@@ -17,5 +17,6 @@ public class MyRuntimeException extends RuntimeException {
 
     public MyRuntimeException(ResponseBean responseBean) {
         super(responseBean.getMessage());
+        this.responseBean = responseBean;
     }
 }

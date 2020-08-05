@@ -1,6 +1,7 @@
 package com.weizhiblog.mapper;
 
 import com.weizhiblog.bean.Data;
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
@@ -11,6 +12,7 @@ import java.util.List;
 public interface DataMapper {
     /**
      * delete by primary key
+     *
      * @param id primaryKey
      * @return deleteCount
      */
@@ -18,6 +20,7 @@ public interface DataMapper {
 
     /**
      * insert record to table
+     *
      * @param record the record
      * @return insert count
      */
@@ -29,6 +32,7 @@ public interface DataMapper {
 
     /**
      * insert record to table selective
+     *
      * @param record the record
      * @return insert count
      */
@@ -36,6 +40,7 @@ public interface DataMapper {
 
     /**
      * select by primary key
+     *
      * @param id primary key
      * @return object by primary key
      */
@@ -43,6 +48,7 @@ public interface DataMapper {
 
     /**
      * update record selective
+     *
      * @param record the updated record
      * @return update count
      */
@@ -50,6 +56,7 @@ public interface DataMapper {
 
     /**
      * update record
+     *
      * @param record the updated record
      * @return update count
      */
@@ -63,4 +70,7 @@ public interface DataMapper {
 
     @Select("SELECT * from data WHERE uid = #{uid}")
     List<Data> listDatasByUid(Integer uid);
+
+    @Delete("DELETE FROM data WHERE aid = #{aid} ")
+    int deleteDataByAid(Integer aid);
 }

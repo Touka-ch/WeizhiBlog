@@ -5,7 +5,6 @@ import com.weizhiblog.bean.ResponseBean;
 import com.weizhiblog.service.CommentService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotNull;
@@ -25,90 +24,44 @@ public class CommentController {
     @Autowired
     CommentService commentService;
 
-    /**
-     * 该文章添加评论
-     * @param id 文章所属id
-     * @param  comments 评论记录
-     * @return 是否添加成功
-     */
-    @RequestMapping(value = "/add", method = {RequestMethod.POST})
-    public ResponseBean CommentsAdd(@RequestParam("id") @NotNull Integer id ,
-                                    @RequestBody Comments comments) {
-        return commentService.addComments(id,comments);
+
+    @PostMapping
+    public ResponseBean addComments(@RequestBody Comments comment) {
+        return commentService.addComment(comment);
     }
-    /**
-     * 删除文章的某条评论
-     * @param id 评论所属id
-     * @param aid 文章所属aid
-     * @return 是否删除成功
-     */
-    @RequestMapping(value = "/delete", method = {RequestMethod.POST,RequestMethod.DELETE})
-    public ResponseBean CommentsDelete( @RequestParam("id") @NotNull Integer id,
-                                        @RequestParam("aid") @NotNull Integer aid){
-        return commentService.deleteComments(id,aid);
+
+
+    @DeleteMapping("/{id}")
+    public ResponseBean deleteComment(@PathVariable("id") @NotNull Integer id) {
+        return commentService.deleteComment(id);
     }
-    /**
-     * 删除某个文章的所有评论
-     * @param id 文章所属id
-     * @return 是否删除成功
-     */
-    @RequestMapping(value = "/delete/all", method = {RequestMethod.POST,RequestMethod.DELETE})
-    public ResponseBean AllCommentsDelete(@RequestParam("id") @NotNull Integer id ){
-        return commentService.deleteAllComments(id);
+
+    @DeleteMapping("/article/{aid}")
+    public ResponseBean deleteAllCommentsByAid(@PathVariable("aid") @NotNull Integer aid) {
+        return commentService.deleteAllCommentsByAid(aid);
     }
-    /**
-     * 更新某个文章的某条评论
-     * @param aid 文章aid
-     * @param id 评论id
-     * @param comments 评论记录
-     * @return 是否更新成功
-     */
-    @RequestMapping(value = "/update", method = {RequestMethod.POST,RequestMethod.PUT})
-    public ResponseBean CommentsUpdate(@RequestParam("id") @NotNull Integer id,
-                                       @RequestParam("aid") @NotNull Integer aid ,Comments comments){
-        return commentService.updateComments(id,aid,comments);
+
+    @PutMapping("/{id}")
+    public ResponseBean putComment(@PathVariable Integer id,
+                                     @RequestBody Comments comment) {
+        return commentService.putComment(id,comment);
     }
-    /**
-     * 查看某个文章的所有评论
-     * @param id 文章id
-     * @return 获取的评论
-     */
-    @RequestMapping(value = "/all/article", method = {RequestMethod.POST,RequestMethod.GET})
-    public ResponseBean AllCommentsView_article(@RequestParam("id") @NotNull Integer id){
-        return commentService.viewAllComments_article(id);
+
+    @PatchMapping("/{id}")
+    public ResponseBean patchComment(@PathVariable Integer id,
+                                     @RequestBody Comments comment) {
+        return commentService.patchComment(id,comment);
     }
-    /**
-     * 查看某个文章的一级评论
-     * @param id 文章id
-     * @return 获取的评论
-     */
-    @RequestMapping(value = "/all/First_article", method = {RequestMethod.POST,RequestMethod.GET})
-    public ResponseBean FirstCommentsView(@RequestParam("id") @NotNull Integer id){
-        return commentService.viewFirstComments(id);
+
+
+    @GetMapping("/article/{aid}")
+    public ResponseBean listAllCommentsByAid(@PathVariable("aid") @NotNull Integer aid) {
+        return commentService.listAllCommentsByAid(aid);
     }
-    /**
-     * 查看某个文章某条评论的所有子评论
-     * @param id 评论id
-     * @param aid 文章id
-     * @return 获取的评论
-     */
-    @RequestMapping(value = "/all/comments", method = {RequestMethod.POST,RequestMethod.GET})
-    public ResponseBean AllCommentsView_comments(@RequestParam("id") @NotNull Integer id,
-                                                 @RequestParam("aid") @NotNull Integer aid
-                                                 ){
-        return commentService.viewAllComments_comments(id,aid);
-    }
-    /**
-     * 查看某个文章某条评论的所有下一级评论
-     * @param id 评论id
-     * @param aid 文章id
-     * @return 获取的评论
-     */
-    @RequestMapping(value = "/all/First_comments", method = {RequestMethod.POST,RequestMethod.GET})
-    public ResponseBean AllFirstCommentsView_comments(@RequestParam("id") @NotNull Integer id,
-                                                      @RequestParam("aid") @NotNull Integer aid
-                                                      ){
-        return commentService.viewAllFirstComments_comments(id,aid);
+
+    @GetMapping("/{id}/level1")
+    public ResponseBean listNextLevelComments(@PathVariable("id") @NotNull Integer id) {
+        return commentService.listNextLevelComments(id);
     }
 
 }
