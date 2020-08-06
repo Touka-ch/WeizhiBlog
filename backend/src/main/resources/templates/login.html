@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <title>登录</title>
+    <link rel="stylesheet" href="../../layui/css/layui.css" media="all"/>
+    <link rel="stylesheet" href="../css/login.css" media="all"/>
+</head>
+<body>
+<div class="login">
+    <h1>登录</h1>
+    <form class="layui-form" method="post">
+        <div class="layui-form-item">
+            <input class="layui-input" name="username" placeholder="用户名" type="text" autocomplete="off"/>
+        </div>
+        <div class="layui-form-item">
+            <input class="layui-input" name="password" placeholder="密码" type="password" autocomplete="off"/>
+        </div>
+        <button class="layui-btn login_btn" lay-submit="" lay-filter="login">登录</button>
+    </form>
+</div>
+<script type="text/javascript" src="../layui/layui.js"></script>
+
+<script th:inline="javascript">
+    layui.use(['layer'], function () {
+        var layer = layui.layer;
+        var message = [[${shiroLoginFailure}]] ? [[${shiroLoginFailure}]] : getUrlPara("shiroLoginFailure");
+        if (message) {
+            layer.msg(message);
+        }
+    });
+
+    function getUrlPara(name) {
+        var url = document.location.toString();
+        var arrUrl = url.split("?" + name + "=");
+        var para = arrUrl[1];
+        if (para)
+            return decodeURI(para);
+    }
+</script>
+</body>
+</html>
