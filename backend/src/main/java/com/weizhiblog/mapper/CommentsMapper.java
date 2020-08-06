@@ -1,6 +1,6 @@
 package com.weizhiblog.mapper;
 
-import com.weizhiblog.bean.Comments;
+import com.weizhiblog.bean.Comment;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -25,7 +25,7 @@ public interface CommentsMapper {
      * @param record 文章评论
      * @return 插入成功则返回插入行数
      */
-    int insert(Comments record);
+    int insert(Comment record);
 
     /**
      * 插入文章评论，如果文章评论存在，则更新该文章评论为 record
@@ -33,7 +33,7 @@ public interface CommentsMapper {
      * @param record 文章评论记录
      * @return 插入或更新成功则返回 1
      */
-    int insertOrUpdate(Comments record);
+    int insertOrUpdate(Comment record);
 
     /**
      * 插入文章评论记录（不为null的字段），如果文章id存在则改为更新
@@ -41,7 +41,7 @@ public interface CommentsMapper {
      * @param record 文章评论记录
      * @return 插入或更新成功则返回 1
      */
-    int insertOrUpdateSelective(Comments record);
+    int insertOrUpdateSelective(Comment record);
 
     /**
      * 插入或更新文章评论记录（不为null的字段），如果文章id存在则改为更新
@@ -49,7 +49,7 @@ public interface CommentsMapper {
      * @param record 文章评论记录
      * @return 插入成功则返回 1
      */
-    int insertSelective(Comments record);
+    int insertSelective(Comment record);
 
 
     /**
@@ -58,7 +58,7 @@ public interface CommentsMapper {
      * @param id 评论id
      * @return 存在此id对应的文章评论则返回该文章评论
      */
-    Comments selectByPrimaryKey(Integer id);
+    Comment selectByPrimaryKey(Integer id);
 
     /**
      * 根据文章的id更新文章评论（不为null的字段）
@@ -66,7 +66,7 @@ public interface CommentsMapper {
      * @param record 文章评论记录
      * @return 更新成功则返回更新行数
      */
-    int updateByPrimaryKeySelective(Comments record);
+    int updateByPrimaryKeySelective(Comment record);
 
     /**
      * 根据文章评论的id更新文章评论
@@ -74,7 +74,7 @@ public interface CommentsMapper {
      * @param record 文章评论记录
      * @return 更新成功则返回更新行数
      */
-    int updateByPrimaryKey(Comments record);
+    int updateByPrimaryKey(Comment record);
 
     /**
      * 批量更新文章评论（根据每个文章的id）
@@ -82,7 +82,7 @@ public interface CommentsMapper {
      * @param list 文章评论列表
      * @return 更新成功则返回插入行数
      */
-    int updateBatch(List<Comments> list);
+    int updateBatch(List<Comment> list);
 
     /**
      * 批量更新文章评论记录（根据每个文章的id）
@@ -90,7 +90,7 @@ public interface CommentsMapper {
      * @param list 文章评论列表
      * @return 更新成功则返回插入行数
      */
-    int updateBatchSelective(List<Comments> list);
+    int updateBatchSelective(List<Comment> list);
 
     /**
      * 批量插入文章评论
@@ -98,7 +98,7 @@ public interface CommentsMapper {
      * @param list 文章评论列表
      * @return 更新成功则返回更新的行数
      */
-    int batchInsert(@Param("list") List<Comments> list);
+    int batchInsert(@Param("list") List<Comment> list);
  /* ************************************************************
      以下为自己写的
      *************************************************************/
@@ -110,7 +110,7 @@ public interface CommentsMapper {
      * @return 评论列表
      */
     @Select("SELECT * from comments WHERE aid = #{aid}")
-    List<Comments> listCommentsByAid(Integer aid);
+    List<Comment> listCommentsByAid(Integer aid);
 
     /**
      * @param uid
@@ -124,5 +124,5 @@ public interface CommentsMapper {
      * @return
      */
     @Select("SELECT * FROM comments WHERE parentId = #{pid} ")
-    List<Comments> listChildrenCommentsByPid(Integer pid);
+    List<Comment> listChildrenCommentsByPid(Integer pid);
 }

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.weizhiblog.mapper.CommentsMapper">
-    <resultMap id="BaseResultMap" type="com.weizhiblog.bean.Comments">
+    <resultMap id="BaseResultMap" type="com.weizhiblog.bean.Comment">
         <!--@Table comments-->
         <id column="id" jdbcType="INTEGER" property="id"/>
         <result column="aid" jdbcType="INTEGER" property="aid"/>
@@ -29,14 +29,14 @@
         from comments
         where id = #{id,jdbcType=INTEGER}
     </delete>
-    <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.weizhiblog.bean.Comments"
+    <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.weizhiblog.bean.Comment"
             useGeneratedKeys="true">
         insert into comments (aid, content, publishTime,
                               parentId, `uid`)
         values (#{aid,jdbcType=INTEGER}, #{content,jdbcType=LONGVARCHAR}, #{publishTime,jdbcType=TIMESTAMP},
                 #{parentId,jdbcType=INTEGER}, #{uid,jdbcType=INTEGER})
     </insert>
-    <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.weizhiblog.bean.Comments"
+    <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.weizhiblog.bean.Comment"
             useGeneratedKeys="true">
         insert into comments
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -74,7 +74,7 @@
             </if>
         </trim>
     </insert>
-    <update id="updateByPrimaryKeySelective" parameterType="com.weizhiblog.bean.Comments">
+    <update id="updateByPrimaryKeySelective" parameterType="com.weizhiblog.bean.Comment">
         update comments
         <set>
             <if test="aid != null">
@@ -95,7 +95,7 @@
         </set>
         where id = #{id,jdbcType=INTEGER}
     </update>
-    <update id="updateByPrimaryKey" parameterType="com.weizhiblog.bean.Comments">
+    <update id="updateByPrimaryKey" parameterType="com.weizhiblog.bean.Comment">
         update comments
         set aid         = #{aid,jdbcType=INTEGER},
             content     = #{content,jdbcType=LONGVARCHAR},
@@ -191,7 +191,7 @@
              #{item.parentId,jdbcType=INTEGER}, #{item.uid,jdbcType=INTEGER})
         </foreach>
     </insert>
-    <insert id="insertOrUpdate" keyColumn="id" keyProperty="id" parameterType="com.weizhiblog.bean.Comments"
+    <insert id="insertOrUpdate" keyColumn="id" keyProperty="id" parameterType="com.weizhiblog.bean.Comment"
             useGeneratedKeys="true">
         insert into comments
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -227,7 +227,7 @@
             `uid`       = #{uid,jdbcType=INTEGER},
         </trim>
     </insert>
-    <insert id="insertOrUpdateSelective" keyColumn="id" keyProperty="id" parameterType="com.weizhiblog.bean.Comments"
+    <insert id="insertOrUpdateSelective" keyColumn="id" keyProperty="id" parameterType="com.weizhiblog.bean.Comment"
             useGeneratedKeys="true">
         insert into comments
         <trim prefix="(" suffix=")" suffixOverrides=",">

@@ -1,6 +1,7 @@
 package com.weizhiblog.service;
 
 import com.weizhiblog.bean.*;
+import com.weizhiblog.config.BeanConfig;
 import com.weizhiblog.exception.MyRuntimeException;
 import com.weizhiblog.mapper.*;
 import lombok.extern.slf4j.Slf4j;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import javax.validation.constraints.NotNull;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -30,6 +32,8 @@ public class UserService {
     DataMapper dataMapper;
     @Autowired
     CommentsMapper commentsMapper;
+    @Autowired
+    LoginService loginService;
 
     /**
      * 注册用户
@@ -54,11 +58,9 @@ public class UserService {
                     ResponseBean.builder().status(-4).message("昵称重复！").object(user.getNickname()).build()
             );
         }
+        user.setPassword(BeanConfig.passwordEncoder().encode(user.getPassword()));
         //设置注册时间、默认启用用户、设置默认头像
         user.setRegTime(new Timestamp(System.currentTimeMillis()));
-        if (user.getEnabled() == null) {//如果设置了默认，就不管，否则默认启用
-            user.setEnabled(true);
-        }
         if (user.getUserface() == null) {//如果设置了默认，就不管，否则使用默认头像
             user.setUserface("/img/defaultUserface.png");
         }
@@ -67,6 +69,14 @@ public class UserService {
         if (i == 1) {
             int insert = rolesUserMapper.insert(RolesUser.builder().rid(2).uid(user1.getId()).build());
             if (insert == 1) {
+                user1.setPassword(null);
+                List<RolesUser> rolesUsers = rolesUserMapper.listRolesUserByUid(user1.getId());
+                List<String> roles = new ArrayList<>();
+                for (RolesUser rolesUser : rolesUsers) {
+                    roles.add("ROLE_" + rolesUser.getRid());
+                }
+                user1.setRoles(roles);
+                user1.setPassword(null);
                 return ResponseBean.builder().status(1).message("注册成功！").object(user1).build();
             } else {
                 throw new MyRuntimeException(
@@ -95,10 +105,10 @@ public class UserService {
         for (Article article : articles) {
             @NotNull Integer id1 = article.getId();
             dataMapper.deleteDataByAid(id1);
-            List<Comments> comments = commentsMapper.listCommentsByAid(id1);
+            List<Comment> comments = commentsMapper.listCommentsByAid(id1);
             if (comments.size() != 0) {//删除该用户每篇文章的评论,这里可能存在删除评论出错的问题。
                 //具体表现为 先删父评论时，子评论有父评论的外键。这里先不管，遇到问题再说
-                for (Comments comment : comments) {
+                for (Comment comment : comments) {
                     commentsMapper.deleteByPrimaryKey(comment.getId());
                 }
             }
@@ -116,6 +126,7 @@ public class UserService {
             throw new MyRuntimeException(ResponseBean.builder().status(0).message("删除用户角色出错").build());
         }
         if (userMapper.deleteByPrimaryKey(id) == 1) {
+            user.setPassword(null);
             return ResponseBean.builder().status(1).message("删除成功！").object(user).build();
         } else {
             throw new MyRuntimeException(ResponseBean.builder().status(0).message("未知错误！").object(user).build());
@@ -128,41 +139,20 @@ public class UserService {
         if (users == null) {
             return ResponseBean.builder().status(0).message("未知错误！").build();
         }
+        for (User user : users) {
+            user.setPassword(null);
+            List<RolesUser> rolesUsers = rolesUserMapper.listRolesUserByUid(user.getId());
+            List<String> roles = new ArrayList<>();
+            for (RolesUser rolesUser : rolesUsers) {
+                roles.add("ROLE_" + rolesUser.getRid());
+            }
+            user.setRoles(roles);
+        }
         return users.size() == 0 ?
                 ResponseBean.builder().status(-2).message("用户数量为空！").build() :
                 ResponseBean.builder().status(1).message("获取成功！").object(users).build();
     }
 
-    /**
-     * 修改用户密码
-     *
-     * @param id      用户id
-     * @param oldPwd  原密码
-     * @param newPwd  新密码
-     * @param captcha 验证码
-     * @return 是否修改成功
-     */
-    public ResponseBean updateUserPassword(Integer id,
-                                           String oldPwd,
-                                           String newPwd,
-                                           String captcha) {
-        User user = userMapper.selectByPrimaryKey(id);
-        if (user == null) {
-            return ResponseBean.builder().status(-4).message("不存在该用户！").build();
-        }
-        if (!user.getPassword().equals(oldPwd)) {
-            return ResponseBean.builder().status(-2).message("原密码错误！").build();
-        }
-        if (user.getPassword().equals(newPwd)) {
-            return ResponseBean.builder().status(-3).message("新旧密码相同！").build();
-        }
-        user.setPassword(newPwd);
-        if (userMapper.updateByPrimaryKey(user) == 1) {
-            return ResponseBean.builder().status(1).message("修改成功！").build();
-        } else {
-            throw new MyRuntimeException(ResponseBean.builder().status(0).message("未知原因！").build());
-        }
-    }
 
     /**
      * 根据id获取用户
@@ -175,14 +165,21 @@ public class UserService {
         if (user == null) {
             return ResponseBean.builder().status(-2).message("用户不存在！").build();
         }
+        List<RolesUser> rolesUsers = rolesUserMapper.listRolesUserByUid(user.getId());
+        List<String> roles = new ArrayList<>();
+        for (RolesUser rolesUser : rolesUsers) {
+            roles.add("ROLE_" + rolesUser.getRid());
+        }
+        user.setRoles(roles);
+        user.setPassword(null);
         return ResponseBean.builder().status(1).message("获取成功！").object(user).build();
     }
 
     public ResponseBean putUser(Integer id, User user) {
-        if (id == null || user.getId()==null) {
+        if (id == null || user.getId() == null) {
             return ResponseBean.builder().status(-5).message("id不能为空！").build();
         }
-        if (!id.equals(user.getId())){
+        if (!id.equals(user.getId())) {
             return ResponseBean.builder().status(-7).message("id有误！").build();
         }
         User sqlUser = userMapper.selectByPrimaryKey(id);
@@ -209,8 +206,20 @@ public class UserService {
                 return ResponseBean.builder().status(-4).message("昵称被占用！").object(user.getNickname()).build();
             }
         }
+        sqlUser = userMapper.selectByPrimaryKey(id);
+        user.setPassword(sqlUser.getPassword());
+        user.setRoles(sqlUser.getRoles());
         userMapper.updateByPrimaryKey(user);
-        return ResponseBean.builder().status(1).message("更新成功！").object(userMapper.selectByPrimaryKey(id)).build();
+        User user1 = userMapper.selectByPrimaryKey(id);
+        user1.setPassword(null);
+        List<RolesUser> rolesUsers = rolesUserMapper.listRolesUserByUid(user1.getId());
+        List<String> roles = new ArrayList<>();
+        for (RolesUser rolesUser : rolesUsers) {
+            roles.add("ROLE_" + rolesUser.getRid());
+        }
+        user1.setRoles(roles);
+        user1.setPassword(null);
+        return ResponseBean.builder().status(1).message("更新成功！").object(user1).build();
     }
 
     public ResponseBean patchUser(Integer id, User user) {
@@ -239,9 +248,21 @@ public class UserService {
                 return ResponseBean.builder().status(-4).message("昵称被占用！").object(user.getNickname()).build();
             }
         }
+        sqlUser = userMapper.selectByPrimaryKey(id);
+        user.setPassword(null);
+        user.setRoles(sqlUser.getRoles());
         int i = userMapper.updateByPrimaryKeySelective(user);
         if (i == 1) {
-            return ResponseBean.builder().status(1).message("更新成功！").object(userMapper.selectByPrimaryKey(user.getId())).build();
+            User user1 = userMapper.selectByPrimaryKey(user.getId());
+            user1.setPassword(null);
+            List<RolesUser> rolesUsers = rolesUserMapper.listRolesUserByUid(user1.getId());
+            List<String> roles = new ArrayList<>();
+            for (RolesUser rolesUser : rolesUsers) {
+                roles.add("ROLE_" + rolesUser.getRid());
+            }
+            user1.setRoles(roles);
+            user1.setPassword(null);
+            return ResponseBean.builder().status(1).message("更新成功！").object(user1).build();
         } else {
             throw new MyRuntimeException(ResponseBean.builder().status(0).message("未知错误！").build());
         }

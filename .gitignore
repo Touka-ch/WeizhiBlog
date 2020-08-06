@@ -46,3 +46,7 @@ rebel-remote.xml
 .gitignore
 readme.md
 backend/src/main/resources/log
+!/frontend/
+!/logs/
+backend/src/main/resources/static/public/
+backend/src/test/

@@ -10,7 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.validation.constraints.NotNull;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -38,6 +37,8 @@ public class ArticleService {
     DataMapper dataMapper;
     @Autowired
     CommentsMapper commentsMapper;
+    @Autowired
+    CommentService commentService;
 
 
     @Transactional
@@ -80,10 +81,10 @@ public class ArticleService {
             return ResponseBean.builder().status(-2).message("该文章不存在").object(id).build();
         }
         dataMapper.deleteDataByAid(id);
-        List<Comments> comments = commentsMapper.listCommentsByAid(id);
+        List<Comment> comments = commentsMapper.listCommentsByAid(id);
         if (comments.size() != 0) {//删除该用户每篇文章的评论,这里可能存在删除评论出错的问题。
             //具体表现为 先删父评论时，子评论有父评论的外键。这里先不管，遇到问题再说
-            for (Comments comment : comments) {
+            for (Comment comment : comments) {
                 commentsMapper.deleteByPrimaryKey(comment.getId());
             }
         }
@@ -167,6 +168,14 @@ public class ArticleService {
         if (articles == null || articles.size() == 0) {
             return ResponseBean.builder().status(-2).message("文章列表为空！").build();
         }
+        Integer id;
+        for (Article article : articles) {
+            id = article.getId();
+            ResponseBean responseBean = listAllTagsByAid(id);
+            if (responseBean.getStatus() == 1) {
+                article.setTags((List<Tag>) responseBean.getObject());
+            }
+        }
         return ResponseBean.builder().status(1).message("获取成功！").object(articles).build();
     }
 
@@ -179,6 +188,14 @@ public class ArticleService {
         List<Article> articles = articleMapper.listArticlesByUid(uid);
         if (articles == null || articles.size() == 0) {
             return ResponseBean.builder().status(-3).message("文章列表为空！").object(uid).build();
+        }
+        Integer id;
+        for (Article article : articles) {
+            id = article.getId();
+            ResponseBean responseBean = listAllTagsByAid(id);
+            if (responseBean.getStatus() == 1) {
+                article.setTags((List<Tag>) responseBean.getObject());
+            }
         }
         return ResponseBean.builder().status(1).message("获取成功！").object(articles).build();
     }
@@ -193,6 +210,14 @@ public class ArticleService {
         for (Integer aid : aids) {
             articles.add(articleMapper.selectByPrimaryKey(aid));
         }
+        Integer id;
+        for (Article article : articles) {
+            id = article.getId();
+            ResponseBean responseBean = listAllTagsByAid(id);
+            if (responseBean.getStatus() == 1) {
+                article.setTags((List<Tag>) responseBean.getObject());
+            }
+        }
         return ResponseBean.builder().status(1).message("获取成功！").object(articles).build();
     }
 
@@ -205,7 +230,15 @@ public class ArticleService {
             return ResponseBean.builder().status(-3).message("该目录不存在！").object(cid).build();
         }
         List<Article> articles = articleMapper.listArticlesByUidAndCid(uid, cid);
-        return articles == null || articles.size() == 0 ?
+        Integer id;
+        for (Article article : articles) {
+            id = article.getId();
+            ResponseBean responseBean = listAllTagsByAid(id);
+            if (responseBean.getStatus() == 1) {
+                article.setTags((List<Tag>) responseBean.getObject());
+            }
+        }
+        return articles.size() == 0 ?
                 ResponseBean.builder().status(-4).message("文章列表为空！").build() :
                 ResponseBean.builder().status(1).message("获取成功！").object(articles).build();
     }
@@ -225,6 +258,14 @@ public class ArticleService {
                 articles.remove(article);
             }
         }
+        Integer id;
+        for (Article article : articles) {
+            id = article.getId();
+            ResponseBean responseBean = listAllTagsByAid(id);
+            if (responseBean.getStatus() == 1) {
+                article.setTags((List<Tag>) responseBean.getObject());
+            }
+        }
         return ResponseBean.builder().status(1).message("获取成功！").object(articles).build();
     }
 
@@ -235,8 +276,8 @@ public class ArticleService {
             return ResponseBean.builder().status(-2).message("该文章不存在！").object(id).build();
         }
         List<Integer> tids = articleTagsMapper.listTidsByAid(id);
-        List<Tags> tags = new ArrayList<>();
-        Tags tag;
+        List<Tag> tags = new ArrayList<>();
+        Tag tag;
         for (Integer tid : tids) {
             tag = tagsMapper.selectByPrimaryKey(tid);
             if (tag == null) {
@@ -254,14 +295,7 @@ public class ArticleService {
 
 
     public ResponseBean listAllCommentsByAid(Integer id) {
-        Article article = articleMapper.selectByPrimaryKey(id);
-        if (article == null) {
-            return ResponseBean.builder().status(-2).message("该文章不存在！").object(id).build();
-        }
-        List<Comments> comments = commentsMapper.listCommentsByAid(id);
-        return comments == null || comments.size() == 0 ?
-                ResponseBean.builder().status(-3).message("评论列表为空！").build() :
-                ResponseBean.builder().status(1).message("获取成功！").object(comments).build();
+        return commentService.listAllCommentsByAid(id);
     }
 
 
@@ -270,11 +304,15 @@ public class ArticleService {
         if (article == null) {
             return ResponseBean.builder().status(-2).message("文章不存在").build();
         }
-        Map<String, Object> map = new HashMap<>();
-        map.put("article", article);
-        map.put("comments", listAllCommentsByAid(id).getObject());
-        map.put("tags", listAllTagsByAid(id).getObject());
-        return ResponseBean.builder().status(1).message("获取成功").object(map).build();
+        ResponseBean responseBean = listAllTagsByAid(id);
+        if (responseBean.getStatus() == 1) {
+            article.setTags((List<Tag>) responseBean.getObject());
+        }
+        ResponseBean responseBean1 = commentService.listAllCommentsByAid(id);
+        if (responseBean1.getStatus()==1){
+            article.setComments((List<Map<String, Object>>) responseBean1.getObject());
+        }
+        return ResponseBean.builder().status(1).message("获取成功").object(article).build();
     }
 
 }

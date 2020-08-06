@@ -1,6 +1,7 @@
 package com.weizhiblog.controller;
 
 import com.weizhiblog.bean.ResponseBean;
+import com.weizhiblog.bean.dto.TagDTO;
 import com.weizhiblog.service.ArticleService;
 import com.weizhiblog.service.TagService;
 import lombok.extern.log4j.Log4j2;
@@ -8,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotNull;
-import java.util.List;
 
 @Log4j2
 @RestController
@@ -20,15 +20,15 @@ public class TagController {
     ArticleService articleService;
 
     @PostMapping("/article/{aid}")
-    public ResponseBean tagAdd(@NotNull @RequestParam("tag") String tag,
+    public ResponseBean tagAdd(@NotNull @RequestBody TagDTO tagDTO,
                                @NotNull @PathVariable("aid") Integer aid) {
-        return tagService.addTag(tag, aid);
+        return tagService.addTag(tagDTO, aid);
     }
 
     @PostMapping("/article/{aid}/multi")
-    public ResponseBean addMultipleTags(@RequestParam("tags") List<String> tags,
+    public ResponseBean addMultipleTags(@NotNull @RequestBody TagDTO tagDTO,
                                         @PathVariable("aid") Integer aid) {
-        return tagService.addTags(tags, aid);
+        return tagService.addTags(tagDTO, aid);
     }
 
     @DeleteMapping("/{tid}/article/{aid}")

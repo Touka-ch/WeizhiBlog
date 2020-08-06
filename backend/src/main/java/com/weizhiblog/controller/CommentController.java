@@ -1,6 +1,6 @@
 package com.weizhiblog.controller;
 
-import com.weizhiblog.bean.Comments;
+import com.weizhiblog.bean.Comment;
 import com.weizhiblog.bean.ResponseBean;
 import com.weizhiblog.service.CommentService;
 import lombok.extern.log4j.Log4j2;
@@ -26,7 +26,7 @@ public class CommentController {
 
 
     @PostMapping
-    public ResponseBean addComments(@RequestBody Comments comment) {
+    public ResponseBean addComments(@RequestBody Comment comment) {
         return commentService.addComment(comment);
     }
 
@@ -43,13 +43,13 @@ public class CommentController {
 
     @PutMapping("/{id}")
     public ResponseBean putComment(@PathVariable Integer id,
-                                     @RequestBody Comments comment) {
+                                     @RequestBody Comment comment) {
         return commentService.putComment(id,comment);
     }
 
     @PatchMapping("/{id}")
     public ResponseBean patchComment(@PathVariable Integer id,
-                                     @RequestBody Comments comment) {
+                                     @RequestBody Comment comment) {
         return commentService.patchComment(id,comment);
     }
 
