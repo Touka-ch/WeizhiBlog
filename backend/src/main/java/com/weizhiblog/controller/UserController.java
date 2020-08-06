@@ -18,7 +18,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 @Slf4j
 @RestController
@@ -56,26 +55,8 @@ public class UserController {
     }
 
     @GetMapping("{id}")
-    private ResponseBean getUserById(@PathVariable("id") @NotNull Integer id) {
+    public ResponseBean getUserById(@PathVariable("id") @NotNull Integer id) {
         return userService.getUserById(id);
     }
-
-    /**
-     * 修改密码
-     *
-     * @param id      用户id
-     * @param oldPwd  旧密码
-     * @param newPwd  新密码
-     * @param captcha 验证码
-     * @return 是否更新密码成功
-     */
-    @RequestMapping(value = "/password", method = {RequestMethod.POST, RequestMethod.PUT})
-    public ResponseBean updateUserPassword(@RequestParam("id") Integer id,
-                                           @RequestParam("oldPwd") @NotNull @Size(max = 20, min = 3) String oldPwd,
-                                           @RequestParam("newPwd") @NotNull @Size(max = 20, min = 3) String newPwd,
-                                           @RequestParam(value = "captcha", required = false) String captcha) {
-        return userService.updateUserPassword(id, oldPwd, newPwd, captcha);
-    }
-
 
 }

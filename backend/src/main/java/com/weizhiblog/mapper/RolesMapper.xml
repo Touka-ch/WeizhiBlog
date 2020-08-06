@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.weizhiblog.mapper.RolesMapper">
-    <resultMap id="BaseResultMap" type="com.weizhiblog.bean.Roles">
+    <resultMap id="BaseResultMap" type="com.weizhiblog.bean.Role">
         <!--@Table roles-->
         <id column="id" jdbcType="INTEGER" property="id"/>
         <result column="name" jdbcType="VARCHAR" property="name"/>
@@ -21,12 +21,12 @@
         from roles
         where id = #{id,jdbcType=INTEGER}
     </delete>
-    <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.weizhiblog.bean.Roles"
+    <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.weizhiblog.bean.Role"
             useGeneratedKeys="true">
         insert into roles (`name`)
         values (#{name,jdbcType=VARCHAR})
     </insert>
-    <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.weizhiblog.bean.Roles"
+    <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.weizhiblog.bean.Role"
             useGeneratedKeys="true">
         insert into roles
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -40,7 +40,7 @@
             </if>
         </trim>
     </insert>
-    <update id="updateByPrimaryKeySelective" parameterType="com.weizhiblog.bean.Roles">
+    <update id="updateByPrimaryKeySelective" parameterType="com.weizhiblog.bean.Role">
         update roles
         <set>
             <if test="name != null">
@@ -49,7 +49,7 @@
         </set>
         where id = #{id,jdbcType=INTEGER}
     </update>
-    <update id="updateByPrimaryKey" parameterType="com.weizhiblog.bean.Roles">
+    <update id="updateByPrimaryKey" parameterType="com.weizhiblog.bean.Role">
         update roles
         set `name` = #{name,jdbcType=VARCHAR}
         where id = #{id,jdbcType=INTEGER}
@@ -92,7 +92,7 @@
             (#{item.name,jdbcType=VARCHAR})
         </foreach>
     </insert>
-    <insert id="insertOrUpdate" keyColumn="id" keyProperty="id" parameterType="com.weizhiblog.bean.Roles"
+    <insert id="insertOrUpdate" keyColumn="id" keyProperty="id" parameterType="com.weizhiblog.bean.Role"
             useGeneratedKeys="true">
         insert into roles
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -116,7 +116,7 @@
             `name` = #{name,jdbcType=VARCHAR},
         </trim>
     </insert>
-    <insert id="insertOrUpdateSelective" keyColumn="id" keyProperty="id" parameterType="com.weizhiblog.bean.Roles"
+    <insert id="insertOrUpdateSelective" keyColumn="id" keyProperty="id" parameterType="com.weizhiblog.bean.Role"
             useGeneratedKeys="true">
         insert into roles
         <trim prefix="(" suffix=")" suffixOverrides=",">

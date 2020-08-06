@@ -3,7 +3,8 @@ package com.weizhiblog.service;
 
 import com.weizhiblog.bean.ArticleTags;
 import com.weizhiblog.bean.ResponseBean;
-import com.weizhiblog.bean.Tags;
+import com.weizhiblog.bean.Tag;
+import com.weizhiblog.bean.dto.TagDTO;
 import com.weizhiblog.exception.MyRuntimeException;
 import com.weizhiblog.mapper.ArticleMapper;
 import com.weizhiblog.mapper.ArticleTagsMapper;
@@ -13,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -26,19 +29,23 @@ public class TagService {
     TagsMapper tagsMapper;
 
     /**
-     * @param tag 内容
-     * @param aid 文章id
+     * @param tagDTO
+     * @param aid    文章id
      * @return Res
      */
     @Transactional
-    public ResponseBean addTag(String tag, Integer aid) {
+    public ResponseBean addTag(TagDTO tagDTO, Integer aid) {
+        String tag = tagDTO.getTag();
+        if (tag == null) {
+            return ResponseBean.builder().status(-4).message("无标签！").build();
+        }
         if (articleMapper.selectByPrimaryKey(aid) == null) {
             return ResponseBean.builder().status(-2).message("文章不存在！").build();
         }
         List<Integer> tids = articleTagsMapper.listTidsByAid(aid);
-        Tags sqlTag = tagsMapper.getIdByTagName(tag);
+        Tag sqlTag = tagsMapper.getIdByTagName(tag);
         if (sqlTag == null) {
-            tagsMapper.insert(Tags.builder().tagName(tag).build());
+            tagsMapper.insert(Tag.builder().tagName(tag).build());
             sqlTag = tagsMapper.getIdByTagName(tag);
         } else {
             for (Integer tid : tids) {
@@ -54,16 +61,24 @@ public class TagService {
     }
 
     /**
-     * @param tags 标签列表
-     * @param aid  文章id
+     * @param tagDTO 标签列表
+     * @param aid    文章id
      * @return Res
      */
     @Transactional
-    public ResponseBean addTags(List<String> tags, Integer aid) {
+    public ResponseBean addTags(@NotNull TagDTO tagDTO, Integer aid) {
+        List<TagDTO> tags = new ArrayList<>();
+        List<String> tags1 = tagDTO.getTags();
+        if (tags1.size() == 0) {
+            return ResponseBean.builder().status(-3).message("标签为空！").build();
+        }
+        for (String s : tags1) {
+            tags.add(TagDTO.builder().tag(s).build());
+        }
         if (articleMapper.selectByPrimaryKey(aid) == null) {
             return ResponseBean.builder().status(-2).message("文章不存在！").build();
         }
-        for (String tag : tags) {
+        for (TagDTO tag : tags) {
             ResponseBean responseBean = addTag(tag, aid);
             if (responseBean.getStatus() != 1) {
                 throw new MyRuntimeException(responseBean);

@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotNull;
 import java.sql.Timestamp;
+import java.util.List;
+import java.util.Map;
 
 @Data
 @Builder
@@ -51,4 +53,7 @@ public class Article {
     private Integer pageView;
 
     private Boolean publicToOthers;
+    
+    List<Tag> tags;
+    List<Map<String,Object>> comments;
 }

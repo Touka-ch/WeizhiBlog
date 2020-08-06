@@ -1,6 +1,6 @@
 package com.weizhiblog.mapper;
 
-import com.weizhiblog.bean.Roles;
+import com.weizhiblog.bean.Role;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -22,7 +22,7 @@ public interface RolesMapper {
      * @param record 用户角色记录
      * @return 插入成功则返回 1
      */
-    int insert(Roles record);
+    int insert(Role record);
 
     /**
      * 插入用户角色，如果用户角色存在，则更新该文用户角色为 record
@@ -30,7 +30,7 @@ public interface RolesMapper {
      * @param record 用户角色记录
      * @return 插入或更新成功则返回 1
      */
-    int insertOrUpdate(Roles record);
+    int insertOrUpdate(Role record);
 
     /**
      * 插入用户角色记录，如果用户角色存在，则更新该文用户角色为 record
@@ -38,7 +38,7 @@ public interface RolesMapper {
      * @param record 用户角色记录
      * @return 插入或更新成功则返回 1
      */
-    int insertOrUpdateSelective(Roles record);
+    int insertOrUpdateSelective(Role record);
 
     /**
      * 插入或更新用户角色记录（不为null的字段），如果用户角色存在则改为更新
@@ -46,7 +46,7 @@ public interface RolesMapper {
      * @param record 用户角色记录
      * @return 插入成功则返回 1
      */
-    int insertSelective(Roles record);
+    int insertSelective(Role record);
 
     /**
      * 根据用户id获取用户角色
@@ -54,7 +54,7 @@ public interface RolesMapper {
      * @param id 用户id
      * @return 存在此id对应的用户角色则返回该角色
      */
-    Roles selectByPrimaryKey(Integer id);
+    Role selectByPrimaryKey(Integer id);
 
     /**
      * 根据用户id更新用户角色名（不为null的字段）
@@ -62,7 +62,7 @@ public interface RolesMapper {
      * @param record 用户角色记录
      * @return 更新成功则返回 1
      */
-    int updateByPrimaryKeySelective(Roles record);
+    int updateByPrimaryKeySelective(Role record);
 
     /**
      * 根据用户id更新用户角色名
@@ -70,7 +70,7 @@ public interface RolesMapper {
      * @param record 用户角色记录
      * @return 更新成功则返回 1
      */
-    int updateByPrimaryKey(Roles record);
+    int updateByPrimaryKey(Role record);
 
     /**
      * 批量更新用户角色名（根据每个用户id）
@@ -78,7 +78,7 @@ public interface RolesMapper {
      * @param list 用户角色名列表
      * @return 更新成功则返回 1
      */
-    int updateBatch(List<Roles> list);
+    int updateBatch(List<Role> list);
 
     /**
      * 批量更新用户角色名记录（根据每个用户id）
@@ -86,7 +86,7 @@ public interface RolesMapper {
      * @param list 用户角色名列表
      * @return 更新成功则返回 1
      */
-    int updateBatchSelective(List<Roles> list);
+    int updateBatchSelective(List<Role> list);
 
     /**
      * 批量插入用户角色名
@@ -94,7 +94,7 @@ public interface RolesMapper {
      * @param list 用户角色列表
      * @return 更新成功则返回 1
      */
-    int batchInsert(@Param("list") List<Roles> list);
+    int batchInsert(@Param("list") List<Role> list);
 
 
 }

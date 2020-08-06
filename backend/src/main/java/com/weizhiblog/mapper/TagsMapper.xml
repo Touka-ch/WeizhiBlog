@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.weizhiblog.mapper.TagsMapper">
-    <resultMap id="BaseResultMap" type="com.weizhiblog.bean.Tags">
+    <resultMap id="BaseResultMap" type="com.weizhiblog.bean.Tag">
         <!--@Table tags-->
         <id column="id" jdbcType="INTEGER" property="id"/>
         <result column="tagName" jdbcType="VARCHAR" property="tagName"/>
@@ -21,12 +21,12 @@
         from tags
         where id = #{id,jdbcType=INTEGER}
     </delete>
-    <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.weizhiblog.bean.Tags"
+    <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.weizhiblog.bean.Tag"
             useGeneratedKeys="true">
         insert into tags (tagName)
         values (#{tagName,jdbcType=VARCHAR})
     </insert>
-    <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.weizhiblog.bean.Tags"
+    <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.weizhiblog.bean.Tag"
             useGeneratedKeys="true">
         insert into tags
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -40,7 +40,7 @@
             </if>
         </trim>
     </insert>
-    <update id="updateByPrimaryKeySelective" parameterType="com.weizhiblog.bean.Tags">
+    <update id="updateByPrimaryKeySelective" parameterType="com.weizhiblog.bean.Tag">
         update tags
         <set>
             <if test="tagName != null">
@@ -49,7 +49,7 @@
         </set>
         where id = #{id,jdbcType=INTEGER}
     </update>
-    <update id="updateByPrimaryKey" parameterType="com.weizhiblog.bean.Tags">
+    <update id="updateByPrimaryKey" parameterType="com.weizhiblog.bean.Tag">
         update tags
         set tagName = #{tagName,jdbcType=VARCHAR}
         where id = #{id,jdbcType=INTEGER}
@@ -92,7 +92,7 @@
             (#{item.tagName,jdbcType=VARCHAR})
         </foreach>
     </insert>
-    <insert id="insertOrUpdate" keyColumn="id" keyProperty="id" parameterType="com.weizhiblog.bean.Tags"
+    <insert id="insertOrUpdate" keyColumn="id" keyProperty="id" parameterType="com.weizhiblog.bean.Tag"
             useGeneratedKeys="true">
         insert into tags
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -116,7 +116,7 @@
             tagName = #{tagName,jdbcType=VARCHAR},
         </trim>
     </insert>
-    <insert id="insertOrUpdateSelective" keyColumn="id" keyProperty="id" parameterType="com.weizhiblog.bean.Tags"
+    <insert id="insertOrUpdateSelective" keyColumn="id" keyProperty="id" parameterType="com.weizhiblog.bean.Tag"
             useGeneratedKeys="true">
         insert into tags
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -152,7 +152,7 @@
         from tags
         where tagName = #{tagName,jdbcType=VARCHAR}
     </select>
-    <insert id="insertByTagName" keyColumn="id" keyProperty="id" parameterType="com.weizhiblog.bean.Tags"
+    <insert id="insertByTagName" keyColumn="id" keyProperty="id" parameterType="com.weizhiblog.bean.Tag"
             useGeneratedKeys="true">
         insert into tags (tagName)
         values (#{tagName,jdbcType=VARCHAR})
