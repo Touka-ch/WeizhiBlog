@@ -1,4 +1,3 @@
-// eslint-disable-next-line prettier/prettier
 import axios from 'axios'
 import { Message, Loading } from 'element-ui'
 const ConfigBaseURL = '/api/' // 'http://47.115.41.198:8090' //默认路径，这里也可以使用env来判断环境

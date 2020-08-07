@@ -94,6 +94,39 @@ export function categoryUserRequest(uid) {
   })
 }
 /*
+ * Comment
+ * post   添加文章评论          {{base}}/comments
+ * post   删除文章评论（一条）    {{base}}/comments/:id
+ * put    更新（全部属性）       {{base}}/comments/:id
+ * patch  更新（部分属性）       {{base}}/comments/:id
+ * *********************************************************************
+ * delete 删除文章评论（all）    {{base}}/comments/article/:aid
+ * get    某文章评论（all）      {{base}}/comments/article/:aid
+ * *********************************************************************
+ * get    某评论所有直接子评论    {{base}}/comments/:id/level1
+ */
+export function commentRequest(method, id, data) {
+  return Service({
+    method: method,
+    url: '/comments/' + (id ? id : ''),
+    data: JSON.stringify(data)
+  })
+}
+export function commentArticleRequest(method, aid, data) {
+  return Service({
+    method: method,
+    url: '/comments/article/' + (aid ? aid : ''),
+    data: JSON.stringify(data)
+  })
+}
+export function commentLevel1Request(id) {
+  return Service({
+    method: 'get',
+    url: '/comments/' + id + '/level1'
+  })
+}
+
+/*
  * Tag
  * post   添加文章标签          {{base}}/tags/article/:aid
  * delete 删除所有标签          {{base}}/tags/article/:aid
@@ -155,24 +188,22 @@ export function setOrdinaryRequest(uid) {
  * get    评论数                {{base}}/data/like/:uid
  * get    喜欢数                {{base}}/data/like/:uid
  * get    喜欢数                {{base}}/data/like/:uid
- * get    喜欢数                {{base}}/data/like/:uid
- * get    喜欢数                {{base}}/data/like/:uid
  * put    用户评论               {{base}}/role/setOrdinary/:uid
  */
 //暂未完成
-export function pvRequest(uid, n) {
+export function pvNumRequest(uid, n) {
   return Service({
     method: 'get',
     url: '/data/pv/' + uid + (n ? '/' + n : '')
   })
 }
-export function likeRequest(uid, n) {
+export function likeNumRequest(uid, n) {
   return Service({
     method: 'get',
     url: '/data/like/' + uid + (n ? '/' + n : '')
   })
 }
-export function commentRequest(uid, n) {
+export function commentNumRequest(uid, n) {
   return Service({
     method: 'get',
     url: '/data/comment/' + uid + (n ? '/' + n : '')
@@ -203,7 +234,7 @@ export function loginRequest(data) {
 }
 export function logoutRequest() {
   return Service({
-    method: 'get',
+    method: 'post',
     url: '/logout/'
   })
 }

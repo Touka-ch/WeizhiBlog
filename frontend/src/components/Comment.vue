@@ -57,38 +57,27 @@
 <script>
 import Vue from 'vue'
 export default {
+  props: {
+    commentsData: {
+      type: Array,
+      required: true
+    }
+  },
   data() {
     return {
       inputComment: '',
       showItemId: '',
-      comments: [
-        {
-          content: 'adfadfadfadsfdasasdfsadfa的发达范德萨分答复阿斯顿',
-          date: 1596768890000,
-          fromAvatar: 'http://47.115.41.198:8090/public/2020/08/07/03/43/27/270/touxiang5.png',
-          fromId: 12,
-          fromName: 'user',
-          id: 27,
-          likeNum: 1,
-          ownerId: 28,
-          toId: -1,
-          reply: [
-            //回复，或子评论
-            {
-              id: '34523244545', //主键id
-              commentId: 'comment0001', //父评论id，即父亲的id
-              fromId: 'observer223432', //评论者id
-              fromName: '夕阳红', //评论者昵称
-              fromAvatar: 'https://wx4.sinaimg.cn/mw690/69e273f8gy1ft1541dmb7j215o0qv7wh.jpg', //评论者头像
-              toId: 'errhefe232213', //被评论者id
-              toName: '犀利的评论家', //被评论者昵称
-              toAvatar: 'http://ww4.sinaimg.cn/bmiddle/006DLFVFgy1ft0j2pddjuj30v90uvagf.jpg', //被评论者头像
-              content: '赞同，很靠谱，水平很高', //评论内容
-              date: '2018-07-05 08:35' //评论时间
-            }
-          ]
-        }
-      ]
+      comments: {}
+    }
+  },
+  watch: {
+    commentsData(val, oldval) {
+      if (val != oldval) {
+        this.comments = this.commentsData
+        console.log('ajkskhdjkahsdahdjakshdka')
+        console.log(this.comments)
+        console.log('ajkskhdjkahsdahdjakshdka')
+      }
     }
   },
   computed: {},
@@ -109,18 +98,21 @@ export default {
         item.isLike = !item.isLike
       }
     },
+
     /**
      * 点击取消按钮
      */
     cancel() {
       this.showItemId = ''
     },
+
     /**
      * 提交评论
      */
     commitComment() {
       console.log(this.inputComment)
     },
+
     /**
      * 点击评论按钮显示输入框
      * item: 当前大评论

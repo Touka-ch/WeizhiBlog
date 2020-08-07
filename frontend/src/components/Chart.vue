@@ -28,7 +28,7 @@
 
 <script>
 import EChart from './CommonEChart'
-import { pvRequest, likeRequest, commentRequest } from '../api/Requests'
+import { pvNumRequest, likeNumRequest, commentNumRequest } from '../api/Requests'
 export default {
   name: 'Chart',
   components: { EChart },
@@ -85,15 +85,15 @@ export default {
   mounted() {
     this.uid = JSON.parse(localStorage.getItem('user')).id
     console.log(JSON.parse(localStorage.getItem('user')))
-    pvRequest(this.uid).then(res => {
+    pvNumRequest(this.uid).then(res => {
       this.error(res.status, res.message)
       this.pv = res.object
     })
-    likeRequest(this.uid).then(res => {
+    likeNumRequest(this.uid).then(res => {
       this.error(res.status, res.message)
       this.like = res.object
     })
-    commentRequest(this.uid).then(res => {
+    commentNumRequest(this.uid).then(res => {
       this.error(res.status, res.message)
       this.comment = res.object
     })

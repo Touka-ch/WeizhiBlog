@@ -18,7 +18,7 @@
         filter-placement="bottom-end"
       >
         <template slot-scope="scope">
-          <el-tag :type="scope.row.enabled === true ? 'success' : 'info'">{{ scope.row.enabled }}</el-tag>
+          <el-tag :type="scope.row.status === true ? 'success' : 'info'">{{ scope.row.status }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column label="角色" prop="roles">
@@ -62,6 +62,18 @@
         <el-form-item label="邮箱" prop="email">
           <el-input v-model="ruleForm.email"></el-input>
         </el-form-item>
+        <el-form-item label="是否启用">
+          <el-switch
+            style="display: block"
+            v-model="ruleForm.status"
+            active-color="#13ce66"
+            inactive-color="#ff4949"
+            active-text="启用"
+            inactive-text="禁用"
+            :disabled="isOrigin"
+          >
+          </el-switch>
+        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">取 消</el-button>
@@ -95,7 +107,8 @@ export default {
         username: '',
         password: '',
         nickname: '',
-        email: ''
+        email: '',
+        status: true
       },
       rules: {
         username: [
@@ -143,7 +156,7 @@ export default {
         }
         console.log(this.tableData)
         for (let item of this.tableData) {
-          item.enabled = true
+          //item.enabled = true
           item.password = '**********'
           let data = new Date(item.regTime)
           item.regTime = data.toLocaleString()
@@ -206,4 +219,8 @@ export default {
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+.el-switch {
+  margin-top: 9px;
+}
+</style>

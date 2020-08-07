@@ -32,14 +32,12 @@ export default {
       this.$router.push({ name: 'login' })
     },
     logout() {
+      //logoutRequest()
       localStorage.clear()
       this.$router.push({ name: 'index' })
     },
     getUser() {
       this.user = JSON.parse(localStorage.getItem('user')).username
-    },
-    mounted() {
-      this.getUser()
     }
   },
   mounted() {

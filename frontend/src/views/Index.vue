@@ -90,6 +90,9 @@ export default {
       //console.log(res.object)
       this.articles = res.object
     })
+    if (this.$route.name === 'article') {
+      this.isDisplay = false
+    }
   },
   mounted() {}
 }
