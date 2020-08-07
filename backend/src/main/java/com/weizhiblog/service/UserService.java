@@ -4,6 +4,7 @@ import com.weizhiblog.bean.*;
 import com.weizhiblog.config.BeanConfig;
 import com.weizhiblog.exception.MyRuntimeException;
 import com.weizhiblog.mapper.*;
+import com.weizhiblog.utils.AvatarUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,7 +35,6 @@ public class UserService {
     CommentsMapper commentsMapper;
     @Autowired
     LoginService loginService;
-
     /**
      * 注册用户
      *
@@ -60,10 +60,12 @@ public class UserService {
         }
         user.setPassword(BeanConfig.passwordEncoder().encode(user.getPassword()));
         //设置注册时间、默认启用用户、设置默认头像
+
         user.setRegTime(new Timestamp(System.currentTimeMillis()));
         if (user.getUserface() == null) {//如果设置了默认，就不管，否则使用默认头像
-            user.setUserface("/img/defaultUserface.png");
+            user.setUserface(AvatarUtils.getRandAvatar());
         }
+        user.setEnabled(true);
         int i = userMapper.insert(user);
         User user1 = userMapper.getUserByUsername(user.getUsername());
         if (i == 1) {
@@ -209,6 +211,7 @@ public class UserService {
         sqlUser = userMapper.selectByPrimaryKey(id);
         user.setPassword(sqlUser.getPassword());
         user.setRoles(sqlUser.getRoles());
+        user.setEnabled(user.getStatus());
         userMapper.updateByPrimaryKey(user);
         User user1 = userMapper.selectByPrimaryKey(id);
         user1.setPassword(null);
@@ -223,6 +226,7 @@ public class UserService {
     }
 
     public ResponseBean patchUser(Integer id, User user) {
+        log.info(user.toString());
         if (id == null) {
             return ResponseBean.builder().status(-5).message("id不能为空！").build();
         }
@@ -248,6 +252,7 @@ public class UserService {
                 return ResponseBean.builder().status(-4).message("昵称被占用！").object(user.getNickname()).build();
             }
         }
+        user.setEnabled(user.getStatus());
         sqlUser = userMapper.selectByPrimaryKey(id);
         user.setPassword(null);
         user.setRoles(sqlUser.getRoles());

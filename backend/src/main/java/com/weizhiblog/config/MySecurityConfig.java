@@ -36,7 +36,9 @@ public class MySecurityConfig extends WebSecurityConfigurerAdapter {
             "/logout",
             "/articles/",
             "/articles/**",
-            "/users"
+            "/users",
+            "/public/**",
+            "/img/**"
     };
 
     private final String[] ADMIN_LIST = new String[]{

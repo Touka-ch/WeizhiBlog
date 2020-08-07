@@ -66,6 +66,17 @@ public class User implements UserDetails {
 
     private List<String> roles;
 
+    private Boolean status;
+
+    public Boolean getStatus() {
+        return enabled;
+    }
+
+    public void setStatus(Boolean status) {
+        this.enabled = status;
+        this.status = status;
+    }
+
     /**
      * 设置密码
      *
@@ -110,8 +121,8 @@ public class User implements UserDetails {
         this.nickname = nickname;
     }
 
-    public void setEnabled(Boolean enabled) {
-        this.enabled = enabled;
+    public void setEnabled(Boolean status) {
+        this.enabled = status;
     }
 
     public String getEmail() {
@@ -187,6 +198,6 @@ public class User implements UserDetails {
     @Override
     @JsonIgnore
     public boolean isEnabled() {
-        return true;
+        return enabled == null || enabled;
     }
 }

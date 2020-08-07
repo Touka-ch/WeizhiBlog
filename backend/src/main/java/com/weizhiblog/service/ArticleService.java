@@ -312,6 +312,9 @@ public class ArticleService {
         if (responseBean1.getStatus()==1){
             article.setComments((List<Map<String, Object>>) responseBean1.getObject());
         }
+        patchArticle(id,Article.builder().pageView(article.getPageView()+2)
+                .likeNum(article.getLikeNum()+1)
+                .build());
         return ResponseBean.builder().status(1).message("获取成功").object(article).build();
     }
 
