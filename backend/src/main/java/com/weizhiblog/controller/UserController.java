@@ -28,6 +28,7 @@ public class UserController {
 
     @PostMapping
     public ResponseBean signUpUser(@RequestBody @Validated User user) {
+        log.info(user.toString());
         return userService.signUpUser(user);
     }
 
