@@ -4,10 +4,13 @@
       <el-dropdown>
         <span class="el-dropdown-link"><img :src="userImg" class="user" /> </span>
         <el-dropdown-menu slot="dropdown">
+          <el-dropdown-item>{{ user }}</el-dropdown-item>
           <el-dropdown-item>
             <div @click="login">切换用户</div>
           </el-dropdown-item>
-          <el-dropdown-item>退出</el-dropdown-item>
+          <el-dropdown-item>
+            <div @click="logout">退出</div>
+          </el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
     </div>
@@ -19,13 +22,28 @@ export default {
   name: 'CommonHeader',
   data() {
     return {
-      userImg: require('..//assets/images/user (1).png')
+      userImg: require('..//assets/images/user (1).png'),
+      user: ''
     }
   },
   methods: {
     login() {
+      localStorage.clear()
       this.$router.push({ name: 'login' })
+    },
+    logout() {
+      localStorage.clear()
+      this.$router.push({ name: 'index' })
+    },
+    getUser() {
+      this.user = JSON.parse(localStorage.getItem('user')).username
+    },
+    mounted() {
+      this.getUser()
     }
+  },
+  mounted() {
+    this.getUser()
   }
 }
 </script>

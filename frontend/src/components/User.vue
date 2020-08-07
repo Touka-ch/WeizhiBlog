@@ -5,7 +5,7 @@
       <!--:data="tableData.filter(data => !search || data.username.toLowerCase().includes(search.toLowerCase()))"-->
       <el-table-column label="用户名" prop="username" sortable> </el-table-column>
       <el-table-column label="密码" prop="password"> </el-table-column>
-      <el-table-column label="昵称" prop="nickname"> </el-table-column>
+      <el-table-column label="昵称" prop="nickname" sortable> </el-table-column>
       <el-table-column
         prop="enabled"
         label="启用"
@@ -18,10 +18,16 @@
         filter-placement="bottom-end"
       >
         <template slot-scope="scope">
-          <el-tag :type="scope.row.enabled == true ? 'success' : 'info'">{{ scope.row.enabled }}</el-tag>
+          <el-tag :type="scope.row.enabled === true ? 'success' : 'info'">{{ scope.row.enabled }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="角色" prop="roles"> </el-table-column>
+      <el-table-column label="角色" prop="roles">
+        <template slot-scope="scope">
+          <div v-for="item in scope.row.roles" :key="item">
+            <el-tag :type="item === 'ROLE_1' ? 'danger' : 'info'">{{ item }}</el-tag>
+          </div>
+        </template>
+      </el-table-column>
       <el-table-column label="头像">
         <template slot-scope="scope">
           <img :src="scope.row.userface" min-width="70" height="70" />
@@ -32,29 +38,29 @@
       <el-table-column align="right">
         <template slot="header">
           <!-- slot-scope="scope" -->
-          <input v-model="search" size="mini" placeholder="输入关键字搜索" />
+          <input v-model="search" placeholder="输入关键字搜索" />
         </template>
-        <template slot-scope="scope">
+        <template v-slot="scope">
+          <!-- slot-scope="scope" v-slot="scope"-->
           <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-          <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+          <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)" :disabled="isOrigin">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
-    <!-- Form -->
-    <el-dialog title="编辑用户" :visible.sync="dialogFormVisible">
+    <!-- Form  小bug 如果原来用户名或者密码大于20个，不点击输入框的时候，不会报错-->
+    <el-dialog title="编辑用户" :visible.sync="dialogFormVisible" width="500px">
       <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="login-box">
-        <h2 class="login-title">注册新用户</h2>
         <el-form-item label="用户名" prop="username">
-          <el-input placeholder="不少于3个字符" v-model="ruleForm.username"></el-input>
+          <el-input v-model="ruleForm.username"></el-input>
         </el-form-item>
         <el-form-item label="昵称" prop="nickname">
-          <el-input placeholder="想个好听的名字吧!" v-model="ruleForm.nickname"></el-input>
+          <el-input v-model="ruleForm.nickname"></el-input>
         </el-form-item>
         <el-form-item label="密码" prop="password">
-          <el-input type="password" placeholder="不少于3个字符" v-model="ruleForm.password"></el-input>
+          <el-input type="password" v-model="ruleForm.password"></el-input>
         </el-form-item>
         <el-form-item label="邮箱" prop="email">
-          <el-input placeholder="请输入常用的邮箱" v-model="ruleForm.email"></el-input>
+          <el-input v-model="ruleForm.email"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -66,6 +72,7 @@
 </template>
 
 <script>
+import { userRequest } from '../api/Requests'
 export default {
   name: 'User',
   computed: {
@@ -84,6 +91,7 @@ export default {
         region: ''
       },
       ruleForm: {
+        id: '',
         username: '',
         password: '',
         nickname: '',
@@ -101,31 +109,65 @@ export default {
         ],
         email: [{ required: true, message: '请输入邮箱', trigger: 'blur' }]
       },
-      tableData: [{}],
+      tableData: [
+        {
+          enable: true
+        }
+      ],
       search: '',
       info: '',
-      errors: ''
+      errors: '',
+      index: null,
+      row: '',
+      isOrigin: true
     }
   },
   created() {
-    this.$http.get('/user/all').then(res => {
-      this.info = res.data
-      this.tableData = res.data.object
-      //this.tableData = res.data.object
-      //console.log(res.data)
-      this.error()
-    })
-    //this.error('created')
+    this.judgeRole()
+    this.getAllUser()
   },
-  mounted() {
-    this.error()
-  },
+  activated() {},
+  mounted() {},
   methods: {
+    getAllUser() {
+      //获取所有用户
+      userRequest('get').then(res => {
+        this.info = res
+        this.tableData = res.object
+        if (this.isOrigin) {
+          for (let user of this.tableData)
+            if (user.id == JSON.parse(localStorage.getItem('user')).id) {
+              this.tableData = [user]
+              break
+            }
+        }
+        console.log(this.tableData)
+        for (let item of this.tableData) {
+          item.enabled = true
+          item.password = '**********'
+          let data = new Date(item.regTime)
+          item.regTime = data.toLocaleString()
+        }
+        this.error()
+      })
+    },
     error() {
-      if (this.info.status == 0) this.errors = true
+      if (this.info.status == '0') this.errors = true
+      else {
+        this.$message({
+          message: '数据加载成功',
+          type: 'success'
+        })
+      }
     },
     filterTag(value, row) {
       return row.enabled === value
+    },
+    judgeRole() {
+      for (let item of JSON.parse(localStorage.getItem('user')).roles) {
+        console.log(item)
+        if (item == 'ROLE_1') this.isOrigin = false
+      }
     },
     /*
     change() {
@@ -136,24 +178,29 @@ export default {
       this.reload()
     },*/
     updateUser() {
-      this.$http.post('/user/update').then(res => {
-        console.log(res)
+      delete this.ruleForm.regTime
+      userRequest('patch', this.ruleForm.id, this.ruleForm).then(res => {
+        if (res.status == '1') {
+          this.$notify({ title: '成功', message: res.message, type: 'success' })
+          //this.getAllUser()
+        } else this.$notify({ title: '失败', message: res.message, type: 'error' })
       })
       this.dialogFormVisible = false
     },
     handleEdit(index, row) {
+      this.row = row
       this.dialogFormVisible = true
-      this.ruleForm.username = (index, row).username
-      this.ruleForm.password = (index, row).password
-      this.ruleForm.nickname = (index, row).nickname
-      this.ruleForm.email = (index, row).email
+      this.ruleForm = (index, row)
       //console.log((index, row).email)
     },
     handleDelete(index, row) {
-      this.$http.post('/user/delete').then(res => {
-        console.log(res)
+      //删除用户
+      userRequest('delete', (index, row).id).then(res => {
+        if (res.status == '1') {
+          this.$notify({ title: '成功', message: res.message, type: 'success' })
+          //this.getAllUser()
+        } else this.$notify.error({ title: '失败', message: res.message })
       })
-      console.log(index, row)
     }
   }
 }

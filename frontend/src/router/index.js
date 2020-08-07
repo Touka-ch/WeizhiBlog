@@ -6,9 +6,23 @@ Vue.use(VueRouter)
 
 const routes = [
   {
-    path: '/index',
+    path: '/',
+    params: 'view',
     name: 'index',
-    component: () => import('../views/Index')
+    component: () => import('../views/Index'),
+    children: [
+      {
+        path: '/article',
+        params: 'aid',
+        name: 'article',
+        component: () => import('../components/CommonArticle')
+      }
+    ]
+  },
+  {
+    path: '/test',
+    name: 'test',
+    component: () => import('../components/test')
   },
   {
     //登录页
@@ -26,37 +40,37 @@ const routes = [
     component: () => import('@/views/Main.vue'),
     children: [
       {
-        path: '/article',
-        name: 'article',
-        component: () => import('@/components/Article.vue')
+        path: '/main/article',
+        name: 'articles',
+        component: () => import('@/components/CommonList.vue')
       },
       {
-        path: '/hub',
+        path: '/main/hub',
         name: 'hub',
         component: () => import('@/components/Hub.vue')
       },
       {
-        path: '/list',
+        path: '/main/list',
         name: 'list',
         component: () => import('@/components/List.vue')
       },
       {
-        path: '/new',
+        path: '/main/new',
         name: 'new',
         component: () => import('@/components/New.vue')
       },
       {
-        path: '/user',
+        path: '/main/user',
         name: 'user',
         component: () => import('@/components/User.vue')
       },
       {
-        path: '/column',
+        path: '/main/column',
         name: 'column',
         component: () => import('@/components/Column.vue')
       },
       {
-        path: '/chart',
+        path: '/main/chart',
         name: 'chart',
         component: () => import('@/components/Chart.vue')
       }

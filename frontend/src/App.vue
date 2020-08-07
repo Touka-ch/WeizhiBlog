@@ -6,6 +6,5 @@
 
 <style lang="scss">
 #app {
-  color: $theme-color;
 }
 </style>

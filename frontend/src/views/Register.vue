@@ -2,28 +2,29 @@
   <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="login-box">
     <h2 class="login-title">注册新用户</h2>
     <el-form-item label="用户名" prop="username">
-      <el-input placeholder="不少于3个字符" v-model="ruleForm.username"></el-input>
+      <el-input placeholder="不少于3个字符" v-model="ruleForm.username" @change="disable"></el-input>
     </el-form-item>
     <el-form-item label="昵称" prop="nickname">
-      <el-input placeholder="想个好听的名字吧!" v-model="ruleForm.nickname"></el-input>
+      <el-input placeholder="想个好听的名字吧!" v-model="ruleForm.nickname" @change="disable"></el-input>
     </el-form-item>
     <el-form-item label="密码" prop="password">
-      <el-input type="password" placeholder="不少于3个字符" v-model="ruleForm.password"></el-input>
+      <el-input type="password" placeholder="不少于3个字符" v-model="ruleForm.password" @change="disable"></el-input>
     </el-form-item>
     <el-form-item label="确认密码" prop="checkPwd">
-      <el-input type="password" placeholder="再输入一次吧" v-model="ruleForm.checkPwd"></el-input>
+      <el-input type="password" placeholder="再输入一次吧" v-model="ruleForm.checkPwd" @change="disable"></el-input>
     </el-form-item>
     <el-form-item label="邮箱" prop="email">
-      <el-input placeholder="请输入常用的邮箱" v-model="ruleForm.email"></el-input>
+      <el-input placeholder="请输入常用的邮箱" v-model="ruleForm.email" @change="disable"></el-input>
     </el-form-item>
     <el-form-item>
-      <el-button type="primary" @click="submitForm('ruleForm')">立即创建</el-button>
+      <el-button type="primary" @click="submitForm(ruleForm)" :disabled="flag">立即创建</el-button>
       <el-button @click="resetForm('ruleForm')">重置</el-button>
     </el-form-item>
   </el-form>
 </template>
 
 <script>
+import { userRequest } from '../api/Requests'
 export default {
   name: 'register',
   data() {
@@ -47,6 +48,7 @@ export default {
       }
     }
     return {
+      flag: true,
       ruleForm: {
         username: '',
         password: '',
@@ -66,17 +68,42 @@ export default {
       }
     }
   },
+  watch: {},
   methods: {
-    submitForm(formName) {
+    disable() {
+      if (
+        this.ruleForm.username == '' ||
+        this.ruleForm.password == '' ||
+        this.ruleForm.checkPwd == '' ||
+        this.ruleForm.nickname == '' ||
+        this.ruleForm.email == ''
+      ) {
+        this.flag = true
+      } else {
+        this.flag = false
+      }
+    },
+    submitForm: function(formName) {
+      console.log(formName)
+      userRequest('post', '', formName).then(res => {
+        if (res.status == 1) {
+          this.$notify({ title: '成功', message: res.message, type: 'success' })
+          this.$router.push({ name: 'login' })
+        } else {
+          this.$notify({ title: '失败', message: res.message, type: 'error' })
+        }
+      })
+    },
+    /*
       this.$refs[formName].validate(valid => {
         if (valid) {
           alert('submit!')
         } else {
-          console.log('error submit!!')
+          console.log('是否确认')
           return false
         }
       })
-    },
+    },*/
     resetForm(formName) {
       this.$refs[formName].resetFields()
     }

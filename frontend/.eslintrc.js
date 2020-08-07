@@ -10,13 +10,13 @@ module.exports = {
   rules: {
     'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
     'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
-    // 'prettier/prettier': [
-    //   'error',
-    //   {
-    //     semi: false,
-    //     singleQuote: true,
-    //     printWidth: 200
-    //   }
-    // ]
+     'prettier/prettier': [
+       'error',
+       {
+         semi: false,
+         singleQuote: true,
+         printWidth: 200
+       }
+     ]
   }
 }

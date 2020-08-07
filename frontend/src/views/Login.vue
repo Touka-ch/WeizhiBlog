@@ -9,7 +9,7 @@
         <el-input type="password" placeholder="请输入密码" v-model="form.password" />
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="onSubmit('loginForm')">登录</el-button>
+        <el-button type="primary" @click="onSubmit" @keyup.enter.native="onSubmit">登录</el-button>
       </el-form-item>
       <el-form-item label="没有账号，">
         <el-button type="text" @click="register">立即注册</el-button>
@@ -26,6 +26,8 @@
 </template>
 
 <script>
+import { loginRequest } from '../api/Requests'
+
 export default {
   name: 'Login',
   data() {
@@ -34,35 +36,48 @@ export default {
         username: '',
         password: ''
       },
-
       // 表单验证，需要在 el-form-item 元素中增加 prop 属性
       rules: {
         username: [{ required: true, message: '账号不可为空', trigger: 'blur' }],
         password: [{ required: true, message: '密码不可为空', trigger: 'blur' }]
       },
-
       // 对话框显示和隐藏
       dialogVisible: false,
-      register1: ''
+      register1: '',
+      data: '',
+      data2: ''
     }
   },
   methods: {
-    onSubmit(formName) {
+    onSubmit() {
       // 为表单绑定验证功能
-      this.$refs[formName].validate(valid => {
-        if (valid) {
-          // 使用 vue-router 路由到指定页面，该方式称之为编程式导航
+      loginRequest(this.form).then(res => {
+        if (res.status == '1') {
+          //console.log(res)
+          localStorage.setItem('user', JSON.stringify(res.object))
+          this.$notify({ title: '成功', message: res.message, type: 'success' })
+          //console.log(JSON.parse(localStorage.getItem('user')))
+          //console.log(localStorage.getItem('user'))
           this.$router.push('/main')
         } else {
-          this.dialogVisible = true
-          return false
+          this.$notify({ title: '失败', message: res.message, type: 'error' })
+          //this.dialogVisible = true
         }
       })
     },
+    /*
+      if (valid) {
+        // 使用 vue-router 路由到指定页面，该方式称之为编程式导航
+        this.$router.push('/main')
+      } else {
+        this.dialogVisible = true
+        return false
+      }*/
     register() {
       this.$router.push('/register')
     }
-  }
+  },
+  created() {}
 }
 </script>
 
