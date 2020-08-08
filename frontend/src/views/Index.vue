@@ -35,8 +35,7 @@
             </div>
             <el-card class="box-card">
               <div slot="header" class="d-flex align-items-center">
-                <img class="card-icon" src="src/assets/images/lianjie.png" />
-                <span>为空</span>
+                <span>友链</span>
                 <el-button class="ml-auto" style="padding: 3px 0" type="text"> </el-button>
               </div>
               <div class="text item"><a href="#">某某的博客</a></div>

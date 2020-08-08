@@ -1,5 +1,12 @@
 <template>
-  <el-menu default-active="2" class="el-menu-vertical-demo" background-color="#545c64" text-color="#fff" active-text-color="#ffd04b" :collapse="isCollapse">
+  <el-menu
+    default-active="2"
+    class="el-menu-vertical-demo"
+    background-color="#545c64"
+    text-color="#fff"
+    active-text-color="#ffd04b"
+    :collapse="isCollapse"
+  >
     <el-button type="primary" icon="el-icon-menu" @click="collapse"></el-button>
     <el-submenu :index="item.path" v-for="item in hasChildren" :key="item.path">
       <!--"(item, index) in hasChildren" :key="index"-->
