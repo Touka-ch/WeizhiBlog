@@ -12,7 +12,15 @@
       </el-col>
     </el-row>
     <el-row>
-      <mavon-editor v-model="article.mdContent" @save="saveDoc" @change="updateDoc"></mavon-editor>
+      <mavon-editor
+        v-model="article.mdContent"
+        ref="md"
+        @save="saveDoc"
+        @change="updateDoc"
+        @imgAdd="handleEditorImgAdd"
+        @imgDel="handleEditorImgDel"
+      ></mavon-editor>
+      <!--@imgAdd="handleEditorImgAdd"-->
     </el-row>
     <el-row>
       <el-col :span="20">
@@ -41,7 +49,7 @@
 </template>
 
 <script>
-import { articleRequest, categoryUserRequest, mulTagRequest } from '../api/Requests' //articleRequest,
+import { articleRequest, categoryUserRequest, fileRequest, mulTagRequest } from '../api/Requests' //articleRequest,
 
 export default {
   name: 'New',
@@ -65,7 +73,8 @@ export default {
       dynamicTags: [],
       tags: { tags: [] },
       inputVisible: false,
-      inputValue: ''
+      inputValue: '',
+      imgFile: []
     }
   },
   /*watch: {
@@ -87,10 +96,9 @@ export default {
     }
   },
   methods: {
-    updateDoc(markdown, html) {
+    updateDoc: function(markdown, html) {
       // 此时会自动将 markdown 和 html 传递到这个方法中
       //console.log('markdown内容: ' + markdown)
-      //console.log('html内容:' + html)
       this.summary(html)
     },
     saveDoc() {
@@ -141,13 +149,37 @@ export default {
       }
       this.inputVisible = false
       this.inputValue = ''
+    },
+    handleEditorImgAdd(pos, $file) {
+      let formdata = new FormData()
+      formdata.append('file', $file)
+      this.imgFile[pos] = $file
+      //console.formdata
+      fileRequest(formdata).then(res => {
+        console.log(res)
+        if (res.status == '1') {
+          this.$notify({ title: '成功', message: res.message, type: 'success' })
+          let name = $file.name
+          if (name.includes('-')) {
+            name = name.replace(/-/g, '')
+          }
+          // 第二步.将返回的url替换到文本原位置![...](0) -> ![...](url)  这里是必须要有的
+          //  _this.$refs.md.$imgUpdateByUrl(pos, json.msg)
+          this.$refs.md.$imglst2Url([[pos, res.object]])
+        } else {
+          this.$notify.error({ title: '失败', message: res.message })
+        }
+      })
+    },
+    handleEditorImgDel(pos) {
+      delete this.imgFile[pos]
     }
   },
   mounted() {
     this.user = JSON.parse(localStorage.getItem('user'))
     this.article.uid = this.user.id
     categoryUserRequest(this.user.id).then(res => {
-      console.log(res)
+      //console.log(res)
       this.error(res.status, res.message)
       this.categories = res.object
     })

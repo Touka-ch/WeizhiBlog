@@ -9,6 +9,7 @@ import { Service } from './Service.js'
  * get    单个用户             {{base}}/users/:id
  */
 export function userRequest(method, id, data) {
+  console.log(method)
   return Service({
     method: method,
     url: '/users' + (id ? '/' + id : ''),

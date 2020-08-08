@@ -2,7 +2,10 @@
   <header>
     <div class="r-content">
       <el-dropdown>
-        <span class="el-dropdown-link"><img :src="userImg" class="user" /> </span>
+        <span class="el-dropdown-link">
+          <img :src="userface" class="user" />
+          <!--<el-image :src="user.userface" class="user"></el-image>-->
+        </span>
         <el-dropdown-menu slot="dropdown">
           <el-dropdown-item>{{ user }}</el-dropdown-item>
           <el-dropdown-item>
@@ -23,7 +26,8 @@ export default {
   data() {
     return {
       userImg: require('..//assets/images/user (1).png'),
-      user: ''
+      user: '',
+      userface: ''
     }
   },
   methods: {
@@ -38,10 +42,12 @@ export default {
     },
     getUser() {
       this.user = JSON.parse(localStorage.getItem('user')).username
+      this.userface = JSON.parse(localStorage.getItem('user')).userface
     }
   },
   mounted() {
     this.getUser()
+    console.log(this.userface)
   }
 }
 </script>

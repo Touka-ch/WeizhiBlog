@@ -34,17 +34,17 @@
         ></mavon-editor>
       </el-row>
     </el-card>
-    <!---<comment :comments-data="comments"></comment>-->
+    <comment :comments-data="comments"></comment>
   </div>
 </template>
 
 <script>
 import { articleRequest, commentArticleRequest } from '../api/Requests'
-//import Comment from './Comment'
+import Comment from './Comment'
 
 export default {
   name: 'CommonArticle',
-  components: {}, // Comment
+  components: { Comment },
   data() {
     return {
       content: '# your markdown content',
@@ -70,7 +70,8 @@ export default {
           }
         ]
       },
-      comments: {}
+      comments: [],
+      oldComments: []
     }
   },
   methods: {
@@ -80,6 +81,36 @@ export default {
     goback() {
       this.$router.push({ name: 'index', params: { view: 'yes' } })
       window.location.reload()
+    },
+    rawToFit(comments) {
+      let fitComments = []
+      let comments1 = comments.sort(this.compare('toId'))
+      console.log('第一次排序后的评论：' + comments1)
+      for (let i = 0; i < comments1.length; i++) {
+        if (comments1[i]['toId'] === -1) {
+          fitComments.push(comments1[i])
+        }
+      }
+      for (let i = 0; i < comments1.length; i++) {
+        if (comments1[i]['toId'] != -1) {
+          for (let j = 0; j < fitComments.length; j++) {
+            if (fitComments[j]['reply'] === undefined || fitComments[j]['reply'].length === 0) {
+              fitComments[j]['reply'] = []
+            }
+            if (fitComments[j]['id'] === comments1[i]['toId']) {
+              fitComments[j]['reply'].push(comments1[i])
+            }
+          }
+        }
+      }
+      return fitComments
+    },
+    compare(property) {
+      return function(obj1, obj2) {
+        var value1 = obj1[property]
+        var value2 = obj2[property]
+        return value1 - value2 // 升序
+      }
     }
   },
   created() {
@@ -90,7 +121,8 @@ export default {
     commentArticleRequest('get', this.$route.params.aid).then(res => {
       console.log(res)
       this.error(res.status, res.message)
-      this.comments = res.object
+      this.oldComments = res.object
+      this.comments = this.rawToFit(this.oldComments)
     })
   }
 }

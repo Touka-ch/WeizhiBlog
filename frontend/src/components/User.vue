@@ -35,6 +35,11 @@
       </el-table-column>
       <el-table-column label="邮箱" prop="email"> </el-table-column>
       <el-table-column label="注册时间" prop="regTime" sortable> </el-table-column>
+      <el-table-column label="更改头像">
+        <template v-slot="scope">
+          <el-button size="mini" type="success" @click="handleImgEdit(scope.$index, scope.row)">更改图片</el-button>
+        </template>
+      </el-table-column>
       <el-table-column align="right">
         <template slot="header">
           <!-- slot-scope="scope" -->
@@ -43,7 +48,13 @@
         <template v-slot="scope">
           <!-- slot-scope="scope" v-slot="scope"-->
           <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-          <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)" :disabled="isOrigin">删除</el-button>
+          <el-button
+            size="mini"
+            type="danger"
+            @click="handleDelete(scope.$index, scope.row)"
+            :disabled="isOrigin || isMine((scope.index, scope.row).id)"
+            >删除</el-button
+          >
         </template>
       </el-table-column>
     </el-table>
@@ -80,11 +91,17 @@
         <el-button type="primary" @click="updateUser">确 定</el-button>
       </div>
     </el-dialog>
+    <el-dialog title="编辑图片" :visible.sync="dialogForm2Visible" width="500px">
+      <el-upload class="avatar-uploader" action="https://jsonplaceholder.typicode.com/posts/" :show-file-list="false" :http-request="uploadFile">
+        <img v-if="ruleForm.userface" :src="ruleForm.userface" class="avatar" />
+        <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+      </el-upload>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { userRequest } from '../api/Requests'
+import { fileRequest, userRequest } from '../api/Requests'
 export default {
   name: 'User',
   computed: {
@@ -95,7 +112,7 @@ export default {
   },
   data() {
     return {
-      dialogTableVisible: false,
+      dialogForm2Visible: false,
       dialogFormVisible: false,
       formLabelWidth: '120px',
       form: {
@@ -108,7 +125,8 @@ export default {
         password: '',
         nickname: '',
         email: '',
-        status: true
+        status: true,
+        userface: ''
       },
       rules: {
         username: [
@@ -132,7 +150,26 @@ export default {
       errors: '',
       index: null,
       row: '',
-      isOrigin: true
+      isOrigin: true,
+      id: '',
+      userFace: ''
+    }
+  },
+  watch: {
+    userFace(val, oldval) {
+      if (val != oldval) {
+        let user = { userface: '', id: this.id }
+        user.userface = this.userFace
+        userRequest('patch', this.id, user).then(res => {
+          console.log(res)
+          if (res.status == '1') {
+            this.$notify({ type: 'success', message: res.message })
+          } else {
+            this.$notify.error({ message: res.message })
+            console.log()
+          }
+        })
+      }
     }
   },
   created() {
@@ -178,7 +215,6 @@ export default {
     },
     judgeRole() {
       for (let item of JSON.parse(localStorage.getItem('user')).roles) {
-        console.log(item)
         if (item == 'ROLE_1') this.isOrigin = false
       }
     },
@@ -214,6 +250,31 @@ export default {
           //this.getAllUser()
         } else this.$notify.error({ title: '失败', message: res.message })
       })
+    },
+    handleImgEdit(index, row) {
+      this.row = row
+      this.dialogForm2Visible = true
+      this.ruleForm = (index, row)
+    },
+    isMine(id) {
+      if (id === JSON.parse(localStorage.getItem('user')).id) {
+        return true
+      } else {
+        return false
+      }
+    },
+    uploadFile(content) {
+      this.id = (this.index, this.row).id
+      let formdata = new FormData()
+      formdata.append('file', content.file)
+      fileRequest(formdata).then(res => {
+        if (res.status == '1') {
+          this.$notify({ type: 'success', message: res.message })
+          this.userFace = res.object
+        } else {
+          this.$notify.error({ message: res.message })
+        }
+      })
     }
   }
 }
@@ -222,5 +283,28 @@ export default {
 <style scoped>
 .el-switch {
   margin-top: 9px;
+}
+.avatar-uploader .el-upload {
+  border: 1px dashed #d9d9d9;
+  border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+.avatar-uploader .el-upload:hover {
+  border-color: #409eff;
+}
+.avatar-uploader-icon {
+  font-size: 28px;
+  color: #8c939d;
+  width: 178px;
+  height: 178px;
+  line-height: 178px;
+  text-align: center;
+}
+.avatar {
+  width: 178px;
+  height: 178px;
+  display: block;
 }
 </style>

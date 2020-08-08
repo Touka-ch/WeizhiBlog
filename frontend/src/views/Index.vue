@@ -94,7 +94,9 @@ export default {
       this.isDisplay = false
     }
   },
-  mounted() {}
+  mounted() {
+    localStorage.clear()
+  }
 }
 </script>
 

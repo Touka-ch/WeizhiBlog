@@ -60,6 +60,12 @@ const routes = [
         component: () => import('@/components/New.vue')
       },
       {
+        path: '/main/updateArticle',
+        name: 'updateArticle',
+        params: 'aid',
+        component: () => import('@/components/updateArtical.vue')
+      },
+      {
         path: '/main/user',
         name: 'user',
         component: () => import('@/components/User.vue')
@@ -67,7 +73,13 @@ const routes = [
       {
         path: '/main/column',
         name: 'column',
-        component: () => import('@/components/Column.vue')
+        component: () => import('@/components/Column.vue'),
+        children: [
+          {
+            path: '/main/column/articles',
+            name: 'columnArticle'
+          }
+        ]
       },
       {
         path: '/main/chart',

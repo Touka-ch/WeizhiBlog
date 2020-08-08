@@ -22,14 +22,16 @@
         </el-row>
         <el-row class="art-body">
           <div class="side-img hidden-sm-and-down">
-            <img class="art-banner" src="../assets/images/1.jpg" />
+            <img class="art-banner" :src="getImg(item.mdContent)" :onerror="errorImg" />
+            <!--:src="getImg(item.mdContent)"
+            onerror="this.src='../assets/images/error.jpg'"-->
           </div>
           <div class="side-abstract">
             <div class="art-abstract">{{ item.summary }}</div>
             <div class="art-more">
               <div>
                 <div v-if="isEdit">
-                  <el-button type="success">编辑</el-button>
+                  <el-button type="success" @click="updateArticle(item.id)">编辑</el-button>
                   <el-button type="warning" @click="deleteArticle(item.id)">删除</el-button>
                 </div>
                 <div v-else>
@@ -106,7 +108,8 @@ export default {
           ]
         }
       ],
-      isEdit: false
+      isEdit: false,
+      errorImg: 'this.src="' + require('../assets/images/error.jpg') + '"'
     }
   },
   watch: {
@@ -140,6 +143,15 @@ export default {
         } else this.$notify.error({ title: '失败', message: res.message })
         window.location.reload()
       })
+    },
+    getImg(markdown) {
+      let url = markdown.replace(/.*!\[.*]\(/, '')
+      let index = url.indexOf(')')
+      url = url.substring(0, index)
+      return url
+    },
+    updateArticle(aid) {
+      this.$router.push({ name: 'updateArticle', params: { aid: aid } })
     }
   },
   mounted() {

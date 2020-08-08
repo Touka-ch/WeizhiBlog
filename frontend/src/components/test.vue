@@ -1,142 +1,43 @@
 <!--评论模块-->
 <template>
-  <div class="container">
-    <div class="comment" v-for="item in comments" :key="item.date">
-      <div class="info">
-        <img class="avatar" :src="item.fromAvatar" width="36" height="36" />
-        <div class="right">
-          <div class="name">{{ item.fromName }}</div>
-          <div class="date">{{ item.date }}</div>
-        </div>
-      </div>
-      <div class="content">{{ item.content }}</div>
-      <div class="control">
-        <span class="like" :class="{ active: item.isLike }" @click="likeClick(item)">
-          <i class="iconfont icon-like"></i>
-          <span class="like-num">{{ item.likeNum > 0 ? item.likeNum + '人赞' : '赞' }}</span>
-        </span>
-        <span class="comment-reply" @click="showCommentInput(item)">
-          <i class="iconfont icon-comment"></i>
-          <span>回复</span>
-        </span>
-      </div>
-      <div class="reply">
-        <div class="item" v-for="reply in item.reply" :key="reply.date">
-          <div class="reply-content">
-            <span class="from-name">{{ reply.fromName }}</span
-            ><span>: </span>
-            <span class="to-name">@{{ reply.toName }}</span>
-            <span>{{ reply.content }}</span>
-          </div>
-          <div class="reply-bottom">
-            <span>{{ reply.date }}</span>
-            <span class="reply-text" @click="showCommentInput(item, reply)">
-              <i class="iconfont icon-comment"></i>
-              <span>回复</span>
-            </span>
-          </div>
-        </div>
-        <div class="write-reply" v-if="item.reply.length > 0" @click="showCommentInput(item)">
-          <i class="el-icon-edit"></i>
-          <span class="add-comment">添加新评论</span>
-        </div>
-        <transition name="fade">
-          <div class="input-wrapper" v-if="showItemId === item.id">
-            <el-input class="gray-bg-input" v-model="inputComment" type="textarea" :rows="3" autofocus placeholder="写下你的评论"> </el-input>
-            <div class="btn-control">
-              <span class="cancel" @click="cancel">取消</span>
-              <el-button class="btn" type="success" round @click="commitComment">确定</el-button>
-            </div>
-          </div>
-        </transition>
-      </div>
-    </div>
+  <div>
+    <el-progress :text-inside="true" :stroke-width="20" :percentage="percentage" :color="customColors"></el-progress>
+    <el-progress :percentage="percentage" :color="customColors"></el-progress>
+    <el-button-group>
+      <el-button icon="el-icon-minus" @click="decrease"></el-button>
+      <el-button icon="el-icon-plus" @click="increase"></el-button>
+    </el-button-group>
   </div>
 </template>
 
 <script>
-import Vue from 'vue'
 export default {
+  name: 'test',
   data() {
     return {
-      inputComment: '',
-      showItemId: '',
-      comments: [
-        {
-          content: 'adfadfadfadsfdasasdfsadfa的发达范德萨分答复阿斯顿',
-          date: 1596768890000,
-          fromAvatar: 'http://47.115.41.198:8090/public/2020/08/07/03/43/27/270/touxiang5.png',
-          fromId: 12,
-          fromName: 'user',
-          id: 27,
-          likeNum: 1,
-          ownerId: 28,
-          toId: -1,
-          reply: [
-            //回复，或子评论
-            {
-              id: '34523244545', //主键id
-              commentId: 'comment0001', //父评论id，即父亲的id
-              fromId: 'observer223432', //评论者id
-              fromName: '夕阳红', //评论者昵称
-              fromAvatar: 'https://wx4.sinaimg.cn/mw690/69e273f8gy1ft1541dmb7j215o0qv7wh.jpg', //评论者头像
-              toId: 'errhefe232213', //被评论者id
-              toName: '犀利的评论家', //被评论者昵称
-              toAvatar: 'http://ww4.sinaimg.cn/bmiddle/006DLFVFgy1ft0j2pddjuj30v90uvagf.jpg', //被评论者头像
-              content: '赞同，很靠谱，水平很高', //评论内容
-              date: '2018-07-05 08:35' //评论时间
-            }
-          ]
-        }
+      percentage: 20,
+      customColors: [
+        { color: '#f56c6c', percentage: 20 },
+        { color: '#e6a23c', percentage: 40 },
+        { color: '#5cb87a', percentage: 60 },
+        { color: '#1989fa', percentage: 80 },
+        { color: '#6f7ad3', percentage: 100 }
       ]
     }
   },
-  computed: {},
   methods: {
-    /**
-     * 点赞
-     */
-    likeClick(item) {
-      if (item.isLike === null) {
-        Vue.$set(item, 'isLike', true)
-        item.likeNum++
-      } else {
-        if (item.isLike) {
-          item.likeNum--
-        } else {
-          item.likeNum++
-        }
-        item.isLike = !item.isLike
+    increase() {
+      this.percentage += 10
+      if (this.percentage > 100) {
+        this.percentage = 100
       }
     },
-    /**
-     * 点击取消按钮
-     */
-    cancel() {
-      this.showItemId = ''
-    },
-    /**
-     * 提交评论
-     */
-    commitComment() {
-      console.log(this.inputComment)
-    },
-    /**
-     * 点击评论按钮显示输入框
-     * item: 当前大评论
-     * reply: 当前回复的评论
-     */
-    showCommentInput(item, reply) {
-      if (reply) {
-        this.inputComment = '@' + reply.fromName + ' '
-      } else {
-        this.inputComment = ''
+    decrease() {
+      this.percentage -= 10
+      if (this.percentage < 0) {
+        this.percentage = 0
       }
-      this.showItemId = item.id
     }
-  },
-  created() {
-    console.log(this.comments)
   }
 }
 </script>
