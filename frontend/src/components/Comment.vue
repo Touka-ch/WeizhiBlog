@@ -59,27 +59,34 @@
 
 <script>
 import Vue from 'vue'
+import { commentRequest } from '../api/Requests'
 export default {
   props: {
     commentsData: {
       type: Array,
       required: true
-    }
+    },
+    propsAid: null
   },
   data() {
     return {
       inputComment: '',
       showItemId: '',
-      comments: {}
+      comments: {},
+      aid: ''
     }
   },
   watch: {
     commentsData(val, oldval) {
       if (val != oldval) {
         this.comments = this.commentsData
-        console.log('ajkskhdjkahsdahdjakshdka')
-        console.log(this.comments)
-        console.log('ajkskhdjkahsdahdjakshdka')
+      }
+    },
+    propsAid(val, oldval) {
+      if (val != oldval) {
+        this.aid = this.propsAid
+        console.log('samndjsahd')
+        console.log(this.aid)
       }
     }
   },
@@ -114,6 +121,14 @@ export default {
      */
     commitComment() {
       console.log(this.inputComment)
+      console.log(this.aid)
+      commentRequest('post', this.aid, { aid: this.aid, content: this.inputComment, parentId: '27', uid: '19' }).then(res => {
+        if (res.status == '1') {
+          this.$notify({ type: 'success', message: res.message })
+        } else {
+          this.$notify.error({ message: res.message })
+        }
+      })
     },
 
     /**

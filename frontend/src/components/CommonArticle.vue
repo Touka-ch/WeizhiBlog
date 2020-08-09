@@ -34,7 +34,7 @@
         ></mavon-editor>
       </el-row>
     </el-card>
-    <comment :comments-data="comments"></comment>
+    <comment :comments-data="comments" :props-aid="aid"></comment>
   </div>
 </template>
 
@@ -71,7 +71,32 @@ export default {
         ]
       },
       comments: [],
-      oldComments: []
+      oldComments: [],
+      fakeComments: [
+        {
+          content: '评论示例',
+          date: '2020/8/8 上午 9:01:46', //1596768890000,
+          fromAvatar: 'http://47.115.41.198:8090/public/2020/08/07/03/43/27/270/touxiang5.png',
+          fromId: 12,
+          fromName: 'user',
+          id: 27,
+          likeNum: 1,
+          ownerId: 28,
+          toId: -1
+        },
+        {
+          content: '回复示例',
+          date: '2020/8/8 下午 1:01:46', //1596768894000,
+          fromAvatar: 'http://47.115.41.198:8090/public/2020/08/07/03/43/27/270/touxiang5.png',
+          fromId: 12,
+          fromName: 'user',
+          id: 28,
+          likeNum: 1,
+          ownerId: 28,
+          toId: 27
+        }
+      ],
+      aid: ''
     }
   },
   methods: {
@@ -107,22 +132,28 @@ export default {
     },
     compare(property) {
       return function(obj1, obj2) {
-        var value1 = obj1[property]
-        var value2 = obj2[property]
+        let value1 = obj1[property]
+        let value2 = obj2[property]
         return value1 - value2 // 升序
       }
     }
   },
   created() {
-    articleRequest('get', this.$route.params.aid).then(res => {
+    this.aid = this.$route.params.aid
+    //console.log(this.aid)
+    articleRequest('get', this.aid).then(res => {
       this.error(res.status, res.message)
       this.article = res.object
     })
-    commentArticleRequest('get', this.$route.params.aid).then(res => {
-      console.log(res)
+    commentArticleRequest('get', this.aid).then(res => {
+      //console.log(res)
       this.error(res.status, res.message)
       this.oldComments = res.object
-      this.comments = this.rawToFit(this.oldComments)
+      if (this.oldComments == null) {
+        this.comments = this.rawToFit(this.oldComments)
+      } else {
+        this.comments = this.rawToFit(this.fakeComments)
+      }
     })
   }
 }

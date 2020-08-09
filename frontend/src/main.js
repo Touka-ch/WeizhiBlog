@@ -9,8 +9,6 @@ import 'element-ui/lib/theme-chalk/index.css'
 import { Service } from './api/Service.js'
 import 'mavon-editor/dist/css/index.css'
 import mavonEditor from 'mavon-editor'
-//import axios from 'axios'
-import './mock'
 
 // 安装路由
 Vue.use(VueRouter)
