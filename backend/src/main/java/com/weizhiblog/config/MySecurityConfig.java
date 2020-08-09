@@ -11,7 +11,7 @@ package com.weizhiblog.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.weizhiblog.bean.ResponseBean;
 import com.weizhiblog.bean.User;
-import com.weizhiblog.filter.CustomAuthenticationFilter;
+import com.weizhiblog.filter.MyUsernamePasswordAuthenticationFilter;
 import com.weizhiblog.service.LoginService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,11 +38,11 @@ public class MySecurityConfig extends WebSecurityConfigurerAdapter {
             "/articles/**",
             "/users",
             "/public/**",
-            "/img/**"
+            "/comments/**",
+            "/comments"
     };
 
     private final String[] ADMIN_LIST = new String[]{
-            "/fuckU",
             "/role/setAdmin/**",
             "/role/setOrdinary/**",
     };
@@ -56,7 +56,7 @@ public class MySecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
                 .antMatchers(WHITE_LIST).permitAll()
-                .antMatchers(ADMIN_LIST).hasRole("2")
+                .antMatchers(ADMIN_LIST).hasRole("1")
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()
@@ -94,8 +94,8 @@ public class MySecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    CustomAuthenticationFilter customAuthenticationFilter() throws Exception {
-        CustomAuthenticationFilter filter = new CustomAuthenticationFilter();
+    MyUsernamePasswordAuthenticationFilter customAuthenticationFilter() throws Exception {
+        MyUsernamePasswordAuthenticationFilter filter = new MyUsernamePasswordAuthenticationFilter();
         filter.setAuthenticationSuccessHandler((req, resp, authentication) -> {
             User principal = (User) authentication.getPrincipal();
             principal.setPassword(null);

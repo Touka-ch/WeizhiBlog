@@ -227,8 +227,11 @@ public class UserService {
 
     public ResponseBean patchUser(Integer id, User user) {
         log.info(user.toString());
-        if (id == null) {
+        if (id == null||user.getId()==null) {
             return ResponseBean.builder().status(-5).message("id不能为空！").build();
+        }
+        if (user.getId()!=id){
+            return ResponseBean.builder().status(-7).message("user中id必须和路径id相同！").object(id).build();
         }
         User sqlUser = userMapper.selectByPrimaryKey(id);
         if (sqlUser == null) {

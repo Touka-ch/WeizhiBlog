@@ -1,22 +1,29 @@
 /*
- *
- * @createTime 07-30 18:29:58
- * @author Touka_
- * @classname C:/Workplace/Project/WeizhiBlog/backend/sql/weizhiblog.sql
- * @lastModifiedTime 7月30日   18:29:57
+  库名 weizhiblog
+  通过该文件可建立 9 张表
+                1 个存储过程
+                1 个定时器
  */
-
-# 这是我修改后的数据库，请将之前的库删掉，然后运行此文件。
-create database weizhiblog;
-use weizhiblog;
 create table category
 (
     id       int auto_increment
         primary key,
-    cateName varchar(64) ,
-    date     date        ,
-    uid      int         not null
+    cateName varchar(64),
+    date     date,
+    uid      int not null
 );
+
+# create table file
+# (
+#     id          bigint auto_increment
+#         primary key,
+#     name        varchar(100) not null comment '文件名',
+#     md5         varchar(32)  null comment 'MD5值',
+#     path        varchar(100) not null comment '文件路径',
+#     upload_time datetime(3)  not null comment '上传时间',
+#     ext         varchar(255) comment '文件后缀名'
+# )
+#     charset = utf8mb4;
 
 create table roles
 (
@@ -38,12 +45,12 @@ create table user
 (
     id       int auto_increment
         primary key,
-    username varchar(64)          ,
-    nickname varchar(64)          ,
-    password varchar(255)         ,
-    enabled  tinyint(1) default 1 ,
-    email    varchar(64)          ,
-    userface varchar(255)         ,
+    username varchar(64),
+    nickname varchar(64),
+    password varchar(255),
+    enabled  tinyint(1) default 1,
+    email    varchar(64),
+    userface varchar(255),
     regTime  datetime
 );
 
@@ -52,16 +59,16 @@ create table article
     id             int auto_increment
         primary key,
     title          varchar(255)         not null,
-    mdContent      text                  comment 'md文件源码',
-    htmlContent    text                  comment 'html源码',
-    summary        text                 ,
+    mdContent      text comment 'md文件源码',
+    htmlContent    text comment 'html源码',
+    summary        text,
     cid            int                  not null,
     uid            int                  not null,
-    publishDate    timestamp            ,
-    editTime       timestamp            ,
+    publishDate    timestamp,
+    editTime       timestamp,
     commentNum     int        default 0 not null,
     likeNum        int        default 0 not null,
-    state          int                   comment '0表示草稿箱，1表示已发表，2表示已删除',
+    state          int comment '0表示草稿箱，1表示已发表，2表示已删除',
     pageView       int        default 0 not null,
     publicToOthers tinyint(1) default 0 not null,
     constraint article_ibfk_1
@@ -80,8 +87,8 @@ create table article_tags
 (
     id  int auto_increment
         primary key,
-    aid int ,
-    tid int ,
+    aid int,
+    tid int,
     constraint article_tags_ibfk_1
         foreign key (aid) references article (id)
             on delete cascade,
@@ -96,17 +103,15 @@ create table comments
 (
     id          int auto_increment
         primary key,
-    aid         int       ,
-    content     text      ,
-    publishTime timestamp ,
-    parentId    int        comment '-1表示正常回复，其他值表示是评论的回复',
-    uid         int       ,
+    aid         int,
+    content     text,
+    publishTime timestamp null,
+    parentId    int comment '-1表示正常回复，其他值表示是评论的回复',
+    uid         int,
     constraint comments_ibfk_1
         foreign key (aid) references article (id),
     constraint comments_ibfk_2
-        foreign key (uid) references user (id),
-    constraint comments_ibfk_3
-        foreign key (parentId) references comments (id)
+        foreign key (uid) references user (id)
 );
 
 create index aid
@@ -122,12 +127,12 @@ create table data
 (
     id         int auto_increment
         primary key,
-    uid        int                                 ,
-    aid        int                                 ,
-    day        timestamp default CURRENT_TIMESTAMP ,
-    pv         int                                 ,
-    commentNum int                                 ,
-    likeNum    int                                 ,
+    uid        int,
+    aid        int,
+    day        timestamp default CURRENT_TIMESTAMP,
+    pv         int,
+    commentNum int,
+    likeNum    int,
     constraint data_article_aid_id_fk
         foreign key (aid) references article (id),
     constraint data_user_uid_id
@@ -138,8 +143,8 @@ create table roles_user
 (
     id  int auto_increment
         primary key,
-    rid int default 2 ,
-    uid int           ,
+    rid int default 2,
+    uid int,
     constraint roles_user_ibfk_1
         foreign key (rid) references roles (id),
     constraint roles_user_ibfk_2
@@ -150,8 +155,8 @@ create table roles_user
 create index rid
     on roles_user (rid);
 
-delimiter //
-create procedure countData()
+create
+    definer = root@localhost procedure countData()
 begin
     declare aid int default 0;
     declare total int default 0;
@@ -161,7 +166,7 @@ begin
     declare commentNum int default 0;
     declare likeNum int default 0;
     declare done int default 0;
-    DECLARE cur CURSOR FOR SELECT a.id,a.uid,a.pageView,a.likeNum,a.commentNum from article a;
+    DECLARE cur CURSOR FOR SELECT a.id, a.uid, a.pageView, a.likeNum, a.commentNum from article a;
     -- 指定游标循环结束时的返回值
     declare continue handler for not found set done = 1;
     -- 打开游标
@@ -169,19 +174,25 @@ begin
     -- 初始化 变量
     set total = 0;
     -- while 循环
-    while done != 1 do
+    while done != 1
+        do
             fetch cur into aid,uid,pageView,likeNum,commentNum;
-            insert into data(`uid`,`aid`,`day`,`pv`,`commentNum`,`likeNum`) values (uid,aid,day,pageView,likeNum,commentNum);
+            insert into data(`uid`, `aid`, `day`, `pv`, `commentNum`, `likeNum`)
+            values (uid, aid, day, pageView, likeNum, commentNum);
         end while;
     -- 关闭游标
     close cur;
-end//
-delimiter ;
+end;
 
-create event countData on schedule
+create definer = root@localhost event countData on schedule
     every '24' HOUR
     on completion preserve
     enable
     do
     call countData();
+
+
+insert into roles (id, name) value (1, '超级管理员');
+insert into roles (id, name) value (2, '用户');
+
 

@@ -42,7 +42,6 @@ public class FileController {
             absoluteDir = new File("").getCanonicalPath() + "\\backend\\src\\main\\resources\\static\\public\\";
             extraPath = DateUtils.getExtraPath();
         }
-
         String uri = "javascript:void(0)";
         StringBuffer url = request.getRequestURL();
         String tempContextUrl = url.delete(url.length() - request.getRequestURI().length(), url.length()).append("/").toString();

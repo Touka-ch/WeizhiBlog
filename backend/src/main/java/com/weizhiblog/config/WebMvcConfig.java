@@ -45,7 +45,6 @@ public class WebMvcConfig extends WebMvcConfigurationSupport {
         //如果是Windows系统
         if (os.toLowerCase().startsWith("win")) {
             registry.addResourceHandler("/public/**")
-                    // /app_file/**表示在磁盘filePathWindow目录下的所有资源会被解析为以下的路径
                     .addResourceLocations("file:" + filePathWindow);
         } else {  //linux 和mac
             registry.addResourceHandler("/public/**")
