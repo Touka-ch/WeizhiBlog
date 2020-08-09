@@ -34,4 +34,29 @@
 
 ## 前端技术
 * Vue
-* ...
+* element-ui
+* axios
+* echarts
+* mavon-editor
+* scss
+* eslint/prettier
+
+### 运行
+1. 克隆项目
+2. 依次安装上述插件（npm install ..）
+3. npm run serve
+4. 系统自动打开浏览器访问8080端口的网页 即成功
+
+### 部署
+* 可以使用 nginx / apache 等服务器作为配置环境
+1. 在 frontend目录下 运行 npm run build
+2. 将dist全部文件放到网站根目录
+3. 以 nginx 为例，在 nginx.conf 中加入如下跨域配置
+* ip自己设置
+```
+    #代理
+   location /api/ {
+            proxy_pass http://8.8.8.8/;
+        }
+```
+4. 访问网站根目录ip+端口 即可成功
