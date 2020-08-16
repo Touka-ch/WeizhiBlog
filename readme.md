@@ -60,3 +60,16 @@
         }
 ```
 4. 访问网站根目录ip+端口 即可成功
+
+## 界面预览
+![](frontend/docs/1.png)
+![](frontend/docs/2.png)
+![](frontend/docs/3.png)
+![](frontend/docs/4.png)
+![](frontend/docs/5.png)
+![](frontend/docs/6.png)
+![](frontend/docs/7.png)
+![](frontend/docs/8.png)
+![](frontend/docs/9.png)
+![](frontend/docs/10.png)
+
