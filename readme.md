@@ -62,15 +62,17 @@
 4. 访问网站根目录ip+端口 即可成功
 
 ## 界面预览
-![](frontend/docs/1.png)
-![](frontend/docs/2.png)
-![](frontend/docs/3.png)
-![](frontend/docs/4.png)
-![](frontend/docs/5.png)
-![](frontend/docs/6.png)
-![](frontend/docs/7.png)
-![](frontend/docs/8.png)
-![](frontend/docs/9.png)
-![](frontend/docs/10.png)
+![](frontend/docs/1.jpg)
+![](frontend/docs/2.jpg)
+![](frontend/docs/3.jpg)
+![](frontend/docs/4.jpg)
+![](frontend/docs/5.jpg)
+![](frontend/docs/6.jpg)
+![](frontend/docs/7.jpg)
+![](frontend/docs/8.jpg)
+![](frontend/docs/9.jpg)
+![](frontend/docs/10.jpg)
+
+
 
 示例http://47.102.219.118/
