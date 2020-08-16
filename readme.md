@@ -1,4 +1,9 @@
 # 玮织博客
+## 接口文档
+> https://www.showdoc.com.cn/weizhiblog?page_id=4999291931384042
+## 接口测试（Postman）
+> https://documenter.getpostman.com/view/11010527/T1Dv9FAc?version=latest
+
 ## 后端
 ### 技术选用
 * Java11
@@ -30,7 +35,7 @@
   - 如不想配置docker内网络连接，请使用host模式 --net=host。
 7. idea的services里查看日志。
 ##### 其它部署
-1. 不会
+1. 待定
 
 ## 前端技术
 * Vue
